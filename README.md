@@ -19,7 +19,7 @@ MovieMood เป็น Web Application สำหรับจัดการข�
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 ### Backend
 - Java 17
@@ -36,20 +36,19 @@ MovieMood เป็น Web Application สำหรับจัดการข�
 - Thymeleaf
 
 ### Database
-- PostgreSQL
-
-### Development Tools
-- IntelliJ IDEA / Visual Studio Code
-- Git
-- GitHub
+- Supabase (PostgreSQL)
 
 ### Testing
 - JUnit
 - Mockito
 
+### Version Control
+- Git
+- GitHub
+
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
 MovieMood ใช้แนวคิด **Layered Architecture** โดยแบ่งระบบออกเป็นแต่ละ Layer เพื่อแยกหน้าที่และลดการเชื่อมโยงระหว่างส่วนต่าง ๆ ของระบบ
 
@@ -79,97 +78,15 @@ MovieMood ใช้แนวคิด **Layered Architecture** โดยแบ�
                │
                ▼
 ┌─────────────────────────────┐
-│        PostgreSQL           │
+│    Supabase (PostgreSQL)    │
 │          Database           │
+
 └─────────────────────────────┘
-
----
-
-## 🗄️ Database Design (ER Diagram)
-
-Database ของ MovieMood ประกอบด้วยข้อมูลหลักสำหรับผู้ใช้ ภาพยนตร์ Mood และประวัติการใช้งาน
-
-```text
-┌──────────────┐
-│     User     │
-├──────────────┤
-│ id           │
-│ username     │
-│ email        │
-│ password     │
-└──────┬───────┘
-       │
-       │ 1 : 1
-       ▼
-┌──────────────┐
-│ UserProfile  │
-├──────────────┤
-│ id           │
-│ user_id      │
-│ name         │
-└──────────────┘
-
-User
-  │
-  │ 1 : N
-  ▼
-┌─────────────────┐
-│ UserPreference  │
-├─────────────────┤
-│ id              │
-│ user_id         │
-│ genre_id        │
-│ mood_id         │
-└─────────────────┘
-
-┌──────────────┐
-│    Genre     │
-├──────────────┤
-│ id           │
-│ name         │
-└──────┬───────┘
-       │
-       │ 1 : N
-       ▼
-┌──────────────┐
-│    Movie     │
-├──────────────┤
-│ id           │
-│ title        │
-│ description  │
-│ genre_id     │
-│ duration     │
-│ release_year │
-└──────┬───────┘
-       │
-       │ N : M
-       ▼
-┌──────────────┐
-│  MovieMood   │
-├──────────────┤
-│ movie_id     │
-│ mood_id      │
-└──────┬───────┘
-       │
-       ▼
-┌──────────────┐
-│     Mood     │
-├──────────────┤
-│ id           │
-│ name         │
-└──────────────┘
-
-User ───── 1 : N ───── MovieRating
-User ───── 1 : N ───── WatchHistory
-Movie ──── 1 : N ───── MovieRating
-Movie ──── 1 : N ───── WatchHistory
 ```
 
-> **Note:** ER Diagram ฉบับสมบูรณ์จะจัดทำเพิ่มเติมตามโครงสร้าง Database ที่พัฒนาจริง
-
 ---
 
-## 📂 โครงสร้างโปรเจกต์ (Project Structure)
+##  โครงสร้างโปรเจกต์ (Project Structure)
 
 ```text
 MovieMood/
@@ -212,12 +129,12 @@ MovieMood/
 
 ## ⚙️ Installation & Setup
 
-### Prerequisites
-ก่อนเริ่มใช้งานโปรเจกต์ ต้องติดตั้ง Software ดังต่อไปนี้:
-* **Java 17** หรือสูงกว่า
-* **Maven**
-* **PostgreSQL**
-* **Git**
+### Requirements
+- Java 17 หรือสูงกว่า
+- Maven
+- Git
+- GitHub Account
+- Supabase Account
 
 ### 1. Clone Repository
 ```bash
@@ -225,36 +142,25 @@ git clone <repository-url>
 cd MovieMood
 ```
 
-### 2. ตั้งค่า PostgreSQL
-สร้าง Database ชื่อ `moviemood` ใน PostgreSQL:
-```sql
-CREATE DATABASE moviemood;
-```
+### 2. Setup Supabase
+1. สร้าง Project บน Supabase
+2. สร้าง Database Tables ตาม ER Diagram
+3. เตรียมข้อมูล Database Connection ของ Supabase
+4. ตั้งค่าการเชื่อมต่อ Database ใน `application.properties`
 
-### 3. ตั้งค่า Database Connection
-เปิดไฟล์ `src/main/resources/application.properties` และกำหนดค่าการเชื่อมต่อ Database:
+### 3. Configure Database
+เปิดไฟล์ `src/main/resources/application.properties` และกำหนดค่า:
 
 ```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/moviemood
-spring.datasource.username=postgres
-spring.datasource.password=your_password
+spring.datasource.url=${DB_URL}
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
 
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 ```
-> **หมายเหตุ:** เปลี่ยน `username` และ `password` ให้ตรงกับ PostgreSQL ในเครื่องของผู้ใช้งาน
 
-### 4. Install Dependencies
-ใช้ Maven เพื่อดาวน์โหลด Dependencies ที่กำหนดไว้ใน `pom.xml`:
-
-```bash
-mvn install
-```
-
-สำหรับ Windows สามารถใช้:
-```cmd
-mvnw.cmd install
-```
+> **คำเตือน:** ไม่ควรใส่ Password จริงในไฟล์หรือ Commit ข้อมูลสำคัญขึ้น GitHub
 
 ---
 
@@ -274,7 +180,7 @@ mvn spring-boot:run
 ```
 
 เมื่อ Application ทำงานสำเร็จ สามารถเข้าใช้งานผ่าน Web Browser ได้ที่:
-👉 **[http://localhost:8080](http://localhost:8080)**
+--> **[http://localhost:8080](http://localhost:8080)**
 
 ### Stop Application
 กด `Ctrl + C` ใน Terminal เพื่อหยุดการทำงานของ Application
@@ -283,36 +189,38 @@ mvn spring-boot:run
 
 ## 📚 API Documentation
 
-MovieMood ใช้ REST API สำหรับการสื่อสารระหว่าง Frontend และ Backend ตัวอย่าง API หลักของระบบ:
-
 ### User API
-* `POST /api/users/register` - ลงทะเบียนผู้ใช้ใหม่
-* `POST /api/users/login` - เข้าสู่ระบบ
-* `GET  /api/users/{id}` - ดึงข้อมูลผู้ใช้ตาม ID
-* `PUT  /api/users/{id}` - อัปเดตข้อมูลผู้ใช้
+- `POST   /api/users/register`
+- `POST   /api/users/login`
+- `GET    /api/users/{id}`
+- `PUT    /api/users/{id}`
 
 ### Movie API
-* `GET    /api/movies` - ดึงรายชื่อภาพยนตร์ทั้งหมด
-* `GET    /api/movies/{id}` - ดึงข้อมูลภาพยนตร์ตาม ID
-* `POST   /api/movies` - เพิ่มภาพยนตร์ใหม่
-* `PUT    /api/movies/{id}` - แก้ไขข้อมูลภาพยนตร์
-* `DELETE /api/movies/{id}` - ลบภาพยนตร์
+- `GET    /api/movies`
+- `GET    /api/movies/{id}`
+- `POST   /api/movies`
+- `PUT    /api/movies/{id}`
+- `DELETE /api/movies/{id}`
 
 ### Mood API
-* `GET  /api/moods` - ดึงหมวดหมู่อารมณ์ทั้งหมด
-* `POST /api/moods` - เพิ่มหมวดหมู่อารมณ์ใหม่
+- `GET    /api/moods`
+- `POST   /api/moods`
 
 ### Recommendation API
-* `GET  /api/recommendations/{userId}` - ดึงรายการแนะนำภาพยนตร์ตามผู้ใช้
-* `POST /api/recommendations` - ประมวลผลคำแนะนำภาพยนตร์
+- `GET    /api/recommendations/{userId}`
+- `POST   /api/recommendations`
 
 ### Rating API
-* `POST /api/ratings` - บันทึกคะแนนรีวิวภาพยนตร์
-* `GET  /api/ratings/movie/{movieId}` - ดึงรายการรีวิวตามภาพยนตร์
+- `POST   /api/ratings`
+- `GET    /api/ratings/movie/{movieId}`
 
 ### Watch History API
-* `POST /api/history` - บันทึกประวัติการรับชม
-* `GET  /api/history/user/{userId}` - ดึงประวัติการรับชมของผู้ใช้
+- `POST   /api/history`
+- `GET    /api/history/user/{userId}`
+
+### Swagger / OpenAPI
+สามารถดูและทดสอบ REST API ผ่าน Swagger UI ได้ที่:
+--> **[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)**
 
 ---
 
