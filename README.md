@@ -96,33 +96,34 @@ MovieMood/
 │   │   │   └── com.example.moviemood/
 │   │   │       ├── controller/        # REST Controllers สำหรับจัดการ HTTP Request และ Routing
 │   │   │       ├── service/           # Business Logic ของระบบ
-│   │   │       ├── repository/        # Interface เชื่อมต่อกับ Database (Spring Data JPA)
+│   │   │       ├── repository/        # Interface สำหรับเข้าถึง Database ผ่าน Spring Data JPA
 │   │   │       ├── entity/            # Database Models / Entities
 │   │   │       ├── dto/               # Data Transfer Objects
 │   │   │       ├── strategy/          # Strategy Pattern สำหรับอัลกอริทึมการแนะนำ
 │   │   │       └── factory/           # Factory Pattern สำหรับการสร้าง Object
 │   │   │
 │   │   └── resources/
-│   │       ├── static/                # Static assets (CSS, JS, Images)
+│   │       ├── static/                # Static Assets (CSS, JS, Images)
 │   │       │   ├── css/
-│   │       │   └── js/
+│   │       │   ├── js/
+│   │       │   └── images/
 │   │       ├── templates/             # HTML Templates (Thymeleaf/UI)
 │   │       │   ├── index.html         # หน้าแรกของเว็บไซต์
 │   │       │   ├── login.html         # หน้าเข้าสู่ระบบ
 │   │       │   ├── movies.html        # หน้าแสดงรายการภาพยนตร์ทั้งหมด
 │   │       │   ├── movie-detail.html  # หน้ารายละเอียดภาพยนตร์
 │   │       │   ├── mood.html          # หน้าเลือกอารมณ์/ความรู้สึก
-│   │       │   ├── recommendation.html# หน้าแสดงผลการแนะนำภาพยนตร์
+│   │       │   ├── recommendation.html # หน้าแสดงผลการแนะนำภาพยนตร์
 │   │       │   ├── rating.html        # หน้าให้คะแนนภาพยนตร์
 │   │       │   ├── history.html       # หน้าประวัติการใช้งาน
 │   │       │   └── profile.html       # หน้าโปรไฟล์ผู้ใช้
-│   │       └── application.properties # ไฟล์การตั้งค่า Spring Boot และ Database
+│   │       └── application.properties # ไฟล์ตั้งค่า Spring Boot และ Database
 │   │
 │   └── test/                          # Unit Tests และ Integration Tests
 │
 ├── README.md                          # เอกสารอธิบายโปรเจกต์
 ├── pom.xml                            # ไฟล์จัดการ Dependencies ของ Maven
-└── .gitignore                         # รายชื่อไฟล์ที่ยกเว้นการ Upload บน Git
+└── .gitignore                         # ไฟล์ระบุสิ่งที่ Git ไม่ต้องติดตามหรือ Commit
 ```
 
 ---
