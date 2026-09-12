@@ -127,7 +127,7 @@ MovieMood/
 
 ---
 
-## ⚙️ Installation & Setup
+##  Installation & Setup
 
 ### Requirements
 - Java 17 หรือสูงกว่า
@@ -164,7 +164,7 @@ spring.jpa.show-sql=true
 
 ---
 
-## ▶️ How to Run
+## How to Run
 
 ### สำหรับ Windows / macOS / Linux
 เปิด Terminal ในโฟลเดอร์ของโปรเจกต์ แล้วใช้คำสั่งสำหรับ **Windows**:
@@ -187,7 +187,7 @@ mvn spring-boot:run
 
 ---
 
-## 📚 API Documentation
+##  API Documentation
 
 ### User API
 - `POST   /api/users/register`
@@ -224,7 +224,7 @@ mvn spring-boot:run
 
 ---
 
-## 🧪 How to Run Tests
+##  How to Run Tests
 
 โปรเจกต์ใช้ **JUnit** และ **Mockito** สำหรับทดสอบการทำงานของระบบ
 
@@ -245,6 +245,6 @@ mvnw.cmd test
 
 ---
 
-## 🌐 Deployment URL
+##  Deployment URL
 
 * **Production URL:** `<deployment-url>` *(จะถูกเพิ่มหลังจากนำระบบขึ้น Deployment Server เรียบร้อยแล้ว)*
