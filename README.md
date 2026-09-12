@@ -12,10 +12,10 @@ MovieMood เป็น Web Application สำหรับจัดการข�
 
 | ลำดับ | ชื่อ - นามสกุล | รหัสนักศึกษา | Sec | Email | Branch | หน้าที่รับผิดชอบ |
 |---:|---|---|---|---|---|---|
-| 1 | กนกพร บุญครอง | 673380024-0  | SEC 1 | kanokporn.bo@kkumail.com | `feature/user-management` | **User Management & Authentication** — พัฒนา User Entity, User Profile, Registration/Login และจัดการข้อมูล Preference ของผู้ใช้ |
-| 2 | ชิดชนก ชนะพา | 673380033-9| SEC 1 | chidchanok.cha@kkumail.com | `feature/movie-management` | **Movie & Mood Management** — พัฒนา Movie, Genre, Mood Entity รวมถึง CRUD, Search, Filter และจัดการความสัมพันธ์ระหว่าง Movie กับ Mood |
-| 3 | ญาทิชา จันทรศรีสุริยวงศ์ | 673380034-7 | SEC 2 | yathicha.c@kkumail.com | `feature/recommendation` | **Recommendation Engine & Design Patterns** — พัฒนา Recommendation Logic, Match Score และประยุกต์ใช้ Strategy Pattern สำหรับการคำนวณ Recommendation |
-| 4 | อรปรีญา แซ่โซ้ง | 673380070-3 | SEC 1 | onpriya122549@gmail.com | `feature/rating-history` | **Rating, Watch History & Frontend Integration** — พัฒนา Rating API, Watch History, Dashboard และเชื่อมต่อ Frontend กับ REST API |
+| 1 | กนกพร บุญครอง | 673380024-0  | SEC 1 | kanokporn.bo@kkumail.com | kanokporn_6733800240_01 | **User Management & Authentication** — พัฒนา User Entity, User Profile, Registration/Login และจัดการข้อมูล Preference ของผู้ใช้ |
+| 2 | ชิดชนก ชนะพา | 673380033-9| SEC 1 | chidchanok.cha@kkumail.com | chidchanok_6733800339_01 | **Movie & Mood Management** — พัฒนา Movie, Genre, Mood Entity รวมถึง CRUD, Search, Filter และจัดการความสัมพันธ์ระหว่าง Movie กับ Mood |
+| 3 | ญาทิชา จันทรศรีสุริยวงศ์ | 673380034-7 | SEC 2 | yathicha.c@kkumail.com | yathicha_6733800347_02 | **Recommendation Engine & Design Patterns** — พัฒนา Recommendation Logic, Match Score และประยุกต์ใช้ Strategy Pattern สำหรับการคำนวณ Recommendation |
+| 4 | อรปรีญา แซ่โซ้ง | 673380070-3 | SEC 1 | onpriya122549@gmail.com | onpriya_6733800703_01 | **Rating, Watch History & Frontend Integration** — พัฒนา Rating API, Watch History, Dashboard และเชื่อมต่อ Frontend กับ REST API |
 
 ---
 
