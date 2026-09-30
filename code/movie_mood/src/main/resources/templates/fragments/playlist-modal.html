@@ -1,0 +1,76 @@
+<div th:fragment="playlist-modal" id="playlistModal"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm transition-opacity duration-300"
+    role="dialog" aria-modal="true" aria-labelledby="playlistModalTitle" style="display:none;">
+    <div
+        class="relative w-full max-w-lg rounded-2xl bg-surface-container border border-outline-variant/40 shadow-2xl overflow-hidden flex flex-col transform transition-all duration-300 scale-100">
+        <div
+            class="flex items-start justify-between p-6 pb-4 border-b border-outline-variant/20 bg-surface-container-high/60">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 rounded-xl bg-primary-container/20 text-primary flex items-center justify-center border border-primary/30">
+                    <span class="material-symbols-outlined text-[24px]">playlist_add</span>
+                </div>
+                <div>
+                    <h2 id="playlistModalTitle"
+                        class="font-headline-sm text-headline-sm font-bold text-on-surface tracking-tight">Add to
+                        Playlist</h2>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Select one or more playlists to
+                        add <span class="text-primary font-medium">Solaris Horizon (2023)</span></p>
+                </div>
+            </div>
+            <button id="closePlaylistModal"
+                class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/40 transition-colors">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+        </div>
+        <div class="p-6 flex flex-col gap-4">
+            <div class="relative">
+                <span
+                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant">search</span>
+                <input id="searchPlaylistsInput" type="text" placeholder="Search your playlists..."
+                    class="w-full pl-9 pr-4 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary transition-colors">
+            </div>
+            <div id="playlistsList" class="flex flex-col gap-2 max-h-60 overflow-y-auto pr-1">
+                <div
+                    th:replace="~{fragments/playlist-item :: playlist-item(name='Cyberpunk & Deep Mind-Benders',count=8,checked=true)}">
+                </div>
+                <div
+                    th:replace="~{fragments/playlist-item :: playlist-item(name='Late Night Cosmic Sci-Fi',count=14,checked=true)}">
+                </div>
+                <div
+                    th:replace="~{fragments/playlist-item :: playlist-item(name='Mind-Bending Masterpieces',count=22,checked=false)}">
+                </div>
+                <div
+                    th:replace="~{fragments/playlist-item :: playlist-item(name='Weekend Watch Party',count=5,checked=false)}">
+                </div>
+            </div>
+            <template id="playlistItemTemplate">
+                <div th:replace="~{fragments/playlist-item :: playlist-item(name='',count=1,checked=true)}">
+                </div>
+            </template>
+            <div class="pt-2 border-t border-outline-variant/20">
+                <button id="toggleCreatePlaylistBtn"
+                    class="flex items-center gap-2 text-label-md font-label-md text-primary hover:text-primary-fixed transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                    <span>Create New Playlist</span>
+                </button>
+                <div id="createPlaylistForm" class="hidden mt-3 flex items-center gap-2">
+                    <input id="newPlaylistNameInput" type="text" placeholder="Playlist name..."
+                        class="flex-1 px-3 py-1.5 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary transition-colors">
+                    <button id="confirmCreatePlaylistBtn"
+                        class="px-3 py-1.5 rounded-lg bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold hover:bg-primary-fixed-dim transition-colors">Create</button>
+                </div>
+            </div>
+        </div>
+        <div
+            class="flex items-center justify-end gap-3 px-6 py-4 border-t border-outline-variant/20 bg-surface-container-high/40">
+            <button id="cancelPlaylistModal"
+                class="px-4 py-2 rounded-lg text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/40 transition-colors">Cancel</button>
+            <button id="savePlaylistsBtn"
+                class="flex items-center gap-2 px-5 py-2 rounded-lg bg-primary-container text-on-primary-container font-label-md text-label-md font-bold hover:bg-primary-fixed-dim amber-glow-box transition-all duration-200 hover:scale-105 active:scale-95">
+                <span class="material-symbols-outlined text-[18px]">check</span>
+                <span>Save to Playlists</span>
+            </button>
+        </div>
+    </div>
+</div>

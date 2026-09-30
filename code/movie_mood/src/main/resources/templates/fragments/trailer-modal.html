@@ -1,0 +1,14 @@
+<div th:fragment="trailer-modal" id="trailerModal"
+    class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 backdrop-blur-sm px-4"
+    onclick="closeTrailer()">
+    <div class="relative w-full max-w-5xl aspect-video rounded-xl overflow-hidden bg-black shadow-2xl"
+        onclick="event.stopPropagation()">
+        <button type="button" onclick="closeTrailer()"
+            class="absolute top-3 right-3 z-10 flex items-center justify-center w-10 h-10 rounded-full bg-black/70 text-white hover:bg-black transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <iframe id="trailerFrame" class="w-full h-full" src="" title="Movie Trailer" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+</div>
