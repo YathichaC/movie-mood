@@ -1,0 +1,63 @@
+<header th:fragment="navbar(activePage)"
+    class="bg-surface-container-low/80 dark:bg-surface-container-low/80 backdrop-blur-md docked full-width top-0 sticky z-50 border-b border-outline-variant/30 dark:border-outline-variant/30 shadow-md">
+    <div class="flex justify-between items-center w-full px-6 md:px-12 max-w-[1600px] mx-auto h-20">
+        <div class="flex items-center gap-8">
+            <a class="flex items-center gap-2.5 group" href="#">
+                <span
+                    class="text-headline-md font-headline-md font-bold tracking-tight text-primary dark:text-primary">MovieMood</span>
+            </a>
+            <nav th:fragment="navbar(activePage)" class="hidden md:flex items-center gap-6">
+                <a th:href="@{/home}"
+                    th:class="${activePage == 'home'}
+           ? 'text-primary dark:text-primary font-bold text-label-md font-label-md'
+           : 'text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface transition-colors duration-200 text-label-md font-label-md'">
+                    Home
+                </a>
+                <a th:href="@{/movie/search}"
+                    th:class="${activePage == 'movies'}
+           ? 'text-primary dark:text-primary font-bold text-label-md font-label-md'
+           : 'text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface transition-colors duration-200 text-label-md font-label-md'">
+                    Movies
+                </a>
+                <a href="#"
+                    th:class="${activePage == 'recommendations'}
+           ? 'text-primary dark:text-primary font-bold text-label-md font-label-md'
+           : 'text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface transition-colors duration-200 text-label-md font-label-md'">
+                    Recommendations
+                </a>
+                <a href="#"
+                    th:class="${activePage == 'watchlist'}
+           ? 'text-primary dark:text-primary font-bold text-label-md font-label-md'
+           : 'text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface transition-colors duration-200 text-label-md font-label-md'">
+                    Watchlist
+                </a>
+                <a href="#"
+                    th:class="${activePage == 'history'}
+           ? 'text-primary dark:text-primary font-bold text-label-md font-label-md'
+           : 'text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface transition-colors duration-200 text-label-md font-label-md'">
+                    Watch History
+                </a>
+            </nav>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="relative hidden sm:block">
+            </div>
+            <button
+                class="sm:hidden w-10 h-10 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-variant/40 transition-colors"
+                title="Search">
+                <span class="material-symbols-outlined text-[20px]">search</span>
+            </button>
+            <div class="h-6 w-px bg-outline-variant/30 hidden sm:block"></div>
+            <div class="flex items-center gap-2">
+                <button
+                    class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-label-md font-label-md text-on-surface hover:text-primary transition-colors">
+                    <span class="hidden lg:inline">Account</span>
+                </button>
+                <button
+                    class="hidden sm:inline-block px-3 py-1.5 rounded-lg text-label-sm font-label-sm text-on-surface-variant hover:text-error transition-colors">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </div>
+</header>

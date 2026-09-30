@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html class="dark" lang="en" style="">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>MovieMood</title>
+    <link rel="icon" type="image/png" th:href="@{/img/moviemood_logo.png}">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Outfit:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script th:src="@{/js/tailwind-config.js}"></script>
+    <style>
+        .amber-glow-box {
+            box-shadow: 0 0 28px rgba(245, 158, 11, 0.28);
+        }
+
+        .poster-glow-border {
+            box-shadow: 0 0 35px rgba(245, 158, 11, 0.2), 0 20px 40px rgba(11, 14, 21, 0.85);
+        }
+
+        .spec-glass-card {
+            background: rgba(29, 31, 39, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background text-on-surface font-body-md selection:bg-primary selection:text-on-primary min-h-screen flex flex-col antialiased">
+    <header th:replace="~{fragments/navbar :: navbar('movies')}"></header>
+    <div class="sticky top-20 z-40 w-full px-6 md:px-12 max-w-[1600px] mx-auto pt-4 transition-all duration-300"
+        id="feedbackBanner" style="display: none;">
+        <div
+            class="rounded-lg bg-surface-container-high/90 backdrop-blur-xl border border-outline-variant/50 border-l-4 border-l-primary-container p-4 shadow-2xl flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-8 h-8 rounded-full bg-primary-container/20 text-primary-container flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-[20px]"
+                        style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                </div>
+                <p class="font-body-md text-body-md text-on-surface font-medium">
+                    Successfully added <span class="text-primary font-bold">"Solaris Horizon"</span> to your Playlist!
+                </p>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="text-on-surface-variant hover:text-on-surface transition-colors"
+                    onclick="document.getElementById('feedbackBanner').style.display='none'">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <section class="relative w-full overflow-hidden pt-6 pb-16">
+        <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-30">
+            <div class="w-full h-full bg-cover bg-center scale-105 filter blur-sm transform origin-center"
+                data-alt="A sweeping cinematic sci-fi scene set in deep orbit with a massive sleek celestial ring station bathed in ethereal amber atmospheric star glare and dark deep obsidian interstellar void. Neon teal navigation beacons sparkle in the distance, casting subtle luminous reflections over the spacecraft hull."
+                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD-KhukzcPkzf-k_yM2IPNElRHgCiPC5LKWdxBY1Q7pwboWxZeitei1F6M0fdh8lIWYxRBmz11pYF1bGGxuq_dk4Aw5NI9OmljwIB3yUFj9lly9RoNNfSCCYw63iDXtCj3-eus0m0nOfU27YNDrQR4SkEXZwatVO3oepxAJdYmKgMGy6mYl3pM098Y_rRTiiurXz7SefxLfzSdLT6MdpOESHSKkuGco7EttKw8aXSOjRVCkMuRyeNjZLw')">
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background"></div>
+        </div>
+        <div class="relative z-10 w-full px-6 md:px-12 max-w-[1600px] mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+                <div class="lg:col-span-4 xl:col-span-4 flex flex-col items-center lg:items-start">
+                    <div
+                        class="relative w-full max-w-sm rounded-xl overflow-hidden border-2 border-primary-container/70 poster-glow-border group">
+                        <img alt="Solaris Horizon Poster"
+                            class="w-full h-[520px] object-cover transition-transform duration-500 group-hover:scale-105"
+                            data-alt="A dramatic cinematic movie poster for Solaris Horizon featuring an enigmatic solitary astronaut gazing toward an immense swirling cosmic vortex with amber solar rays and radiant turquoise nebula filaments against pitch-black space."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCE5ocVPhXaFCjcYF2-tf8rQSO4WaCJqKJkMVMBUNvFXI7ZZgjOUL6AZiNdFO2OXdbUnlJVf4cj8GyQN4g-Y0CWJihK48dbCY2UPIwhhpXw4Sd3a_lpuw1CgSibPs67sU6gaXg2lFSFzaotQO8ZqXE9W13U4KDLROTiPcPqO84PphbG_D7BA22Vbdhpjs4h2IF7h6-RB_8eCbnRnIElIjq5OcavByltj-n8Z5qNx9q35DeI_EEo5viUAA">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <button type="button" onclick="openTrailer('dQw4w9WgXcQ')"
+                                class="w-16 h-16 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center amber-glow-box transform scale-90 group-hover:scale-100 transition-all duration-300 cursor-pointer">
+                                <span class="material-symbols-outlined text-[36px]"
+                                    style="font-variation-settings: 'FILL' 1;">
+                                    play_arrow
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-8 xl:col-span-8 flex flex-col gap-6">
+                    <div>
+                        <div class="flex flex-wrap items-center gap-3 mb-2">
+                        </div>
+                        <h1 class="text-headline-xl font-headline-xl text-on-surface tracking-tight mb-2">
+                            Solaris Horizon
+                        </h1>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-y-3 gap-x-6 py-3 border-y border-outline-variant/30">
+                        <div
+                            class="flex items-center gap-2 bg-primary-container/10 border border-primary-container/30 px-3 py-1.5 rounded-lg">
+                            <span class="material-symbols-outlined text-primary-container text-[20px]"
+                                style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="text-headline-sm font-headline-sm font-bold text-primary">9.1</span>
+                            <span class="text-on-surface-variant font-body-sm text-body-sm">/10 (14.2k ratings)</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-on-surface-variant">
+                            <span class="material-symbols-outlined text-[18px]">calendar_today</span>
+                            <span class="font-body-md text-body-md text-on-surface">Nov 15, 2023</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-on-surface-variant">
+                            <span class="material-symbols-outlined text-[18px]">schedule</span>
+                            <span class="font-body-md text-body-md text-on-surface">2h 46m</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="border border-outline-variant/60 text-on-surface-variant font-label-md text-label-md px-2 py-0.5 rounded">
+                                PG-13
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2 text-on-surface-variant">
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <span class="text-label-md font-label-md text-on-surface-variant mr-1">Genres:</span>
+                        <span
+                            class="bg-surface-container border border-outline-variant/40 text-on-surface px-3 py-1 rounded-full font-label-md text-label-md">
+                            Sci-Fi
+                        </span>
+                        <span
+                            class="bg-surface-container border border-outline-variant/40 text-on-surface px-3 py-1 rounded-full font-label-md text-label-md">
+                            Psychological Drama
+                        </span>
+                        <span
+                            class="bg-surface-container border border-outline-variant/40 text-on-surface px-3 py-1 rounded-full font-label-md text-label-md">
+                            Space Exploration
+                        </span>
+                    </div>
+                    <div>
+                        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-2 font-semibold">
+                            Overview</h2>
+                        <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+                            Stationed aboard the solitary research array <em
+                                class="text-primary not-italic font-medium">Solaris-IV</em> at the edge of a dormant
+                            wormhole, astrophysicist Dr. Caleb Vance investigates a series of temporal distortions that
+                            begin echoing his lost memories. As cosmic hallucinations threaten crew sanity, the team
+                            must decipher whether the surrounding sentient vacuum is unraveling their subjective reality
+                            or providing humanity's singular bridge to transcend the spacetime continuum. A cerebral,
+                            visually arresting meditation on love, grief, and the infinite abyss.
+                        </p>
+                    </div>
+                    <div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <div
+                                class="flex items-center gap-3 p-2 rounded-lg bg-surface-container border border-outline-variant/20 hover:border-primary/40 transition-colors">
+                                <img alt="Alexander Mercer" class="w-12 h-12 rounded-lg object-cover"
+                                    data-alt="Close up dramatic studio portrait of a brooding middle-aged male actor with short trimmed graying beard and intense thoughtful eyes, cinematic lighting with warm amber rim light."
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiSWfSIHlOulP2HzZHHiH9o__m-7xvs06PTC9-HJ3dqp0V7DWyMYXqCELZheXQo1PS5GBo_mmbYLC3lsmppRStP3dOynCAqRtDddb6dJE82o0hkJiFIgsvPzy3HlgJ27s5mgdcVcgz2RgiWWaPceIVmNyv69i9NRcKzm8XmDIBF1dyTR8l4giieUdJSa4miZHvU6UfR2CoejOGYubLE1TbpDIjI7Sc23i-v-bS3INHpKWp9rqTf1xRig">
+                                <div class="overflow-hidden">
+                                    <p class="font-label-md text-label-md text-on-surface font-bold truncate">Alexander
+                                        Mercer</p>
+                                    <p class="font-body-sm text-body-sm text-on-surface-variant truncate">Dr. Caleb
+                                        Vance</p>
+                                </div>
+                            </div>
+                            <div
+                                class="flex items-center gap-3 p-2 rounded-lg bg-surface-container border border-outline-variant/20 hover:border-primary/40 transition-colors">
+                                <img alt="Elena Rostova" class="w-12 h-12 rounded-lg object-cover"
+                                    data-alt="Portrait of an elegant female actress with dark hair tied back and focused intelligent expression, illuminated by cool teal ambient glow on an obsidian cinematic set."
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHhjEo-92gYYcObnaR5RarviNVelhNwgEcEeJtmuXYHQCSKf6H6mWSwtPOOPWDGBSEjKCSGoi3TmPmxZwXD9A9zXDIwV4YYCWRlkrsmd6tKA25gaTYYyOa617UScNEyO60bIuuMtFUaTav_SCiJkjpsE2uKFUHotzcUsgETSHSCF-v6QeSIRsK_ZgNn7ifp6Xs3j7YhhL2ZxEfZu0y0Y-Yl65PJ7lgQS_srRM9iPywbpvd1C5NU3PNHQ">
+                                <div class="overflow-hidden">
+                                    <p class="font-label-md text-label-md text-on-surface font-bold truncate">Elena
+                                        Rostova</p>
+                                    <p class="font-body-sm text-body-sm text-on-surface-variant truncate">Cmdr. Sarah
+                                        Chen</p>
+                                </div>
+                            </div>
+                            <div
+                                class="flex items-center gap-3 p-2 rounded-lg bg-surface-container border border-outline-variant/20 hover:border-primary/40 transition-colors">
+                                <img alt="Marcus Thorne" class="w-12 h-12 rounded-lg object-cover"
+                                    data-alt="Intense portrait of a young male actor in an astronaut technical inner suit looking thoughtfully into the camera with high-contrast cinematic shadows."
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPi_AoQqbMwvm_3mg7wpDiJOlNyTTeqx6N36UtJIxDnw-50HjqjH_NYLH35kzUt1f5adlaAI_w6V35pTr50253l3lolQsoYG65EKYyRuaDMt9L1YkGWrJci96WA7I_HSYceJQpNH3rOlT3MGlAEK7Rzwb3BI4JxDxkYpd2txLqtQ-u7LLxeD6vDbpkIuN0nxZRHgpt4xCv5wL89GkWHLflduKiPeMrPWEQSrRZ_oZCK8jYetY1YuGl1Q">
+                                <div class="overflow-hidden">
+                                    <p class="font-label-md text-label-md text-on-surface font-bold truncate">Marcus
+                                        Thorne</p>
+                                    <p class="font-body-sm text-body-sm text-on-surface-variant truncate">Lt. Jax
+                                        Reynolds</p>
+                                </div>
+                            </div>
+                            <div
+                                class="flex items-center gap-3 p-2 rounded-lg bg-surface-container border border-outline-variant/20 hover:border-primary/40 transition-colors">
+                                <img alt="Diane Callow" class="w-12 h-12 rounded-lg object-cover"
+                                    data-alt="Portrait of a seasoned actress with warm silver streaked hair and compassionate eyes on a dark textured cinematic studio backdrop."
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJrpss7aF6hP9zsZ51_2fFFVB7T-wLDT-TZ75YR8K3B6it-e7v-04x2GsdOPe7PGRDYvqJ6JRlu5LyuIENFz8pLK0g7cRhyz0-NVe25ouLiVnAVnCj8p2lASyysdmhukYB6Y9Wjuqu4FZHc08GAPflAs7AtjGIH6JtImoY6N9BNmYY3be8LfQWlYCWl3cPFaCT73dc-QJrwLUjuGBm4gvLe9KSXZ-8fCVPRAzoemfqgCOxCgrQDzlJ2g">
+                                <div class="overflow-hidden">
+                                    <p class="font-label-md text-label-md text-on-surface font-bold truncate">Diane
+                                        Callow</p>
+                                    <p class="font-body-sm text-body-sm text-on-surface-variant truncate">Director Hayes
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-4 pt-2">
+                        <button
+                            class="flex items-center gap-2.5 px-6 py-3.5 rounded-lg bg-primary-container text-on-primary-container font-label-lg text-label-lg font-bold transition-all duration-200 hover:scale-105 active:scale-95"
+                            id="watchlistActionBtn">
+                            <span class="material-symbols-outlined text-[20px]">bookmark_add</span>
+                            <span class="">Add to Playlist</span>
+                        </button>
+                        <button
+                            class="flex items-center gap-2.5 px-5 py-3.5 rounded-lg bg-surface-container-high/80 border border-outline-variant text-on-surface font-label-lg text-label-lg hover:scale-105 transition-all duration-200 hover:scale-102 active:scale-95"
+                            id="watchedActionBtn">
+                            <span class="material-symbols-outlined text-[20px]">visibility</span>
+                            <span class="">Mark as Watched</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="w-full px-6 md:px-12 max-w-[1600px] mx-auto pb-10">
+    </section>
+    <footer th:replace="fragments/footer :: footer"></footer>
+    <script src="../../static/js/detail.js"></script>
+    <script th:src="@{/js/playlist.js}"></script>
+    <div th:replace="~{fragments/playlist-modal :: playlist-modal}"></div>
+    <div th:replace="~{fragments/trailer-modal :: trailer-modal}"></div>
+    <script th:src="@{/js/trailer.js}"></script>
+</body>
+
+</html>
