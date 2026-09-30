@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Register - MovieMood</title>
+    <title>MovieMood</title>
     <link rel="icon" type="image/png" th:href="@{/img/moviemood_logo.png}">
 
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1&display=swap"
@@ -18,164 +18,8 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
         rel="stylesheet">
 
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-
-    <link rel="stylesheet" href="../static/css/register.css">
-
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-
-            theme: {
-                extend: {
-
-                    colors: {
-                        "primary": "#ffc174",
-                        "tertiary-fixed-dim": "#c0c1ff",
-                        "surface-container": "#1d1f27",
-                        "inverse-primary": "#855300",
-                        "inverse-on-surface": "#2d3038",
-                        "primary-fixed-dim": "#ffb95f",
-                        "on-secondary": "#003640",
-                        "tertiary": "#c7c8ff",
-                        "on-primary-fixed": "#2a1700",
-                        "secondary-fixed-dim": "#4cd7f6",
-                        "surface-container-lowest": "#0b0e15",
-                        "error": "#ffb4ab",
-                        "primary-container": "#f59e0b",
-                        "on-tertiary-fixed": "#07006c",
-                        "on-primary-fixed-variant": "#653e00",
-                        "on-error-container": "#ffdad6",
-                        "outline": "#a08e7a",
-                        "on-secondary-fixed-variant": "#004e5c",
-                        "primary-fixed": "#ffddb8",
-                        "on-tertiary-container": "#2b29bb",
-                        "surface-container-high": "#272a32",
-                        "tertiary-fixed": "#e1e0ff",
-                        "secondary-container": "#03b5d3",
-                        "surface-dim": "#10131a",
-                        "on-surface": "#e1e2ec",
-                        "on-secondary-fixed": "#001f26",
-                        "background": "#10131a",
-                        "on-error": "#690005",
-                        "on-tertiary": "#1000a9",
-                        "on-primary-container": "#613b00",
-                        "outline-variant": "#534434",
-                        "secondary": "#4cd7f6",
-                        "surface": "#10131a",
-                        "surface-tint": "#ffb95f",
-                        "on-primary": "#472a00",
-                        "secondary-fixed": "#acedff",
-                        "surface-container-highest": "#32353d",
-                        "on-tertiary-fixed-variant": "#2f2ebe",
-                        "surface-container-low": "#191b23",
-                        "on-surface-variant": "#d8c3ad",
-                        "error-container": "#93000a",
-                        "tertiary-container": "#a7a9ff",
-                        "surface-variant": "#32353d",
-                        "on-background": "#e1e2ec",
-                        "on-secondary-container": "#00424e",
-                        "inverse-surface": "#e1e2ec",
-                        "surface-bright": "#363941"
-                    },
-
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-
-                    fontFamily: {
-                        "label-md": ["Inter"],
-                        "headline-xl": ["Outfit"],
-                        "body-md": ["Inter"],
-                        "body-sm": ["Inter"],
-                        "label-lg": ["Inter"],
-                        "headline-md": ["Outfit"],
-                        "label-sm": ["Inter"],
-                        "title-md": ["Outfit"],
-                        "headline-sm": ["Outfit"],
-                        "headline-lg": ["Outfit"]
-                    },
-
-                    fontSize: {
-                        "label-md": [
-                            "12px",
-                            {
-                                lineHeight: "16px",
-                                letterSpacing: "0.02em",
-                                fontWeight: "600"
-                            }
-                        ],
-
-                        "headline-md": [
-                            "24px",
-                            {
-                                lineHeight: "32px",
-                                letterSpacing: "0em",
-                                fontWeight: "600"
-                            }
-                        ],
-
-                        "body-md": [
-                            "14px",
-                            {
-                                lineHeight: "20px",
-                                letterSpacing: "0em",
-                                fontWeight: "400"
-                            }
-                        ],
-
-                        "body-sm": [
-                            "12px",
-                            {
-                                lineHeight: "16px",
-                                letterSpacing: "0.01em",
-                                fontWeight: "400"
-                            }
-                        ],
-
-                        "label-lg": [
-                            "14px",
-                            {
-                                lineHeight: "20px",
-                                letterSpacing: "0.01em",
-                                fontWeight: "600"
-                            }
-                        ],
-
-                        "label-sm": [
-                            "11px",
-                            {
-                                lineHeight: "14px",
-                                letterSpacing: "0.04em",
-                                fontWeight: "700"
-                            }
-                        ],
-
-                        "headline-sm": [
-                            "20px",
-                            {
-                                lineHeight: "28px",
-                                letterSpacing: "0em",
-                                fontWeight: "600"
-                            }
-                        ],
-
-                        "headline-lg": [
-                            "32px",
-                            {
-                                lineHeight: "40px",
-                                letterSpacing: "-0.01em",
-                                fontWeight: "600"
-                            }
-                        ]
-                    }
-                }
-            }
-        };
-    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script th:src="@{/js/tailwind-config.js}"></script>
 </head>
 
 <body class="bg-background
@@ -226,8 +70,7 @@
                            transition-transform
                            duration-1000
                            ease-out
-                           hover:scale-100"
-                    th:style="|background-image: url('@{/img/watching-movie.jpg}');|"
+                           hover:scale-100" th:style="|background-image: url('@{/img/watching-movie.jpg}');|"
                     style="background-image: url('../../static/img/watching-movie.jpg');">
                 </div>
 
@@ -312,8 +155,7 @@
                                        font-label-md
                                        text-label-md
                                        text-on-surface
-                                       mb-1.5"
-                                for="username">
+                                       mb-1.5" for="username">
                                 Username
                             </label>
 
@@ -341,13 +183,8 @@
                                            focus:border-primary
                                            focus:ring-1
                                            focus:ring-primary
-                                           transition-all duration-150"
-                                    id="username"
-                                    name="username"
-                                    placeholder="Enter your username"
-                                    required
-                                    type="text"
-                                    autocomplete="username">
+                                           transition-all duration-150" id="username" name="username"
+                                    placeholder="Enter your username" required type="text" autocomplete="username">
 
                             </div>
 
@@ -359,8 +196,7 @@
                                        font-label-md
                                        text-label-md
                                        text-on-surface
-                                       mb-1.5"
-                                for="email">
+                                       mb-1.5" for="email">
                                 Email address
                             </label>
 
@@ -388,13 +224,8 @@
                                            focus:border-primary
                                            focus:ring-1
                                            focus:ring-primary
-                                           transition-all duration-150"
-                                    id="email"
-                                    name="email"
-                                    placeholder="example@domain.com"
-                                    required
-                                    type="email"
-                                    autocomplete="email">
+                                           transition-all duration-150" id="email" name="email"
+                                    placeholder="example@domain.com" required type="email" autocomplete="email">
 
                             </div>
 
@@ -406,8 +237,7 @@
                                        font-label-md
                                        text-label-md
                                        text-on-surface
-                                       mb-1.5"
-                                for="password">
+                                       mb-1.5" for="password">
                                 Password
                             </label>
 
@@ -435,26 +265,17 @@
                                            focus:border-primary
                                            focus:ring-1
                                            focus:ring-primary
-                                           transition-all duration-150"
-                                    id="password"
-                                    name="password"
-                                    placeholder="••••••••••••"
-                                    required
-                                    type="password"
-                                    autocomplete="new-password">
+                                           transition-all duration-150" id="password" name="password"
+                                    placeholder="••••••••••••" required type="password" autocomplete="new-password">
 
-                                <button aria-label="Toggle password visibility"
-                                    class="absolute right-3
+                                <button aria-label="Toggle password visibility" class="absolute right-3
                                            text-on-surface-variant
                                            hover:text-on-surface
                                            transition-colors
-                                           p-1"
-                                    id="togglePassword"
-                                    type="button">
+                                           p-1" id="togglePassword" type="button">
 
                                     <span class="material-symbols-outlined
-                                               text-[20px]"
-                                        id="toggleIcon">
+                                               text-[20px]" id="toggleIcon">
                                         visibility
                                     </span>
 
@@ -470,8 +291,7 @@
                                        font-label-md
                                        text-label-md
                                        text-on-surface
-                                       mb-1.5"
-                                for="confirmPassword">
+                                       mb-1.5" for="confirmPassword">
                                 Confirm password
                             </label>
 
@@ -499,26 +319,17 @@
                                            focus:border-primary
                                            focus:ring-1
                                            focus:ring-primary
-                                           transition-all duration-150"
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    placeholder="••••••••••••"
-                                    required
-                                    type="password"
-                                    autocomplete="new-password">
+                                           transition-all duration-150" id="confirmPassword" name="confirmPassword"
+                                    placeholder="••••••••••••" required type="password" autocomplete="new-password">
 
-                                <button aria-label="Toggle confirm password visibility"
-                                    class="absolute right-3
+                                <button aria-label="Toggle confirm password visibility" class="absolute right-3
                                            text-on-surface-variant
                                            hover:text-on-surface
                                            transition-colors
-                                           p-1"
-                                    id="toggleConfirmPassword"
-                                    type="button">
+                                           p-1" id="toggleConfirmPassword" type="button">
 
                                     <span class="material-symbols-outlined
-                                               text-[20px]"
-                                        id="toggleConfirmIcon">
+                                               text-[20px]" id="toggleConfirmIcon">
                                         visibility
                                     </span>
 
@@ -546,9 +357,7 @@
                                    transform
                                    hover:scale-[1.01]
                                    active:scale-[0.98]
-                                   custom-amber-glow"
-                            id="submitBtn"
-                            type="submit">
+                                   custom-amber-glow" id="submitBtn" type="submit">
 
                             <span>
                                 Create Account
@@ -604,8 +413,7 @@
                                        underline-offset-4
                                        hover:decoration-primary
                                        transition-colors
-                                       ml-1"
-                                th:href="@{/login}">
+                                       ml-1" th:href="@{/auth/login}">
                                 Sign in
                             </a>
 
@@ -642,8 +450,7 @@
                translate-y-24
                opacity-0
                transition-all duration-300
-               pointer-events-none"
-        id="toast">
+               pointer-events-none" id="toast">
 
         <div class="bg-surface-container-high
                    border-l-4
@@ -658,8 +465,7 @@
 
             <span class="material-symbols-outlined
                        text-primary-container
-                       text-[22px]"
-                id="toastIcon">
+                       text-[22px]" id="toastIcon">
                 check_circle
             </span>
 
@@ -667,15 +473,13 @@
 
                 <p class="font-label-md
                            text-label-md
-                           font-bold"
-                    id="toastTitle">
+                           font-bold" id="toastTitle">
                     Creating account...
                 </p>
 
                 <p class="font-body-sm
                            text-body-sm
-                           text-on-surface-variant"
-                    id="toastMessage">
+                           text-on-surface-variant" id="toastMessage">
                     Creating your MovieMood account.
                 </p>
 
