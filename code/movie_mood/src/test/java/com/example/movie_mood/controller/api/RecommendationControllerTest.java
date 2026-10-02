@@ -1,0 +1,129 @@
+package com.example.movie_mood.controller.api;
+
+import com.example.movie_mood.domain.model.Movie;
+import com.example.movie_mood.service.RecommendationService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+class RecommendationControllerTest {
+
+    private MockMvc mockMvc;
+    private RecommendationService recommendationService;
+
+    @BeforeEach
+    void setUp() {
+        recommendationService =
+                Mockito.mock(RecommendationService.class);
+
+        RecommendationController controller =
+                new RecommendationController(recommendationService);
+
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(controller)
+                .build();
+    }
+
+    @Test
+    void shouldReturnRecommendationsByMood() throws Exception {
+
+        Movie movie = createMovie(
+                550L,
+                "Test Movie",
+                8.5,
+                LocalDate.of(2025, 1, 1),
+                List.of(35)
+        );
+
+        when(recommendationService.getRecommendations(
+                eq(com.example.movie_mood.domain.enums.Mood.HAPPY),
+                eq(List.of())
+        )).thenReturn(List.of(movie));
+
+        mockMvc.perform(
+                        get("/api/recommendations")
+                                .param("mood", "HAPPY")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].tmdbMovieId").value(550))
+                .andExpect(jsonPath("$[0].title").value("Test Movie"))
+                .andExpect(jsonPath("$[0].rating").value(8.5));
+
+        verify(recommendationService)
+                .getRecommendations(
+                        com.example.movie_mood.domain.enums.Mood.HAPPY,
+                        List.of()
+                );
+    }
+
+    @Test
+    void shouldPassDislikedGenreIdsToService() throws Exception {
+
+        when(recommendationService.getRecommendations(
+                eq(com.example.movie_mood.domain.enums.Mood.EXCITED),
+                eq(List.of(53, 80))
+        )).thenReturn(List.of());
+
+        mockMvc.perform(
+                        get("/api/recommendations")
+                                .param("mood", "EXCITED")
+                                .param("dislikedGenreIds", "53", "80")
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+
+        verify(recommendationService)
+                .getRecommendations(
+                        com.example.movie_mood.domain.enums.Mood.EXCITED,
+                        List.of(53, 80)
+                );
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenMoodIsInvalid() throws Exception {
+
+        mockMvc.perform(
+                        get("/api/recommendations")
+                                .param("mood", "INVALID_MOOD")
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenMoodIsMissing() throws Exception {
+
+        mockMvc.perform(
+                        get("/api/recommendations")
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    private Movie createMovie(
+            Long id,
+            String title,
+            Double rating,
+            LocalDate releaseDate,
+            List<Integer> genreIds) {
+
+        Movie movie = new Movie();
+
+        movie.setTmdbMovieId(id);
+        movie.setTitle(title);
+        movie.setRating(rating);
+        movie.setReleaseDate(releaseDate);
+        movie.setGenreIds(genreIds);
+
+        return movie;
+    }
+}
