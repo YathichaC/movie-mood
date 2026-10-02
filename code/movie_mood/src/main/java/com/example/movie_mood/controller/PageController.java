@@ -57,13 +57,9 @@ public class PageController {
     public String recommendations(
             @RequestParam(value = "id", required = false) String mood,
             Model model) {
-
         if (mood == null || mood.isBlank()) {
-            // ไม่มี id → หน้าเลือก Mood
             return "recommendations/mood-selection";
         }
-
-        // มี id → หน้าผล Recommendation
         model.addAttribute("mood", mood);
         return "recommendations/recommendations";
     }
