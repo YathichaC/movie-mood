@@ -1,7 +1,9 @@
 package com.example.movie_mood.controller;
 
+import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class PageController {
@@ -49,5 +51,20 @@ public class PageController {
     @GetMapping("/movie/search")
     public String movieSearch() {
         return "movie/search";
+    }
+
+    @GetMapping("/recommendations")
+    public String recommendations(
+            @RequestParam(value = "id", required = false) String mood,
+            Model model) {
+
+        if (mood == null || mood.isBlank()) {
+            // ไม่มี id → หน้าเลือก Mood
+            return "recommendations/mood-selection";
+        }
+
+        // มี id → หน้าผล Recommendation
+        model.addAttribute("mood", mood);
+        return "recommendations/recommendations";
     }
 }
