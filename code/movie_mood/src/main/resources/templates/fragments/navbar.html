@@ -25,8 +25,8 @@
            : 'text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface transition-colors duration-200 text-label-md font-label-md'">
                     Recommendations
                 </a>
-                <a href="#"
-                    th:class="${activePage == 'watchlist'}
+                <a th:href="@{/playlist}"
+                    th:class="${activePage == 'playlist'}
            ? 'text-primary dark:text-primary font-bold text-label-md font-label-md'
            : 'text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface transition-colors duration-200 text-label-md font-label-md'">
                     Playlist

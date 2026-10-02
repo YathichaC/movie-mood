@@ -63,4 +63,14 @@ public class PageController {
         model.addAttribute("mood", mood);
         return "recommendations/recommendations";
     }
+
+    @GetMapping("/playlist")
+    public String playlist() {
+        return "Playlist/playlist";
+    }
+
+    @GetMapping("/playlist/movielist")
+    public String movieList() {
+        return "Playlist/movielist";
+    }
 }
