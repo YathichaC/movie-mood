@@ -10,4 +10,6 @@ public interface MovieProvider {
     List<Movie> searchMovies(String keyword);
 
     Movie getMovie(Long tmdbMovieId);
+
+    List<Movie> discoverMoviesByGenres(List<Integer> genreIds);
 }

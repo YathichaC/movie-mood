@@ -5,6 +5,7 @@ import com.example.movie_mood.integration.tmdb.dto.TmdbMovieResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import java.util.List;
 
 @Component
 public class TmdbRestClient {
@@ -51,4 +52,22 @@ public class TmdbRestClient {
                 .retrieve()
                 .body(TmdbMovieResponse.class);
     }
+
+    public TmdbMovieListResponse discoverMoviesByGenres(List<Integer> genreIds) {
+
+    String genres = genreIds.stream()
+            .map(String::valueOf)
+            .collect(java.util.stream.Collectors.joining("|"));
+
+    return restClient.get()
+            .uri(uriBuilder -> uriBuilder
+                    .path("/discover/movie")
+                    .queryParam("with_genres", genres)
+                    .queryParam("include_adult", false)
+                    .queryParam("language", "en-US")
+                    .queryParam("page", 1)
+                    .build())
+            .retrieve()
+            .body(TmdbMovieListResponse.class);
+}
 }

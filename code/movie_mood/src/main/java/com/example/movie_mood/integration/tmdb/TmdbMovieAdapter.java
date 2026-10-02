@@ -73,4 +73,19 @@ public class TmdbMovieAdapter implements MovieProvider {
 
         return movie;
     }
+    @Override
+public List<Movie> discoverMoviesByGenres(List<Integer> genreIds) {
+
+    TmdbMovieListResponse response =
+            tmdbRestClient.discoverMoviesByGenres(genreIds);
+
+    if (response == null || response.getResults() == null) {
+        return Collections.emptyList();
+    }
+
+    return response.getResults()
+            .stream()
+            .map(this::toMovie)
+            .toList();
+}
 }
