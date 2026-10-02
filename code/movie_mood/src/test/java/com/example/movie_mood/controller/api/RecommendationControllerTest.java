@@ -1,6 +1,8 @@
 package com.example.movie_mood.controller.api;
 
+import com.example.movie_mood.domain.enums.Mood;
 import com.example.movie_mood.domain.model.Movie;
+import com.example.movie_mood.mapper.MovieMapper;
 import com.example.movie_mood.service.RecommendationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,14 +23,21 @@ class RecommendationControllerTest {
 
     private MockMvc mockMvc;
     private RecommendationService recommendationService;
+    private MovieMapper movieMapper;
 
     @BeforeEach
     void setUp() {
+
         recommendationService =
                 Mockito.mock(RecommendationService.class);
 
+        movieMapper = new MovieMapper();
+
         RecommendationController controller =
-                new RecommendationController(recommendationService);
+                new RecommendationController(
+                        recommendationService,
+                        movieMapper
+                );
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(controller)
@@ -47,7 +56,7 @@ class RecommendationControllerTest {
         );
 
         when(recommendationService.getRecommendations(
-                eq(com.example.movie_mood.domain.enums.Mood.HAPPY),
+                eq(Mood.HAPPY),
                 eq(List.of())
         )).thenReturn(List.of(movie));
 
@@ -56,13 +65,22 @@ class RecommendationControllerTest {
                                 .param("mood", "HAPPY")
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].tmdbMovieId").value(550))
-                .andExpect(jsonPath("$[0].title").value("Test Movie"))
-                .andExpect(jsonPath("$[0].rating").value(8.5));
+                .andExpect(
+                        jsonPath("$[0].tmdbMovieId")
+                                .value(550)
+                )
+                .andExpect(
+                        jsonPath("$[0].title")
+                                .value("Test Movie")
+                )
+                .andExpect(
+                        jsonPath("$[0].rating")
+                                .value(8.5)
+                );
 
         verify(recommendationService)
                 .getRecommendations(
-                        com.example.movie_mood.domain.enums.Mood.HAPPY,
+                        Mood.HAPPY,
                         List.of()
                 );
     }
@@ -71,37 +89,46 @@ class RecommendationControllerTest {
     void shouldPassDislikedGenreIdsToService() throws Exception {
 
         when(recommendationService.getRecommendations(
-                eq(com.example.movie_mood.domain.enums.Mood.EXCITED),
+                eq(Mood.EXCITED),
                 eq(List.of(53, 80))
         )).thenReturn(List.of());
 
         mockMvc.perform(
                         get("/api/recommendations")
                                 .param("mood", "EXCITED")
-                                .param("dislikedGenreIds", "53", "80")
+                                .param(
+                                        "dislikedGenreIds",
+                                        "53",
+                                        "80"
+                                )
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
 
         verify(recommendationService)
                 .getRecommendations(
-                        com.example.movie_mood.domain.enums.Mood.EXCITED,
+                        Mood.EXCITED,
                         List.of(53, 80)
                 );
     }
 
     @Test
-    void shouldReturnBadRequestWhenMoodIsInvalid() throws Exception {
+    void shouldReturnBadRequestWhenMoodIsInvalid()
+            throws Exception {
 
         mockMvc.perform(
                         get("/api/recommendations")
-                                .param("mood", "INVALID_MOOD")
+                                .param(
+                                        "mood",
+                                        "INVALID_MOOD"
+                                )
                 )
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void shouldReturnBadRequestWhenMoodIsMissing() throws Exception {
+    void shouldReturnBadRequestWhenMoodIsMissing()
+            throws Exception {
 
         mockMvc.perform(
                         get("/api/recommendations")

@@ -2,6 +2,8 @@ package com.example.movie_mood.controller.api;
 
 import com.example.movie_mood.domain.enums.Mood;
 import com.example.movie_mood.domain.model.Movie;
+import com.example.movie_mood.dto.response.MovieResponse;
+import com.example.movie_mood.mapper.MovieMapper;
 import com.example.movie_mood.service.RecommendationService;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,23 +14,29 @@ import java.util.List;
 public class RecommendationController {
 
     private final RecommendationService recommendationService;
+    private final MovieMapper movieMapper;
 
     public RecommendationController(
-            RecommendationService recommendationService) {
-        this.recommendationService = recommendationService;
-    }
+        RecommendationService recommendationService,
+        MovieMapper movieMapper) {
 
-    @GetMapping
-    public List<Movie> getRecommendations(
-            @RequestParam Mood mood,
-            @RequestParam(
-                    required = false,
-                    defaultValue = ""
-            ) List<Integer> dislikedGenreIds) {
+    this.recommendationService = recommendationService;
+    this.movieMapper = movieMapper;
+}
 
-        return recommendationService.getRecommendations(
-                mood,
-                dislikedGenreIds
-        );
-    }
+   @GetMapping
+    public List<MovieResponse> getRecommendations(
+        @RequestParam Mood mood,
+        @RequestParam(
+                required = false,
+                defaultValue = ""
+        ) List<Integer> dislikedGenreIds) {
+
+    return movieMapper.toResponseList(
+            recommendationService.getRecommendations(
+                    mood,
+                    dislikedGenreIds
+            )
+    );
+}
 }
