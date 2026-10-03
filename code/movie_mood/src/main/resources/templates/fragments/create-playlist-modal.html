@@ -1,0 +1,43 @@
+<div th:fragment="createPlaylistModal"
+    class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 hidden"
+    id="create-playlist-modal">
+    <div class="glass-panel w-full max-w-lg rounded-2xl p-6 border border-[#232D42] shadow-2xl space-y-5">
+        <div class="flex items-center justify-between border-b border-outline-variant/20 pb-4">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-xl">
+                    playlist_add
+                </span>
+                <h3 class="text-headline-sm font-headline-sm font-bold text-on-surface">
+                    Create New Movie Playlist
+                </h3>
+            </div>
+            <button type="button"
+                class="p-1 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container"
+                onclick="document.getElementById('create-playlist-modal').classList.add('hidden')">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="space-y-4">
+            <div>
+                <label for="playlist-name" class="block text-label-md font-label-md text-on-surface mb-1.5 font-medium">
+                    Playlist Name
+                </label>
+                <input id="playlist-name" name="playlistName"
+                    class="w-full px-4 py-2.5 rounded-lg bg-surface-container-low border border-[#232D42] text-on-surface focus:outline-none focus:border-primary text-body-md"
+                    placeholder="" type="text">
+            </div>
+        </div>
+        <div class="pt-3 flex items-center justify-end gap-3 border-t border-outline-variant/20">
+            <button type="button"
+                class="px-4 py-2 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high text-label-md font-label-md"
+                onclick="document.getElementById('create-playlist-modal').classList.add('hidden')">
+                Cancel
+            </button>
+            <button type="button"
+                class="px-5 py-2 rounded-lg bg-primary-container text-on-primary-container font-bold hover:bg-[#ffb95f] text-label-md font-label-md"
+                onclick="alert('Playlist created via Spring Boot REST endpoint!'); document.getElementById('create-playlist-modal').classList.add('hidden')">
+                Save
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en" style="">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="icon" type="image/png" th:href="@{/img/moviemood_logo.png}">
+    <title>MovieMood</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Outfit:wght@500;600;700;800&amp;display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script th:src="@{/js/tailwind-config.js}"></script>
+</head>
+
+<body
+    class="bg-background text-on-surface min-h-screen flex flex-col font-body-md text-body-md antialiased selection:bg-primary-container selection:text-on-primary-fixed">
+    <header th:replace="~{fragments/navbar :: navbar('playlist')}"></header>
+    <main class="flex-grow w-full max-w-[1600px] mx-auto px-6 md:px-12 py-8">
+        <section class="relative mb-10 p-0 md:p-2">
+            <div class="relative z-10 flex flex-col lg:flex-row gap-6 lg:gap-10 items-start lg:items-center">
+                <div
+                    class="w-full sm:w-64 lg:w-72 flex-shrink-0 aspect-square rounded-xl overflow-hidden bg-surface-container-high group relative">
+                    <img id="playlist-cover" class="w-full h-full object-cover"
+                        src="https://i.pinimg.com/236x/29/8b/4d/298b4db780a05dd4e6ef2553e169fc59.jpg?nii=t"
+                        alt="Playlist cover">
+                    <button type="button" id="playlist-cover-btn"
+                        class="hidden absolute bottom-3 left-3 right-3 z-20 items-center justify-center gap-2 px-3 py-2 rounded-lg bg-black/75 text-white hover:bg-primary transition-colors text-sm font-medium">
+                        <span class="material-symbols-outlined text-lg">image</span>
+                        Change Cover
+                    </button>
+                    <input type="file" id="playlist-cover-input" accept="image/*" class="hidden">
+                </div>
+                <div class="flex-grow flex flex-col justify-center min-w-0">
+                    <h1 class="text-headline-xl md:text-display-hero font-extrabold text-on-surface tracking-tight mb-3 leading-tight"
+                        id="playlist-title-display">Cyberpunk &amp; Deep Mind-Benders</h1>
+                    <div class="mb-3 hidden" id="playlist-title-edit-container">
+                        <input aria-label="Playlist title"
+                            class="w-full max-w-2xl bg-surface-container-high border border-outline-variant text-on-surface text-headline-lg font-bold rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary"
+                            id="playlist-title-input" type="text" value="Cyberpunk &amp; Deep Mind-Benders">
+                    </div>
+                    <div class="flex flex-wrap items-center gap-4 mt-2">
+                        <div class="flex items-center gap-2 text-on-surface-variant">
+                            <span class="material-symbols-outlined text-xl text-primary">movie</span>
+                            <span id="playlist-count-display" class="text-sm font-medium">7 Movies</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button
+                                class="flex items-center gap-2 px-4 py-2 rounded-lg border border-outline-variant/40 text-on-surface-variant hover:border-primary hover:text-primary transition-colors text-sm font-medium"
+                                title="Edit Playlist" type="button" id="playlist-edit-btn">
+                                <span class="material-symbols-outlined text-lg" id="playlist-edit-btn-icon">edit</span>
+                                <span id="playlist-edit-btn-label">Edit</span>
+                            </button>
+                            <button
+                                class="flex items-center gap-2 px-4 py-2 rounded-lg border border-outline-variant/40 text-on-surface-variant hover:border-error hover:text-error transition-colors text-sm font-medium"
+                                title="Delete Playlist" type="button" id="playlist-delete-btn">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                                <span>Delete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section
+            class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-surface-container-low/40 p-4 rounded-xl border border-outline-variant/20 backdrop-blur-md">
+            <div class="flex flex-row justify-between items-center w-full gap-4">
+                <div class="relative w-full md:w-80">
+                    <input
+                        class="w-full bg-surface-container border border-outline-variant/30 text-on-surface text-body-md font-body-md rounded-lg pl-5 pr-4 py-2 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all"
+                        placeholder="Search films in playlist..." type="text">
+                </div>
+                <div
+                    class="flex items-center gap-2 bg-surface-container/60 px-3.5 py-2 rounded-lg border border-outline-variant/30 flex-shrink-0">
+                    <span class="material-symbols-outlined text-base text-on-surface-variant"
+                        data-icon="sort">sort</span>
+                    <label class="text-label-sm font-label-sm text-on-surface-variant" for="playlist-sort">Sort
+                        by:</label>
+                    <select
+                        class="bg-transparent border-0 text-on-surface text-label-md font-label-md py-0 pl-1 pr-6 focus:ring-0 cursor-pointer"
+                        id="playlist-sort">
+                        <option class="bg-surface-container text-on-surface" value="custom">Playlist Order</option>
+                        <option class="bg-surface-container text-on-surface" value="recent">Recently Added</option>
+                        <option class="bg-surface-container text-on-surface" value="rating">IMDb Rating (High to Low)
+                        </option>
+                        <option class="bg-surface-container text-on-surface" value="year">Release Date</option>
+                        <option class="bg-surface-container text-on-surface" value="alpha">Alphabetical A-Z</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+        <section>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
+                id="movies-grid">
+                <div class="w-full h-full"
+                    th:replace="~{fragments/playlist-movie-card :: playlist-movie-card('Nui lai','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4mVeSjDwJu21nA62Wrbi8NC4Jgr6freFwpD3BbiJA77MI6sriPk6FRrcq&s=10',8.0,2026)}">
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <div th:replace="~{fragments/confirmation-modal :: confirmation-modal}"></div>
+    <script th:src="@{/js/watchlist.js}"></script>
+</body>
+
+</html>
