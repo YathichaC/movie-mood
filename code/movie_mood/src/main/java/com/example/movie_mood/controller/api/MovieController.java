@@ -1,39 +1,60 @@
 package com.example.movie_mood.controller.api;
 
-import com.example.movie_mood.domain.model.Movie;
+import com.example.movie_mood.dto.response.MovieResponse;
+import com.example.movie_mood.facade.MovieDetailFacade;
+import com.example.movie_mood.mapper.MovieMapper;
 import com.example.movie_mood.service.MovieService;
 import org.springframework.web.bind.annotation.*;
-import com.example.movie_mood.facade.MovieDetailFacade;
+import jakarta.validation.constraints.NotBlank;
+
+import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/movies")
+@Validated
 public class MovieController {
 
     private final MovieService movieService;
     private final MovieDetailFacade movieDetailFacade;
+    private final MovieMapper movieMapper;
+
     public MovieController(
-        MovieService movieService,
-        MovieDetailFacade movieDetailFacade) {
+            MovieService movieService,
+            MovieDetailFacade movieDetailFacade,
+            MovieMapper movieMapper) {
 
-    this.movieService = movieService;
-    this.movieDetailFacade = movieDetailFacade;
-}
-
-    @GetMapping
-    public List<Movie> browseMovies() {
-        return movieService.browseMovies();
+        this.movieService = movieService;
+        this.movieDetailFacade = movieDetailFacade;
+        this.movieMapper = movieMapper;
     }
 
-    @GetMapping("/search")
-    public List<Movie> searchMovies(
-            @RequestParam String keyword) {
-        return movieService.searchMovies(keyword);
+    @GetMapping
+    public List<MovieResponse> browseMovies() {
+
+        return movieMapper.toResponseList(
+                movieService.browseMovies()
+        );
+    }
+
+   @GetMapping("/search")
+    public List<MovieResponse> searchMovies(
+        @RequestParam @NotBlank String keyword) {
+
+    return movieMapper.toResponseList(
+            movieService.searchMovies(keyword)
+    );
     }
 
     @GetMapping("/{tmdbMovieId}")
-    public Movie getMovieDetails(
-            @PathVariable Long tmdbMovieId) {
-       return movieDetailFacade.getMovieDetails(tmdbMovieId);
+public MovieResponse getMovieDetails(
+        @PathVariable @Positive Long tmdbMovieId) {
+
+    return movieMapper.toResponse(
+            movieDetailFacade.getMovieDetails(tmdbMovieId)
+     );
     }
+
 }
