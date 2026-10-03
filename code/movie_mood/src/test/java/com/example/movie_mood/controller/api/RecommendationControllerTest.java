@@ -2,6 +2,7 @@ package com.example.movie_mood.controller.api;
 
 import com.example.movie_mood.domain.enums.Mood;
 import com.example.movie_mood.domain.model.Movie;
+import com.example.movie_mood.exception.GlobalExceptionHandler;
 import com.example.movie_mood.mapper.MovieMapper;
 import com.example.movie_mood.service.RecommendationService;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,8 +41,9 @@ class RecommendationControllerTest {
                 );
 
         mockMvc = MockMvcBuilders
-                .standaloneSetup(controller)
-                .build();
+        .standaloneSetup(controller)
+        .setControllerAdvice(new GlobalExceptionHandler())
+        .build();
     }
 
     @Test
@@ -112,29 +114,38 @@ class RecommendationControllerTest {
                 );
     }
 
-    @Test
-    void shouldReturnBadRequestWhenMoodIsInvalid()
-            throws Exception {
+        @Test
+        void shouldReturnBadRequestWhenMoodIsInvalid()
+        throws Exception {
 
-        mockMvc.perform(
-                        get("/api/recommendations")
-                                .param(
-                                        "mood",
-                                        "INVALID_MOOD"
-                                )
-                )
-                .andExpect(status().isBadRequest());
-    }
+    mockMvc.perform(
+                    get("/api/recommendations")
+                            .param("mood", "INVALID_MOOD")
+            )
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.error").value("Bad Request"))
+            .andExpect(jsonPath("$.message")
+                    .value("Invalid value for parameter: mood"))
+            .andExpect(jsonPath("$.path")
+                    .value("/api/recommendations"));
+}
 
-    @Test
-    void shouldReturnBadRequestWhenMoodIsMissing()
-            throws Exception {
+        @Test
+        void shouldReturnBadRequestWhenMoodIsMissing()
+        throws Exception {
 
-        mockMvc.perform(
-                        get("/api/recommendations")
-                )
-                .andExpect(status().isBadRequest());
-    }
+    mockMvc.perform(
+                    get("/api/recommendations")
+            )
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.error").value("Bad Request"))
+            .andExpect(jsonPath("$.message")
+                    .value("Missing required parameter: mood"))
+            .andExpect(jsonPath("$.path")
+                    .value("/api/recommendations"));
+}
 
     private Movie createMovie(
             Long id,
