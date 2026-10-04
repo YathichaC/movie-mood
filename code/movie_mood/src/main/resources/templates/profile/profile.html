@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html class="dark" lang="en" style="">
-
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -8,429 +7,163 @@
     <title>MovieMood</title>
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Outfit:wght@400;500;600;700;800&amp;display=swap"
-        rel="stylesheet">
-    <!-- Material Symbols Outlined -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet">
-    <!-- Tailwind CSS v3 with plugins -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Outfit:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script th:src="@{/js/tailwind-config.js}"></script>
 </head>
-
-<body
-    class="bg-background text-on-background font-body-md min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary">
-    <!-- TopNavBar (Shared Component) -->
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary">
     <header th:replace="~{fragments/navbar :: navbar(activePage='profile')}"></header>
-    <!-- Main Content Container -->
     <main class="flex-1 w-full max-w-[1600px] mx-auto px-4 sm:px-6 md:px-12 py-6 md:py-8 space-y-8">
-        <!-- 2. Settings & Preferences Main Body (Two-Column Layout) -->
         <div class="w-full max-w-none">
             <section class="w-full space-y-8">
-                <!-- Form Panel: Profile Details -->
-                <div
-                    class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-6 md:p-8 space-y-6 shadow-md">
+                <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-6 md:p-8 space-y-6 shadow-md">
                     <div class="border-b border-outline-variant/20 pb-4">
-                        <h2 class="text-headline-sm font-headline-sm text-on-surface flex items-center gap-2">
-                            Personal Profile
-                        </h2>
-                        <p class="text-on-surface-variant text-body-sm font-body-sm mt-1">
-                            View and update your username and email address.
-                        </p>
+                        <h2 class="text-headline-sm font-headline-sm text-on-surface flex items-center gap-2">Personal Profile</h2>
+                        <p class="text-on-surface-variant text-body-sm font-body-sm mt-1">View and update your username and email address.</p>
                     </div>
                     <form class="space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                            <!-- Username -->
                             <div class="relative">
-                                <span
-                                    class="material-symbols-outlined absolute left-3 inset-y-0 flex items-center text-outline text-lg">
-                                    alternate_email
-                                </span>
-
-                                <input
-                                    class="w-full pl-10 pr-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant/40 text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container focus:outline-none transition-all font-body-md text-body-md"
-                                    id="username" name="username" type="text" value="" placeholder="user"
-                                    data-original="">
+                                <span class="material-symbols-outlined absolute left-3 inset-y-0 flex items-center text-outline text-lg">alternate_email</span>
+                                <input class="w-full pl-10 pr-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant/40 text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container focus:outline-none transition-all font-body-md text-body-md" id="username" name="username" type="text" value="" placeholder="user" data-original="">
                             </div>
-
-                            <!-- Email Address -->
                             <div class="relative">
-                                <span
-                                    class="material-symbols-outlined absolute left-3 inset-y-0 flex items-center text-outline text-lg">
-                                    mail
-                                </span>
-
-                                <input
-                                    class="w-full pl-10 pr-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant/40 text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container focus:outline-none transition-all font-body-md text-body-md"
-                                    id="email" name="email" type="email" value="" placeholder="example@domain.com"
-                                    data-original="">
+                                <span class="material-symbols-outlined absolute left-3 inset-y-0 flex items-center text-outline text-lg">mail</span>
+                                <input class="w-full pl-10 pr-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant/40 text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container focus:outline-none transition-all font-body-md text-body-md" id="email" name="email" type="email" value="" placeholder="example@domain.com" data-original="">
                             </div>
-
                         </div>
                     </form>
                 </div>
-                <!-- Form Panel: Recommendation & Viewing Settings -->
-
-                <!-- Form Panel: Connected Accounts & Security -->
-                <div
-                    class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-6 md:p-8 space-y-6 shadow-md">
+                <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-6 md:p-8 space-y-6 shadow-md">
                     <div class="border-b border-outline-variant/20 pb-4">
-                        <h2 class="text-headline-sm font-headline-sm text-on-surface flex items-center gap-2">
-                            Account Credentials &amp; Security
-                        </h2>
-                        <p class="text-on-surface-variant text-body-sm font-body-sm mt-1">Update your password and view
-                            device authentication status.</p>
+                        <h2 class="text-headline-sm font-headline-sm text-on-surface flex items-center gap-2">Account Credentials &amp; Security</h2>
+                        <p class="text-on-surface-variant text-body-sm font-body-sm mt-1">Update your password and view device authentication status.</p>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
-                            <label class="block text-label-md font-label-md text-on-surface-variant" for="current-pass">
-                                Current Password
-                            </label>
-
-                            <input
-                                class="w-full px-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant/40 text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container focus:outline-none transition-all font-body-md text-body-md"
-                                id="current-pass" name="currentPassword" placeholder="Enter current password"
-                                type="password">
+                            <label class="block text-label-md font-label-md text-on-surface-variant" for="current-pass">Current Password</label>
+                            <input class="w-full px-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant/40 text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container focus:outline-none transition-all font-body-md text-body-md" id="current-pass" name="currentPassword" placeholder="Enter current password" type="password">
                         </div>
-
                         <div class="space-y-2">
-                            <label class="block text-label-md font-label-md text-on-surface-variant" for="new-pass">
-                                New Password
-                            </label>
-
-                            <input
-                                class="w-full px-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant/40 text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container focus:outline-none transition-all font-body-md text-body-md"
-                                id="new-pass" name="newPassword" placeholder="Minimum 8 characters" type="password">
+                            <label class="block text-label-md font-label-md text-on-surface-variant" for="new-pass">New Password</label>
+                            <input class="w-full px-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant/40 text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container focus:outline-none transition-all font-body-md text-body-md" id="new-pass" name="newPassword" placeholder="Minimum 8 characters" type="password">
                         </div>
                     </div>
                 </div>
-                <!-- Global Form Actions Bar -->
-                <!-- Global Form Actions Bar -->
-                <!-- Form Panel: Disliked Genres -->
-                <div
-                    class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-6 md:p-8 space-y-6 shadow-md">
-
+                <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-6 md:p-8 space-y-6 shadow-md">
                     <div class="border-b border-outline-variant/20 pb-4">
-                        <h2 class="text-headline-sm font-headline-sm text-on-surface flex items-center gap-2">
-                            Genres You Want to Avoid
-                        </h2>
-
-                        <p class="text-on-surface-variant text-body-sm font-body-sm mt-1">
-                            Select movie genres you dislike to personalize your recommendations.
-                        </p>
+                        <h2 class="text-headline-sm font-headline-sm text-on-surface flex items-center gap-2">Genres You Want to Avoid</h2>
+                        <p class="text-on-surface-variant text-body-sm font-body-sm mt-1">Select movie genres you dislike to personalize your recommendations.</p>
                     </div>
-
                     <div class="flex items-center justify-between gap-3">
-                        <p class="text-label-md font-label-md text-on-surface-variant">
-                            Select genres to exclude
-                        </p>
-
-                        <span id="disliked-genre-count" class="text-label-sm font-label-sm text-primary-container">
-                            0 selected
-                        </span>
+                        <p class="text-label-md font-label-md text-on-surface-variant">Select genres to exclude</p>
+                        <span id="disliked-genre-count" class="text-label-sm font-label-sm text-primary-container">0 selected</span>
                     </div>
-
                     <div id="disliked-genres" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="12" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                Action
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">Action</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="12" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                Adventure
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">Adventure</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="16" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                Animation
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">Animation</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="35" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                Comedy
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">Comedy</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="80" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                Crime
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">Crime</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="99" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                Documentary
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">Documentary</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="18" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                Drama
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">Drama</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="10751" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                Family
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">Family</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="14" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                Fantasy
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">Fantasy</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="36" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                History
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">History</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="27" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                Horror
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">Horror</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="10402" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                Music
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">Music</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="9648" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                Mystery
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">Mystery</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="10749" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                Romance
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">Romance</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="878" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                Science Fiction
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">Science Fiction</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="10770" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                TV Movie
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">TV Movie</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="53" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                Thriller
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">Thriller</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="10752" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                War
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">War</span>
                         </label>
-
                         <label class="cursor-pointer">
                             <input type="checkbox" name="dislikedGenres" value="37" class="peer sr-only">
-                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg
-                border border-outline-variant/40 bg-surface-container
-                text-on-surface-variant text-sm transition-all
-                peer-checked:bg-primary-container/15
-                peer-checked:border-primary-container
-                peer-checked:text-primary-container
-                hover:border-primary-container/60">
-                                Western
-                            </span>
+                            <span class="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border border-outline-variant/40 bg-surface-container text-on-surface-variant text-sm transition-all peer-checked:bg-primary-container/15 peer-checked:border-primary-container peer-checked:text-primary-container hover:border-primary-container/60">Western</span>
                         </label>
                     </div>
-
-                    <p class="text-outline text-body-sm font-body-sm">
-                        Movies matching your selected genres will be excluded from your recommendations.
-                    </p>
+                    <p class="text-outline text-body-sm font-body-sm">Movies matching your selected genres will be excluded from your recommendations.</p>
                 </div>
-                <div id="profile-actions"
-                    class="hidden flex-col sm:flex-row items-center justify-between gap-4 p-6 rounded-xl bg-surface-container-high/60 border border-outline-variant/30">
-
+                <div id="profile-actions" class="hidden flex-col sm:flex-row items-center justify-between gap-4 p-6 rounded-xl bg-surface-container-high/60 border border-outline-variant/30">
                     <div class="flex items-center gap-2 text-outline text-label-sm font-label-sm">
-                        <span id="profile-status">
-                            Changes will take effect after you save your profile.
-                        </span>
+                        <span id="profile-status">Changes will take effect after you save your profile.</span>
                     </div>
-
                     <div class="flex items-center gap-3 w-full sm:w-auto">
-                        <button id="cancel-changes"
-                            class="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-outline-variant/50 text-on-surface-variant hover:text-on-surface hover:border-outline transition-colors text-label-lg font-label-lg"
-                            type="button">
-                            Cancel
-                        </button>
-
-                        <button id="save-changes"
-                            class="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-primary-container hover:bg-[#fbbf24] text-on-primary-container font-bold text-label-lg font-label-lg flex items-center justify-center gap-2 transition-all duration-200"
-                            type="button">
+                        <button id="cancel-changes" class="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-outline-variant/50 text-on-surface-variant hover:text-on-surface hover:border-outline transition-colors text-label-lg font-label-lg" type="button">Cancel</button>
+                        <button id="save-changes" class="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-primary-container hover:bg-[#fbbf24] text-on-primary-container font-bold text-label-lg font-label-lg flex items-center justify-center gap-2 transition-all duration-200" type="button">
                             <span>Save Changes</span>
                         </button>
                     </div>
                 </div>
-                <!-- Danger Zone Section -->
-                <div
-                    class="bg-surface-container-lowest border border-error-container/40 rounded-xl p-6 md:p-8 space-y-4">
+                <div class="bg-surface-container-lowest border border-error-container/40 rounded-xl p-6 md:p-8 space-y-4">
                     <div class="flex items-center gap-2 text-error">
                         <span class="material-symbols-outlined text-xl" data-icon="error">error</span>
                         <h3 class="text-headline-sm font-headline-sm font-semibold">Danger Zone</h3>
                     </div>
-                    <div
-                        class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-4 border-t border-error-container/20">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-4 border-t border-error-container/20">
                         <div>
                             <p class="font-semibold text-error text-body-md font-body-md">Permanently Delete Account</p>
-                            <p class="text-outline text-body-sm font-body-sm">Deletes all ratings, mood histories,
-                                customized vectors, and playlists forever.</p>
+                            <p class="text-outline text-body-sm font-body-sm">Deletes all ratings, mood histories, customized vectors, and playlists forever.</p>
                         </div>
-                        <button
-                            class="px-4 py-2 rounded-lg border border-error/50 bg-error-container/20 text-error hover:bg-error hover:text-on-error transition-all text-label-md font-label-md flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined text-base"
-                                data-icon="delete_forever">delete_forever</span>
+                        <button class="px-4 py-2 rounded-lg border border-error/50 bg-error-container/20 text-error hover:bg-error hover:text-on-error transition-all text-label-md font-label-md flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-base" data-icon="delete_forever">delete_forever</span>
                             <span class="">Delete Account</span>
                         </button>
                     </div>
@@ -438,35 +171,21 @@
             </section>
         </div>
     </main>
-    <!-- Footer (Shared Component) -->
     <footer th:replace="~{fragments/footer :: footer}"></footer>
     <script th:src="@{/js/profile.js}"></script>
 </body>
-<!-- Notification Container -->
-
-<!-- Success Notification -->
 <div id="success-notification" class="fixed top-5 right-5 z-[9999] w-[calc(100%-2.5rem)] sm:w-96 hidden">
-
     <div class="flex items-start gap-3 p-4 rounded-xl bg-surface-container-low border border-green-500/30 shadow-xl">
-        <div
-            class="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-green-500/15 text-green-500">
+        <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-green-500/15 text-green-500">
             <span class="material-symbols-outlined">check_circle</span>
         </div>
-
         <div class="flex-1 min-w-0">
-            <h3 class="text-label-lg font-label-lg text-on-surface">
-                Successfully Saved
-            </h3>
-            <p class="mt-1 text-body-sm font-body-sm text-on-surface-variant">
-                Your profile information has been saved successfully.
-            </p>
+            <h3 class="text-label-lg font-label-lg text-on-surface">Successfully Saved</h3>
+            <p class="mt-1 text-body-sm font-body-sm text-on-surface-variant">Your profile information has been saved successfully.</p>
         </div>
-
-        <button id="close-success-notification" type="button" aria-label="Close notification"
-            class="flex-shrink-0 text-outline hover:text-on-surface transition-colors">
+        <button id="close-success-notification" type="button" aria-label="Close notification" class="flex-shrink-0 text-outline hover:text-on-surface transition-colors">
             <span class="material-symbols-outlined text-xl">close</span>
         </button>
     </div>
 </div>
-
 </html>
