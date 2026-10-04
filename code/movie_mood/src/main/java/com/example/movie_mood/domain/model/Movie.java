@@ -78,4 +78,14 @@ public class Movie {
     public void setGenreIds(List<Integer> genreIds) {
         this.genreIds = genreIds;
     }
+
+    private Double matchScore;
+
+    public Double getMatchScore() {
+        return matchScore;
+    }
+
+    public void setMatchScore(Double matchScore) {
+        this.matchScore = matchScore;
+    }
 }
