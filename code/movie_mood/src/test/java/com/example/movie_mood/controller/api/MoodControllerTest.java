@@ -51,7 +51,7 @@ class MoodControllerTest {
                         Mood.SCARY
                 ));
 
-        mockMvc.perform(get("/api/moods"))
+        mockMvc.perform(get("/api/v1/moods"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(6))
                 .andExpect(jsonPath("$[0].name").value("HAPPY"))
@@ -64,7 +64,7 @@ class MoodControllerTest {
         when(moodService.getMoodByName("happy"))
                 .thenReturn(Mood.HAPPY);
 
-        mockMvc.perform(get("/api/moods/happy"))
+        mockMvc.perform(get("/api/v1/moods/happy"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("HAPPY"))
                 .andExpect(jsonPath("$.displayName").value("Happy"));
@@ -75,11 +75,11 @@ class MoodControllerTest {
         when(moodService.getMoodByName("ANGRY"))
                 .thenThrow(new MoodNotFoundException("ANGRY"));
 
-        mockMvc.perform(get("/api/moods/ANGRY"))
+        mockMvc.perform(get("/api/v1/moods/ANGRY"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.error").value("Not Found"))
                 .andExpect(jsonPath("$.message").value("Mood not found: ANGRY"))
-                .andExpect(jsonPath("$.path").value("/api/moods/ANGRY"));
+                .andExpect(jsonPath("$.path").value("/api/v1/moods/ANGRY"));
     }
 }

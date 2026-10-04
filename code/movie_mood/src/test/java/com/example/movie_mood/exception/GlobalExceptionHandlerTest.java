@@ -41,13 +41,13 @@ class GlobalExceptionHandlerTest {
         when(movieDetailFacade.getMovieDetails(999999999L))
                 .thenThrow(new MovieNotFoundException(999999999L));
 
-        mockMvc.perform(get("/api/movies/999999999"))
+        mockMvc.perform(get("/api/v1/movies/999999999"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.error").value("Not Found"))
                 .andExpect(jsonPath("$.message")
                         .value("Movie not found with TMDB ID: 999999999"))
                 .andExpect(jsonPath("$.path")
-                        .value("/api/movies/999999999"));
+                        .value("/api/v1/movies/999999999"));
     }
 }

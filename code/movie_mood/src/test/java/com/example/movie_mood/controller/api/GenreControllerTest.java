@@ -55,7 +55,7 @@ class GenreControllerTest {
         when(genreService.createGenre(any(Genre.class)))
                 .thenReturn(genre);
 
-        mockMvc.perform(post("/api/genres")
+        mockMvc.perform(post("/api/v1/genres")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -77,7 +77,7 @@ class GenreControllerTest {
         when(genreService.getGenreById(35))
                 .thenReturn(genre);
 
-        mockMvc.perform(get("/api/genres/35"))
+        mockMvc.perform(get("/api/v1/genres/35"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.genreId").value(35))
                 .andExpect(jsonPath("$.genreName").value("Comedy"));
@@ -92,7 +92,7 @@ class GenreControllerTest {
         when(genreService.getGenreById(999))
                 .thenThrow(new GenreNotFoundException(999));
 
-        mockMvc.perform(get("/api/genres/999"))
+        mockMvc.perform(get("/api/v1/genres/999"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.message")
@@ -121,7 +121,7 @@ class GenreControllerTest {
                         )
                 );
 
-        mockMvc.perform(get("/api/genres")
+        mockMvc.perform(get("/api/v1/genres")
                         .param("page", "0")
                         .param("size", "2")
                         .param("sort", "genreName,asc"))
@@ -147,7 +147,7 @@ class GenreControllerTest {
                 any(Genre.class)
         )).thenReturn(updatedGenre);
 
-        mockMvc.perform(put("/api/genres/35")
+        mockMvc.perform(put("/api/v1/genres/35")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -171,7 +171,7 @@ class GenreControllerTest {
                 .when(genreService)
                 .deleteGenre(35);
 
-        mockMvc.perform(delete("/api/genres/35"))
+        mockMvc.perform(delete("/api/v1/genres/35"))
                 .andExpect(status().isNoContent());
 
         verify(genreService).deleteGenre(35);
@@ -181,7 +181,7 @@ class GenreControllerTest {
     void createGenre_shouldReturn400_whenGenreNameIsBlank()
             throws Exception {
 
-        mockMvc.perform(post("/api/genres")
+        mockMvc.perform(post("/api/v1/genres")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {

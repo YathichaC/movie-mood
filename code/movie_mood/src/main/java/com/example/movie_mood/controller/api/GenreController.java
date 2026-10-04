@@ -26,7 +26,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/genres")
+@RequestMapping("/api/v1/genres")
 @Validated
 @Tag(name = "Genres", description = "Genre management APIs")
 public class GenreController {
