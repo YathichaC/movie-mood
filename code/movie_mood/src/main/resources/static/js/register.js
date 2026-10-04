@@ -58,24 +58,16 @@ toggleConfirmPasswordBtn.addEventListener("click", () => {
             : "visibility_off";
 });
 
-registerForm.addEventListener("submit", (event) => {
+registerForm.addEventListener("submit", async (event) => {
 
     event.preventDefault();
 
-    const username =
-        usernameInput.value.trim();
-
-    const email =
-        emailInput.value.trim();
-
-    const password =
-        passwordInput.value;
-
-    const confirmPassword =
-        confirmPasswordInput.value;
+    const username = usernameInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
 
     if (password !== confirmPassword) {
-
         showToast(
             "Password Mismatch",
             "Passwords do not match.",
@@ -83,12 +75,10 @@ registerForm.addEventListener("submit", (event) => {
         );
 
         confirmPasswordInput.focus();
-
         return;
     }
 
     if (username.length < 3) {
-
         showToast(
             "Invalid Username",
             "Username must be at least 3 characters.",
@@ -96,7 +86,6 @@ registerForm.addEventListener("submit", (event) => {
         );
 
         usernameInput.focus();
-
         return;
     }
 
@@ -106,40 +95,37 @@ registerForm.addEventListener("submit", (event) => {
         <span class="material-symbols-outlined animate-spin text-[20px]">
             progress_activity
         </span>
-
-        <span>
-            Creating account...
-        </span>
+        <span>Creating account...</span>
     `;
 
-    showToast(
-        "Creating Account",
-        "Please wait while we create your MovieMood account.",
-        "person_add"
-    );
+    try {
+        const response = await fetch("/api/auth/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username,
+                email,
+                password,
+                confirmPassword
+            })
+        });
 
-    setTimeout(() => {
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message || "Registration failed"
+            );
+        }
 
         submitBtn.innerHTML = `
             <span class="material-symbols-outlined text-[20px]">
                 done
             </span>
-
-            <span>
-                Account Created!
-            </span>
+            <span>Account Created!</span>
         `;
-
-
-        submitBtn.classList.remove(
-            "bg-primary-container"
-        );
-
-        submitBtn.classList.add(
-            "bg-secondary-container",
-            "text-on-secondary-container"
-        );
-
 
         showToast(
             "Registration Successful",
@@ -147,8 +133,22 @@ registerForm.addEventListener("submit", (event) => {
             "verified"
         );
 
-    }, 1200);
+    } catch (error) {
+        showToast(
+            "Registration Failed",
+            error.message,
+            "error"
+        );
 
+        submitBtn.disabled = false;
+
+        submitBtn.innerHTML = `
+            <span>Create Account</span>
+            <span class="material-symbols-outlined text-[20px]">
+                arrow_forward
+            </span>
+        `;
+    }
 });
 
 function showToast(
