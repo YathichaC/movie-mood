@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 
 @RestController
-@RequestMapping("/api/recommendations")
+@RequestMapping("/api/v1/recommendations")
 @Tag(
         name = "Recommendations",
         description = "Get movie recommendations based on mood and disliked genres"

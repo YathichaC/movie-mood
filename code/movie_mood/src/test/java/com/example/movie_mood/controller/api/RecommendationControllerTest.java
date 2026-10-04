@@ -63,7 +63,7 @@ class RecommendationControllerTest {
         )).thenReturn(List.of(movie));
 
         mockMvc.perform(
-                        get("/api/recommendations")
+                        get("/api/v1/recommendations")
                                 .param("mood", "HAPPY")
                 )
                 .andExpect(status().isOk())
@@ -96,7 +96,7 @@ class RecommendationControllerTest {
         )).thenReturn(List.of());
 
         mockMvc.perform(
-                        get("/api/recommendations")
+                        get("/api/v1/recommendations")
                                 .param("mood", "EXCITED")
                                 .param(
                                         "dislikedGenreIds",
@@ -119,7 +119,7 @@ class RecommendationControllerTest {
         throws Exception {
 
     mockMvc.perform(
-                    get("/api/recommendations")
+                    get("/api/v1/recommendations")
                             .param("mood", "INVALID_MOOD")
             )
             .andExpect(status().isBadRequest())
@@ -128,7 +128,7 @@ class RecommendationControllerTest {
             .andExpect(jsonPath("$.message")
                     .value("Invalid value for parameter: mood"))
             .andExpect(jsonPath("$.path")
-                    .value("/api/recommendations"));
+                    .value("/api/v1/recommendations"));
 }
 
         @Test
@@ -136,7 +136,7 @@ class RecommendationControllerTest {
         throws Exception {
 
     mockMvc.perform(
-                    get("/api/recommendations")
+                    get("/api/v1/recommendations")
             )
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.status").value(400))
@@ -144,7 +144,7 @@ class RecommendationControllerTest {
             .andExpect(jsonPath("$.message")
                     .value("Missing required parameter: mood"))
             .andExpect(jsonPath("$.path")
-                    .value("/api/recommendations"));
+                    .value("/api/v1/recommendations"));
 }
 
     private Movie createMovie(

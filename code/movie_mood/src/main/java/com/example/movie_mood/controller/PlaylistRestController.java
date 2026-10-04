@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/playlists")
+@RequestMapping("/api/v1/playlists")
 public class PlaylistRestController {
 
     private final PlaylistService playlistService;
