@@ -1,11 +1,13 @@
 package com.example.movie_mood.integration.tmdb;
 
+import com.example.movie_mood.exception.MovieNotFoundException;
 import com.example.movie_mood.integration.tmdb.dto.TmdbMovieListResponse;
 import com.example.movie_mood.integration.tmdb.dto.TmdbMovieResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import java.util.List;
+
 
 @Component
 public class TmdbRestClient {
@@ -44,14 +46,17 @@ public class TmdbRestClient {
     }
 
     public TmdbMovieResponse getMovie(Long tmdbMovieId) {
-        return restClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/movie/{id}")
-                        .queryParam("language", "en-US")
-                        .build(tmdbMovieId))
-                .retrieve()
-                .body(TmdbMovieResponse.class);
-    }
+    return restClient.get()
+            .uri("/movie/{id}", tmdbMovieId)
+            .retrieve()
+            .onStatus(
+                    status -> status.value() == 404,
+                    (request, response) -> {
+                        throw new MovieNotFoundException(tmdbMovieId);
+                    }
+            )
+            .body(TmdbMovieResponse.class);
+        }
 
     public TmdbMovieListResponse discoverMoviesByGenres(List<Integer> genreIds) {
 
