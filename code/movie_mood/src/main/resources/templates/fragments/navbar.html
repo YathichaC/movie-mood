@@ -31,7 +31,7 @@
            : 'text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface transition-colors duration-200 text-label-md font-label-md'">
                     Playlist
                 </a>
-                <a href="#"
+                <a th:href="@{/history}"
                     th:class="${activePage == 'history'}
            ? 'text-primary dark:text-primary font-bold text-label-md font-label-md'
            : 'text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface transition-colors duration-200 text-label-md font-label-md'">
@@ -49,14 +49,16 @@
             </button>
             <div class="h-6 w-px bg-outline-variant/30 hidden sm:block"></div>
             <div class="flex items-center gap-2">
-                <button
+                <a th:href="@{/profile}"
                     class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-label-md font-label-md text-on-surface hover:text-primary transition-colors">
                     <span class="hidden lg:inline">Account</span>
-                </button>
-                <button
-                    class="hidden sm:inline-block px-3 py-1.5 rounded-lg text-label-sm font-label-sm text-on-surface-variant hover:text-error transition-colors">
-                    Logout
-                </button>
+                </a>
+                <form th:action="@{/logout}" method="post" class="hidden sm:inline-block">
+                    <button type="submit"
+                        class="px-3 py-1.5 rounded-lg text-label-sm font-label-sm text-on-surface-variant hover:text-error transition-colors">
+                        Logout
+                    </button>
+                </form>
             </div>
         </div>
     </div>

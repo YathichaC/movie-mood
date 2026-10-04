@@ -9,7 +9,6 @@ function closeModal() {
     modal.classList.remove('flex');
     modalAction = null;
 }
-
 function showModal({
     title = 'Confirmation',
     message = '',
