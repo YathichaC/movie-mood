@@ -3,10 +3,10 @@ package com.example.movie_mood.strategy;
 import com.example.movie_mood.domain.enums.Mood;
 import com.example.movie_mood.domain.model.Movie;
 import com.example.movie_mood.service.MovieService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -14,34 +14,40 @@ import java.util.List;
 public class MoodStrategy implements Strategy {
 
     private final MovieService movieService;
+    private final MatchScoreStrategy defaultStrategy;
 
-    public MoodStrategy(MovieService movieService) {
+    public MoodStrategy(
+            MovieService movieService,
+            @Qualifier("defaultMatchScoreStrategy") MatchScoreStrategy defaultStrategy) {
         this.movieService = movieService;
+        this.defaultStrategy = defaultStrategy;
     }
 
     @Override
     public List<Movie> recommend(Mood mood, List<Integer> dislikedGenreIds) {
+        return recommend(mood, dislikedGenreIds, defaultStrategy);
+    }
+
+    public List<Movie> recommend(Mood mood, List<Integer> dislikedGenreIds, MatchScoreStrategy strategy) {
+        MatchScoreStrategy scoreStrategy = strategy != null ? strategy : defaultStrategy;
+
         List<Movie> allMovies = movieService.browseMovies();
         if (allMovies == null || allMovies.isEmpty()) {
             allMovies = getFallbackMockMovies();
         }
 
         List<Movie> recommended = new ArrayList<>();
-
         for (Movie movie : allMovies) {
-            // 1. ข้ามแนวหนังที่ไม่ชอบ
             if (dislikedGenreIds != null && isDisliked(movie, dislikedGenreIds)) {
                 continue;
             }
 
-            // 2. คำนวณ Match Score ตาม Mood และ Rating
-            double score = calculateMatchScore(movie, mood);
+            double score = scoreStrategy.calculateScore(movie, mood);
             movie.setMatchScore(score);
 
             recommended.add(movie);
         }
 
-        // 3. จัดเรียง: MatchScore มาก -> Rating สูง -> หนังใหม่กว่า -> ชื่อเรื่อง A-Z
         recommended.sort(
             Comparator.comparing(Movie::getMatchScore, Comparator.nullsLast(Comparator.reverseOrder()))
                 .thenComparing(Movie::getRating, Comparator.nullsLast(Comparator.reverseOrder()))
@@ -49,36 +55,7 @@ public class MoodStrategy implements Strategy {
                 .thenComparing(Movie::getTitle, Comparator.nullsLast(Comparator.naturalOrder()))
         );
 
-        return recommended;
-    }
-
-    private double calculateMatchScore(Movie movie, Mood mood) {
-        double score = 40.0; // คะแนนฐาน
-
-        // คะแนนจากเรตติ้ง (สูงสุดประมาณ +30 ถึง +40 คะแนน)
-        if (movie.getRating() != null) {
-            score += Math.min(movie.getRating() * 4.0, 40.0);
-        }
-
-        // โบนัสพิเศษเมื่อตรงกับ Mood (+25 คะแนน)
-        List<Integer> targetGenres = getGenreIdsForMood(mood);
-        if (movie.getGenreIds() != null && !Collections.disjoint(movie.getGenreIds(), targetGenres)) {
-            score += 25.0;
-        }
-
-        return Math.min(score, 100.0);
-    }
-
-    private List<Integer> getGenreIdsForMood(Mood mood) {
-        if (mood == null) return List.of();
-        return switch (mood) {
-            case ROMANTIC -> List.of(10749, 18);          // Romance, Drama
-            case HAPPY -> List.of(35, 16, 10751);         // Comedy, Animation, Family
-            case SAD -> List.of(18);                      // Drama
-            case EXCITED -> List.of(28, 12, 878, 53);     // Action, Adventure, Sci-Fi, Thriller
-            case SCARY -> List.of(27, 9648, 53);          // Horror, Mystery, Thriller
-            case RELAXED -> List.of(16, 99, 10402);       // Animation, Documentary, Music
-        };
+        return recommended.stream().limit(10).toList();
     }
 
     private boolean isDisliked(Movie movie, List<Integer> dislikedGenreIds) {

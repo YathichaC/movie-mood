@@ -2,6 +2,9 @@ package com.example.movie_mood.service;
 
 import com.example.movie_mood.domain.enums.Mood;
 import com.example.movie_mood.domain.model.Movie;
+import com.example.movie_mood.mapper.MoodGenreMapper;
+import com.example.movie_mood.strategy.DefaultMatchScoreStrategy;
+import com.example.movie_mood.strategy.MatchScoreStrategy;
 import com.example.movie_mood.strategy.MoodStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -37,9 +40,11 @@ public class RecommendationStrategyTest {
             public Movie getMovieDetails(Long tmdbMovieId) { return null; }
         };
 
-        MoodStrategy strategy = new MoodStrategy(mockMovieService);
-        List<Integer> dislikedGenres = List.of(27);
-        List<Movie> results = strategy.recommend(Mood.HAPPY, dislikedGenres);
+        MoodGenreMapper moodGenreMapper = new MoodGenreMapper();
+        MatchScoreStrategy defaultStrategy = new DefaultMatchScoreStrategy(moodGenreMapper);
+        MoodStrategy strategy = new MoodStrategy(mockMovieService, defaultStrategy);
+
+        List<Movie> results = strategy.recommend(Mood.HAPPY, List.of(27));
 
         Assertions.assertEquals(1, results.size(), "Disliked horror genre should be excluded");
         Assertions.assertEquals("Inside Out 2", results.get(0).getTitle());
