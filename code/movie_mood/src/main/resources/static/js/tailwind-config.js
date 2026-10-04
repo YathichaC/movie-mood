@@ -18,29 +18,23 @@ tailwind.config = {
                 "primary-container": "#f59e0b",
                 "on-tertiary-fixed": "#07006c",
                 "on-primary-fixed-variant": "#653e00",
-                "on-error-container": "#ffdad6",
-                "outline": "#a08e7a",
-                "on-secondary-fixed-variant": "#004e5c",
-                "primary-fixed": "#ffddb8",
-                "on-tertiary-container": "#2b29bb",
-                "surface-container-high": "#272a32",
-                "tertiary-fixed": "#e1e0ff",
                 "secondary-container": "#03b5d3",
                 "surface-dim": "#10131a",
                 "on-surface": "#e1e2ec",
-                "on-secondary-fixed": "#001f26",
                 "background": "#10131a",
                 "on-error": "#690005",
                 "on-tertiary": "#1000a9",
                 "on-primary-container": "#613b00",
-                "outline-variant": "#534434",
+                "outline": "#a08e7a",
+                "primary-fixed": "#ffddb8",
+                "surface-container-high": "#272a32",
+                "tertiary-fixed": "#e1e0ff",
                 "secondary": "#4cd7f6",
                 "surface": "#10131a",
                 "surface-tint": "#ffb95f",
                 "on-primary": "#472a00",
                 "secondary-fixed": "#acedff",
                 "surface-container-highest": "#32353d",
-                "on-tertiary-fixed-variant": "#2f2ebe",
                 "surface-container-low": "#191b23",
                 "on-surface-variant": "#d8c3ad",
                 "error-container": "#93000a",
@@ -49,7 +43,12 @@ tailwind.config = {
                 "on-background": "#e1e2ec",
                 "on-secondary-container": "#00424e",
                 "inverse-surface": "#e1e2ec",
-                "surface-bright": "#363941"
+                "surface-bright": "#363941",
+                "outline-variant": "#534434",
+                "on-secondary-fixed-variant": "#004e5c",
+                "on-tertiary-container": "#2b29bb",
+                "on-tertiary-fixed-variant": "#2f2ebe",
+                "on-secondary-fixed": "#001f26"
             },
 
             borderRadius: {
@@ -60,18 +59,17 @@ tailwind.config = {
             },
 
             fontFamily: {
-                "label-md": ["Inter"],
-                "headline-xl": ["Outfit"],
-                "body-md": ["Inter"],
-                "body-sm": ["Inter"],
-                "label-lg": ["Inter"],
-                "headline-md": ["Outfit"],
-                "label-sm": ["Inter"],
-                "title-md": ["Outfit"],
-                "headline-sm": ["Outfit"],
-                "headline-lg": ["Outfit"],
-
-                "display-hero": ["Outfit"]
+                "label-md": ["Inter", "sans-serif"],
+                "headline-xl": ["Inter", "sans-serif"],
+                "body-md": ["Inter", "sans-serif"],
+                "body-sm": ["Inter", "sans-serif"],
+                "label-lg": ["Inter", "sans-serif"],
+                "headline-md": ["Inter", "sans-serif"],
+                "label-sm": ["Inter", "sans-serif"],
+                "title-md": ["Inter", "sans-serif"],
+                "headline-sm": ["Inter", "sans-serif"],
+                "headline-lg": ["Inter", "sans-serif"],
+                "display-hero": ["Inter", "sans-serif"]
             },
 
             fontSize: {
@@ -83,7 +81,6 @@ tailwind.config = {
                         fontWeight: "600"
                     }
                 ],
-
                 "headline-xl": [
                     "40px",
                     {
@@ -92,7 +89,6 @@ tailwind.config = {
                         fontWeight: "600"
                     }
                 ],
-
                 "body-md": [
                     "14px",
                     {
@@ -101,7 +97,6 @@ tailwind.config = {
                         fontWeight: "400"
                     }
                 ],
-
                 "body-sm": [
                     "12px",
                     {
@@ -110,7 +105,6 @@ tailwind.config = {
                         fontWeight: "400"
                     }
                 ],
-
                 "label-lg": [
                     "14px",
                     {
@@ -119,7 +113,6 @@ tailwind.config = {
                         fontWeight: "600"
                     }
                 ],
-
                 "headline-md": [
                     "24px",
                     {
@@ -128,7 +121,6 @@ tailwind.config = {
                         fontWeight: "600"
                     }
                 ],
-
                 "label-sm": [
                     "11px",
                     {
@@ -137,7 +129,6 @@ tailwind.config = {
                         fontWeight: "700"
                     }
                 ],
-
                 "title-md": [
                     "18px",
                     {
@@ -146,7 +137,6 @@ tailwind.config = {
                         fontWeight: "500"
                     }
                 ],
-
                 "headline-sm": [
                     "20px",
                     {
@@ -155,7 +145,6 @@ tailwind.config = {
                         fontWeight: "600"
                     }
                 ],
-
                 "headline-lg": [
                     "32px",
                     {
@@ -172,7 +161,6 @@ tailwind.config = {
                         fontWeight: "800"
                     }
                 ],
-
                 "display-hero": [
                     "64px",
                     {

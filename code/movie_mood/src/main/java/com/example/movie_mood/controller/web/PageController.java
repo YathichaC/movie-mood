@@ -83,4 +83,9 @@ public class PageController {
     public String profile() {
         return "profile/profile";
     }
+
+    @GetMapping("/auth/change-password")
+    public String changePassword() {
+        return "auth/changepassword";
+    }
 }

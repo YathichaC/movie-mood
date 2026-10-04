@@ -25,10 +25,8 @@
     <header th:replace="~{fragments/navbar :: navbar('movies')}"></header>
     <main class="flex-grow w-full max-w-[1600px] mx-auto px-4 sm:px-6 md:px-12 py-8">
         <div class="flex flex-col lg:flex-row gap-8 items-start">
-            <!-- Sidebar (Left) -->
             <aside class="w-full lg:w-80 shrink-0 flex flex-col gap-6 bg-surface-container-low/90 border border-outline-variant/30 rounded-xl p-6 backdrop-blur-md shadow-2xl">
                 <div>
-                    <!-- Search Bar -->
                     <form class="relative flex items-center w-full" onsubmit="event.preventDefault();">
                         <div class="relative w-full flex items-center">
                             <input
@@ -44,7 +42,6 @@
 
                 <hr class="border-outline-variant/20">
 
-                <!-- Sort By -->
                 <div class="flex flex-col gap-2">
                     <label class="text-on-surface font-label-lg text-label-lg font-semibold flex items-center gap-1.5" for="sortSelector">
                         Sort by
@@ -64,7 +61,6 @@
 
                 <hr class="border-outline-variant/20">
 
-                <!-- Rating Slider -->
                 <div class="flex flex-col gap-2">
                     <div class="flex items-center justify-between">
                         <label class="text-on-surface font-label-lg text-label-lg font-semibold flex items-center gap-1.5">
@@ -78,8 +74,6 @@
                 </div>
 
                 <hr class="border-outline-variant/20">
-
-                <!-- Year Range Slider -->
                 <div class="flex flex-col gap-3">
                     <div class="flex items-center justify-between">
                         <label class="text-on-surface font-label-lg text-label-lg font-semibold flex items-center gap-1.5">
@@ -98,10 +92,7 @@
                             oninput="updateYearSlider('end')">
                     </div>
                 </div>
-
                 <hr class="border-outline-variant/20">
-
-                <!-- Genre Checkboxes -->
                 <div class="flex flex-col gap-3">
                     <label class="text-on-surface font-label-lg text-label-lg font-semibold flex items-center gap-1.5">
                         Genre
@@ -167,8 +158,6 @@
                     </div>
                 </div>
             </aside>
-
-            <!-- Movie Results (Right) -->
             <section class="flex-1 w-full flex flex-col gap-6" id="resultsContainer">
                 <div class="flex items-center justify-between">
                     <h2 class="font-headline-sm text-headline-lg font-semibold text-on-surface flex items-center gap-2">
@@ -272,33 +261,7 @@
         </div>
     </main>
     <footer th:replace="fragments/footer :: footer"></footer>
-    <script src="../../static/js/search.js"></script>
-    <script>
-        function updateYearSlider(type) {
-            const min = 1900, max = 2026;
-            const startSlider = document.getElementById('yearStartSlider');
-            const endSlider = document.getElementById('yearEndSlider');
-            const yearValue = document.getElementById('yearValue');
-            const yearTrack = document.getElementById('yearTrack');
-
-            let start = parseInt(startSlider.value);
-            let end = parseInt(endSlider.value);
-
-            if (type === 'start' && start > end) {
-                startSlider.value = end;
-                start = end;
-            } else if (type === 'end' && end < start) {
-                endSlider.value = start;
-                end = start;
-            }
-
-            if (yearValue) yearValue.textContent = start + ' - ' + end;
-            if (yearTrack) {
-                yearTrack.style.left = ((start - min) / (max - min) * 100) + '%';
-                yearTrack.style.right = (100 - ((end - min) / (max - min) * 100)) + '%';
-            }
-        }
-    </script>
+    <script th:src="@{/js/search.js}"></script>
 </body>
 
 </html>
