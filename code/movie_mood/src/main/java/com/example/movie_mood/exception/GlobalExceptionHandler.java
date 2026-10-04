@@ -10,6 +10,9 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import java.time.LocalDateTime;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -81,6 +84,48 @@ public ResponseEntity<ErrorResponse> handleConstraintViolation(
             HttpStatus.BAD_REQUEST.value(),
             HttpStatus.BAD_REQUEST.getReasonPhrase(),
             exception.getMessage(),
+            request.getRequestURI()
+    );
+
+    return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(response);
+}
+
+        @ExceptionHandler(GenreNotFoundException.class)
+public ResponseEntity<ErrorResponse> handleGenreNotFound(
+        GenreNotFoundException exception,
+        HttpServletRequest request) {
+
+    ErrorResponse response = new ErrorResponse(
+            LocalDateTime.now(),
+            HttpStatus.NOT_FOUND.value(),
+            HttpStatus.NOT_FOUND.getReasonPhrase(),
+            exception.getMessage(),
+            request.getRequestURI()
+    );
+
+    return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(response);
+}
+        @ExceptionHandler(MethodArgumentNotValidException.class)
+public ResponseEntity<ErrorResponse> handleValidation(
+        MethodArgumentNotValidException exception,
+        HttpServletRequest request) {
+
+    String message = exception.getBindingResult()
+            .getFieldErrors()
+            .stream()
+            .findFirst()
+            .map(error -> error.getDefaultMessage())
+            .orElse("Invalid request");
+
+    ErrorResponse response = new ErrorResponse(
+            LocalDateTime.now(),
+            HttpStatus.BAD_REQUEST.value(),
+            HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            message,
             request.getRequestURI()
     );
 
