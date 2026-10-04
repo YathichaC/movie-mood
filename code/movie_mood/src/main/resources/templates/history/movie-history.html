@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html class="dark" lang="en" style="">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="icon" type="image/png" th:href="@{/img/moviemood_logo.png}">
+    <title>MovieMood</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Outfit:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script th:src="@{/js/tailwind-config.js}"></script>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container antialiased">
+    <header th:replace="~{fragments/navbar :: navbar('history')}"></header>
+    <main class="flex-1 w-full max-w-[1600px] mx-auto px-6 md:px-12 py-8 space-y-8">
+        <section class="flex flex-row justify-between items-center w-full gap-6 pb-6 border-b border-outline-variant/30">
+            <div class="flex items-center gap-4">
+                <div class="space-y-1">
+                    <h1 class="text-headline-lg font-headline-lg font-bold text-on-surface tracking-tight">Watch History</h1>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-surface-container border border-outline-variant/40 text-label-md text-on-surface cursor-pointer hover:border-outline-variant transition-colors">
+                    <span class="text-on-surface-variant">Sort By:</span>
+                    <span class="font-semibold text-primary">Title (A → Z)</span>
+                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant">keyboard_arrow_down</span>
+                </div>
+            </div>
+        </section>
+        <div id="populatedWatchHistoryView">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div th:replace="~{fragments/home-movie-card :: home-movie-card(
+                    title='Absolute Zero Ascent',
+                    poster='https://lh3.googleusercontent.com/aida-public/AB6AXuCqlREUYpnEtIhVdFsRV-hKsaM6ZQ1v4XaUaD-TQfozcXNlSaU6var2VEWloY9gAlOTcuxFAcTlXqSnmrPR8k0kSlRQmAUHv-cYxKCMeyrw73fxkb0eqNDv2es5QFNZu9OmNeUCkoQLDI_ccaX_CvlS1svPzUA3NM8sNCuSFamwIxDKdIl6MeIRP_4lDP2e3Ncl8UXAuLKDNcKIEJ_-POVF4DQG3gEn1KVlRtdWqZn2K6awfYz5cNk2Kw',
+                    rating='9.4',
+                    year='2024'
+                )}"></div>
+                <div th:replace="~{fragments/home-movie-card :: home-movie-card(
+                    title='Blade Runner: Nexus Rebirth',
+                    poster='https://lh3.googleusercontent.com/aida-public/AB6AXuCCbZBs-0g-q22Gmsc4QIiU5UE90Ib2WMnyfLUTq4Xyql5Vx0LMh3XYqQ21xQQLkDeq0nsgSf9N7Yt0IDLAAZfLvG_nZgkQano48CCt0-XekN0lBz4k2lT5L1ek6xJdeJmgSv6b7jqT-ctbUDOj5OKxBaOPeTOYQ4Hh0h25vSQnOizVg4t7lwlqR3qZhLS_MaIB6DMRqG5zSvxVCF12ZceMrosioZI276AE-cJbxxzJMcLGtqGZvvLo5Q',
+                    rating='9.6',
+                    year='2024'
+                )}"></div>
+                <div th:replace="~{fragments/home-movie-card :: home-movie-card(
+                    title='Chrono Shift',
+                    poster='https://lh3.googleusercontent.com/aida-public/AB6AXuAeTdaRP039YRqY7X06wlgEB4u3nN_535yklOia4UXcNJk7WoP8WYpyNxLlwGYdK100ckmQhKOJrTJEGtYbR7YQ7u6w0LnpN0f3fRSHc2oSLiEr6wsUuFtEgRmdQQwClZkm2ytizqrLIgma7GTplVMEzFZEqNc-ov9Hip_H--5epQiHNZ8YSPkCvCAXsDQulN23fbUVtVhqPPkGdUKSgIAGGwqDfTfyiH6BgRWUNfZs_GZyi6f8Hz9zvQ',
+                    rating='9.1',
+                    year='2023'
+                )}"></div>
+                <div th:replace="~{fragments/home-movie-card :: home-movie-card(
+                    title='Dream Architect: Paradox',
+                    poster='https://lh3.googleusercontent.com/aida-public/AB6AXuA2ki8AdKtObWHj9x3EQhznbm5sVi4Ah4lxcSJoCtXELe6ga5N_JO86wcuUXU1uDypM5ELwh12KDw22EKpCDkUS5jtdnStOGf60aQKYY95t1-DZGwJpjUQeen8gsrlrA_fu76vIabpvg8dRWpxUcEU147X0wT50FF9RBCmR-uufNIZaykEUANkk_IvEJThJTbR7iU82fkDkPkMTKm432B7qOmNaKynvCs3FE8qkSL1LS0204XqLPTAI_A',
+                    rating='9.3',
+                    year='2024'
+                )}"></div>
+                <div th:replace="~{fragments/home-movie-card :: home-movie-card(
+                    title='Echoes of Solitude',
+                    poster='https://lh3.googleusercontent.com/aida-public/AB6AXuBb4gcwvnPFXAvycE-OsmHX99PJMX9BsIA5LJicmnshkDCznf-AoZfTLPWqwvLkg6hbT0lFd36kHefb8LcQ9ysyOiDsYGlGgcBHvth_5rADLRHPKlIsjdsmS_sOc19dbbw2tzbOiCyUHIll9reZxSNqDcCAi6vZPlx9SGb5W3VVeVKkfGIDP2iE-1-vhNtIgtxZL-LzRJWjSnyWFc8vZyX-FSgMYfNnOU2KFu2uYJC_Oyh2sj4DB21adg',
+                    rating='8.9',
+                    year='2023'
+                )}"></div>
+                <div th:replace="~{fragments/home-movie-card :: home-movie-card(
+                    title='Fracture Point',
+                    poster='https://lh3.googleusercontent.com/aida-public/AB6AXuC1kjbsAhuMm5IU5fVo-G8ECBcQWSDFWgnIWnlckyumfWrSelHaYFtOKsmQH24AxQma0DcUIk5dsp24JyCm8YKZlBRz9MILzcneioutjGfAuYZXRI6tB_YQdL5t1Wt_kc2dRc3pczY3_fypWt4-EiWO32VA3QLRpCcfHDxR23E12eEbZeCwPDvXIkFz3RV589SYD_e37jW-AvdAPcMtdJReqxFLt6ZbUu6TRBKrQTZa4lxmTxhiYGKT9g',
+                    rating='8.7',
+                    year='2024'
+                )}"></div>
+                <div th:replace="~{fragments/home-movie-card :: home-movie-card(
+                    title='Kyoto Velocity',
+                    poster='https://lh3.googleusercontent.com/aida-public/AB6AXuDwKCPanS8uLxFKOBf1J78L1R7gGnjss1jj1ciSRBvwaFyKVl0BVfGEjSPc71fQH1aupIqedZ5LYKXJ-Ixph4L1BDXtjfxEYkS45lWSZ665KtGceAyiUCMK6ayGDJ6pbhFgJteStQODTWiZOzYbiN02OE6IXWH0OOAJf9VAD9iX2PIX01_HQLRR2i047dr1uExPh1SjXf0eQiwiN7Je7UAT1L2SE7L6imsELCDRgNfNztqHG8-SX2Vfag',
+                    rating='8.8',
+                    year='2023'
+                )}"></div>
+                <div th:replace="~{fragments/home-movie-card :: home-movie-card(
+                    title='Lullaby for the River Spirit',
+                    poster='https://lh3.googleusercontent.com/aida-public/AB6AXuBPHq7QJzSzXrtGt2t3JUUbXYTawLSBQ2U1P93QjqicqZd9ckt1F3VrUxD6DReApo1MjIvqrOgHRMQVl6IW2y6myVDZcmF3PgwteiBi4v6u_SZpxHuXqIcthtmLScyOHENusQ0-ok6D3QAzPfoFMueQg2tfL2dgRaXunUF3mkkp3auW2R-ofjmLA2r38GkI4yEtyTalFrPBVXwvvjjX1rdK6zufak5tn9yVa3g7jgf2sDL7JHwoqs_dGw',
+                    rating='9.8',
+                    year='2024'
+                )}"></div>
+                <div th:replace="~{fragments/home-movie-card :: home-movie-card(
+                    title='Matrix Continuum',
+                    poster='https://lh3.googleusercontent.com/aida-public/AB6AXuCCbZBs-0g-q22Gmsc4QIiU5UE90Ib2WMnyfLUTq4Xyql5Vx0LMh3XYqQ21xQQLkDeq0nsgSf9N7Yt0IDLAAZfLvG_nZgkQano48CCt0-XekN0lBz4k2lT5L1ek6xJdeJmgSv6b7jqT-ctbUDOj5OKxBaOPeTOYQ4Hh0h25vSQnOizVg4t7lwlqR3qZhLS_MaIB6DMRqG5zSvxVCF12ZceMrosioZI276AE-cJbxxzJMcLGtqGZvvLo5Q',
+                    rating='9.2',
+                    year='2024'
+                )}"></div>
+                <div th:replace="~{fragments/home-movie-card :: home-movie-card(
+                    title='Neon Vigilance',
+                    poster='https://lh3.googleusercontent.com/aida-public/AB6AXuBdqvsJdxOBwf8xzY1RNeHoS1enYrlPo1F_OuKwb769JsKuVQNSGb8Zt99DgDxi8Zf3-t-9PamRjH1YI2rOZR1c-UrlVF8_fTfRaG78F_V6zEs_EKuJG3TfoCU950lD9H2INGxqqlfAzFLJAy-TQY5B9u6f4Larodl7dyKfcpXb649jU2SMHw0TimMJsojivTI01TF9tcwMcnnRK42CJaBgqxs4cixKT2d7lPiixovjSAilFCDNPa4shw',
+                    rating='9.0',
+                    year='2023'
+                )}"></div>
+                <div th:replace="~{fragments/home-movie-card :: home-movie-card(
+                    title='Solaris Horizon',
+                    poster='https://lh3.googleusercontent.com/aida-public/AB6AXuAK24mBBezl-NKRpsLlRqizS-EMk6xU8YXUuo5BjB9rt4Qg60RHsl5AulGQORVHyClgeBYXzOHcrGiwS4ICwZag-Tdu0ACYcPKtZK4g75Z3V6ld423JIWsEDjwFsPxDt5Tw6d7upjjWMUdssxYapV4iv2tHWR4yIFRjH50nElAPuQ5hAD-zM1eTXpe4esL521_NSDIkC39Qd8J3tt_CMrTUdqEpdG05HLfqvSXWS2MLQFGNZlWZwUSzDA',
+                    rating='9.7',
+                    year='2024'
+                )}"></div>
+                <div th:replace="~{fragments/home-movie-card :: home-movie-card(
+                    title='Synapse Protocol',
+                    poster='https://lh3.googleusercontent.com/aida-public/AB6AXuAeTdaRP039YRqY7X06wlgEB4u3nN_535yklOia4UXcNJk7WoP8WYpyNxLlwGYdK100ckmQhKOJrTJEGtYbR7YQ7u6w0LnpN0f3fRSHc2oSLiEr6wsUuFtEgRmdQQwClZkm2ytizqrLIgma7GTplVMEzFZEqNc-ov9Hip_H--5epQiHNZ8YSPkCvCAXsDQulN23fbUVtVhqPPkGdUKSgIAGGwqDfTfyiH6BgRWUNfZs_GZyi6f8Hz9zvQ',
+                    rating='8.6',
+                    year='2024'
+                )}"></div>
+            </div>
+        </div>
+        <div class="py-16 px-6 max-w-3xl mx-auto text-center space-y-6 rounded-2xl bg-surface-container-low/70 backdrop-blur-xl border border-outline-variant/30 shadow-[0_20px_50px_rgba(0,0,0,0.5)] hidden" id="emptyWatchHistoryView">
+            <div class="w-20 h-20 mx-auto rounded-2xl bg-surface-container border border-outline-variant/40 flex items-center justify-center text-primary relative">
+                <span class="material-symbols-outlined text-[44px]" data-icon="movie_filter">movie_filter</span>
+                <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary-container"></span>
+            </div>
+            <div class="space-y-2 max-w-md mx-auto">
+                <h2 class="text-headline-md font-headline-md text-on-surface">No watch history recorded yet</h2>
+                <p class="text-on-surface-variant font-body-md text-body-md">
+                    Films you mark as watched will be chronologically logged and indexed alphabetically here to refine your mood recommendation weights.
+                </p>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-4 pt-2">
+                <button class="px-6 py-3 rounded-lg bg-primary-container text-on-primary font-label-lg text-label-lg font-bold hover:bg-primary transition-all shadow-[0_0_20px_rgba(245,158,11,0.35)] flex items-center gap-2">
+                    <span class="material-symbols-outlined" data-icon="play_circle" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+                    <span class="">Start Watching Now</span>
+                </button>
+                <button class="px-6 py-3 rounded-lg bg-surface-container hover:bg-surface-container-high border border-outline-variant/40 text-on-surface font-label-lg text-label-lg transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-secondary" data-icon="tune">tune</span>
+                    <span class="">Calibrate Mood Engine</span>
+                </button>
+            </div>
+            <div class="pt-6 border-t border-outline-variant/20 flex items-center justify-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+                <span class="material-symbols-outlined text-primary text-body-sm" data-icon="info">info</span>
+                <span class="">Tip: Watching at least 3 titles activates personalized neural mood clusters.</span>
+            </div>
+        </div>
+    </main>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script src="/js/history.js"></script>
+</body>
+</html>

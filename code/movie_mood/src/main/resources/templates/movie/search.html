@@ -91,7 +91,10 @@
                 class="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-outline-variant/20">
                 <div class="flex items-center gap-2">
                     <label class="text-on-surface-variant text-label-md font-label-md whitespace-nowrap"
-                        for="sortSelector">Sort by:</label>
+                        for="sortSelector">
+                        Sort by:
+                    </label>
+
                     <div class="relative">
                         <select
                             class="appearance-none bg-surface-container-lowest border border-outline-variant/40 hover:border-primary text-on-surface text-label-md font-label-md rounded-lg pl-3 pr-8 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary transition-colors cursor-pointer"
@@ -99,8 +102,14 @@
                             <option selected="">Highest Rated</option>
                             <option>Alphabetical (A-Z)</option>
                         </select>
+
+                        <span
+                            class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] pointer-events-none">
+                            keyboard_arrow_down
+                        </span>
                     </div>
                 </div>
+
             </div>
         </section>
         <section class="w-full flex flex-col gap-6" id="resultsContainer">
@@ -112,14 +121,30 @@
                 </div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <div th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}"></div>
-                <div th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}"></div>
-                <div th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}"></div>
-                <div th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}"></div>
-                <div th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}"></div>
-                <div th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}"></div>
-                <div th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}"></div>
-                <div th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}"></div>
+                <div
+                    th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+                </div>
+                <div
+                    th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+                </div>
+                <div
+                    th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+                </div>
+                <div
+                    th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+                </div>
+                <div
+                    th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+                </div>
+                <div
+                    th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+                </div>
+                <div
+                    th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+                </div>
+                <div
+                    th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+                </div>
             </div>
             <div
                 class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-surface-container-low border border-outline-variant/20">
