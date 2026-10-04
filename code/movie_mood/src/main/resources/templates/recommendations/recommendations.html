@@ -28,18 +28,14 @@
         <section class="py-4">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div class="flex flex-col gap-2">
-                    <h1 class="text-xl md:text-headline-lg font-semibold text-on-surface tracking-tight">
+                    <h1 class="font-headline-sm text-headline-lg font-semibold text-on-surface flex items-center gap-2">
                         Curated For Your Mood:
                         <span class="text-primary" th:text="${mood}">Happy</span>
                     </h1>
                 </div>
                 <div class="flex items-center shrink-0">
                     <button th:onclick="|window.location.href='@{/recommendations}'|"
-                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-outline-variant/40 bg-surface-container-high/60 hover:border-primary text-on-surface text-sm font-medium transition-all duration-200 group">
-                        <span
-                            class="material-symbols-outlined text-lg text-primary group-hover:rotate-180 transition-transform duration-300">
-                            tune
-                        </span>
+                        class="inline-flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-primary-container text-on-primary font-bold text-label-xl hover:bg-primary active:opacity-80 transition-all duration-200 cursor-pointer">
                         Change Mood
                     </button>
                 </div>

@@ -23,211 +23,282 @@
 <body
     class="bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary">
     <header th:replace="~{fragments/navbar :: navbar('movies')}"></header>
-    <main class="flex-grow w-full max-w-[1600px] mx-auto px-4 sm:px-6 md:px-12 py-8 flex flex-col gap-8">
-        <section
-            class="w-full bg-surface-container-low/90 border border-outline-variant/30 rounded-xl p-6 md:p-8 backdrop-blur-md relative overflow-hidden shadow-2xl">
-            <div class="relative z-10 flex flex-col gap-6">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <div
-                            class="flex items-center gap-2 text-primary font-label-sm text-label-sm uppercase tracking-wider mb-1">
-                        </div>
-                        <h1 class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">Discover
-                            Movies</h1>
-                    </div>
-                </div>
-                <form class="relative flex items-center w-full" onsubmit="event.preventDefault();">
-                    <div class="relative w-full flex items-center">
-                        <input
-                            class="w-full pl-13 pr-32 py-4 px-6 bg-surface-container-lowest/90 border border-outline-variant/40 rounded-xl text-on-surface placeholder:text-on-surface-variant/60 font-body-lg text-body-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-inner"
-                            id="searchInput" placeholder="" type="text" value="">
-                        <div class="absolute right-3 flex items-center gap-2">
-                            <button class="material-symbols-outlined text-xl px-2"
-                                style="font-variation-settings: &quot;FILL&quot; 1;">
+    <main class="flex-grow w-full max-w-[1600px] mx-auto px-4 sm:px-6 md:px-12 py-8">
+        <div class="flex flex-col lg:flex-row gap-8 items-start">
+            <!-- Sidebar (Left) -->
+            <aside class="w-full lg:w-80 shrink-0 flex flex-col gap-6 bg-surface-container-low/90 border border-outline-variant/30 rounded-xl p-6 backdrop-blur-md shadow-2xl">
+                <div>
+                    <!-- Search Bar -->
+                    <form class="relative flex items-center w-full" onsubmit="event.preventDefault();">
+                        <div class="relative w-full flex items-center">
+                            <input
+                                class="w-full pl-4 pr-10 py-3 bg-surface-container-lowest/90 border border-outline-variant/40 rounded-xl text-on-surface placeholder:text-on-surface-variant/60 font-body-md text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-inner"
+                                id="searchInput" placeholder="Search..." type="text" value="">
+                            <button class="absolute right-3 material-symbols-outlined text-xl text-on-surface-variant hover:text-primary transition-colors"
+                                style="font-variation-settings: 'FILL' 1;">
                                 search
                             </button>
                         </div>
-                    </div>
-                </form>
-            </div>
-        </section>
-        <section
-            class="bg-surface-container/60 border border-outline-variant/20 rounded-xl p-4 md:p-5 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 backdrop-blur-sm">
-            <div class="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-none">
-                <div
-                    class="flex items-center gap-1.5 text-on-surface-variant pr-2 text-label-md font-label-md whitespace-nowrap">
-                    <span class="material-symbols-outlined text-lg">filter_alt</span>
-                    <span class="">Filters:</span>
+                    </form>
                 </div>
-                <div class="relative group shrink-0">
-                    <button
-                        class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-primary-container bg-primary-container/10 text-primary text-label-md font-label-md hover:bg-primary/20 transition-all">
-                        <span class="material-symbols-outlined text-base">category</span>
-                        <span class="">Genre: Sci-Fi, Action</span>
-                        <span class="material-symbols-outlined text-sm">expand_more</span>
-                    </button>
-                </div>
-                <div class="relative group shrink-0">
-                    <button
-                        class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-outline-variant/40 bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:border-primary text-label-md font-label-md transition-all">
-                        <span class="material-symbols-outlined text-base">calendar_month</span>
-                        <span class="">Year: 2020 - 2024</span>
-                        <span class="material-symbols-outlined text-sm">expand_more</span>
-                    </button>
-                </div>
-                <div class="relative group shrink-0">
-                    <button
-                        class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-primary-container bg-primary-container/10 text-primary text-label-md font-label-md hover:bg-primary-container/20 transition-all">
-                        <span class="material-symbols-outlined text-base text-primary"
-                            style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
-                        <span class="">Rating: 8.0+</span>
-                        <span class="material-symbols-outlined text-sm">expand_more</span>
-                    </button>
-                </div>
-                <div class="relative group shrink-0">
-                </div>
-            </div>
-            <div
-                class="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-outline-variant/20">
-                <div class="flex items-center gap-2">
-                    <label class="text-on-surface-variant text-label-md font-label-md whitespace-nowrap"
-                        for="sortSelector">
-                        Sort by:
-                    </label>
 
+                <hr class="border-outline-variant/20">
+
+                <!-- Sort By -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-on-surface font-label-lg text-label-lg font-semibold flex items-center gap-1.5" for="sortSelector">
+                        Sort by
+                    </label>
                     <div class="relative">
                         <select
-                            class="appearance-none bg-surface-container-lowest border border-outline-variant/40 hover:border-primary text-on-surface text-label-md font-label-md rounded-lg pl-3 pr-8 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary transition-colors cursor-pointer"
+                            class="w-full appearance-none bg-surface-container-lowest border border-outline-variant/40 hover:border-primary text-on-surface text-label-md font-label-md rounded-lg pl-3 pr-8 py-2 focus:outline-none focus:ring-1 focus:ring-primary transition-colors cursor-pointer"
                             id="sortSelector">
-                            <option selected="">Highest Rated</option>
-                            <option>Alphabetical (A-Z)</option>
+                            <option selected="">Highest rating</option>
+                            <option>Alphabet A-Z</option>
                         </select>
-
-                        <span
-                            class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] pointer-events-none">
+                        <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] pointer-events-none">
                             keyboard_arrow_down
                         </span>
                     </div>
                 </div>
 
-            </div>
-        </section>
-        <section class="w-full flex flex-col gap-6" id="resultsContainer">
-            <div class="flex items-center justify-between">
-                <h2 class="font-headline-sm text-headline-sm font-semibold text-on-surface flex items-center gap-2">
-                    <span class="">Search Result</span>
-                </h2>
-                <div class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant">
+                <hr class="border-outline-variant/20">
+
+                <!-- Rating Slider -->
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center justify-between">
+                        <label class="text-on-surface font-label-lg text-label-lg font-semibold flex items-center gap-1.5">
+                            Rating
+                        </label>
+                        <span id="ratingValue" class="text-primary font-label-md text-label-md font-bold">0+</span>
+                    </div>
+                    <input type="range" min="0" max="10" step="0.5" value="0" id="ratingSlider"
+                        class="w-full accent-primary bg-surface-container-high h-2 rounded-lg cursor-pointer"
+                        oninput="document.getElementById('ratingValue').textContent = this.value + '+'">
                 </div>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <div
-                    th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+
+                <hr class="border-outline-variant/20">
+
+                <!-- Year Range Slider -->
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center justify-between">
+                        <label class="text-on-surface font-label-lg text-label-lg font-semibold flex items-center gap-1.5">
+                            Year
+                        </label>
+                        <span id="yearValue" class="text-primary font-label-md text-label-md font-bold">1900 - 2026</span>
+                    </div>
+                    <div class="relative w-full h-6 flex items-center">
+                        <div class="absolute w-full h-2 bg-surface-container-high rounded-lg pointer-events-none"></div>
+                        <div id="yearTrack" class="absolute h-2 bg-primary rounded-lg pointer-events-none" style="left: 0%; right: 0%;"></div>
+                        <input type="range" min="1900" max="2026" value="1900" id="yearStartSlider"
+                            class="absolute w-full h-2 appearance-none bg-transparent pointer-events-none cursor-pointer accent-primary [&::-webkit-slider-thumb]:pointer-events-auto [&::-moz-range-thumb]:pointer-events-auto [&::-webkit-slider-runnable-track]:bg-transparent [&::-moz-range-track]:bg-transparent z-20"
+                            oninput="updateYearSlider('start')">
+                        <input type="range" min="1900" max="2026" value="2026" id="yearEndSlider"
+                            class="absolute w-full h-2 appearance-none bg-transparent pointer-events-none cursor-pointer accent-primary [&::-webkit-slider-thumb]:pointer-events-auto [&::-moz-range-thumb]:pointer-events-auto [&::-webkit-slider-runnable-track]:bg-transparent [&::-moz-range-track]:bg-transparent z-10"
+                            oninput="updateYearSlider('end')">
+                    </div>
                 </div>
-                <div
-                    th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+
+                <hr class="border-outline-variant/20">
+
+                <!-- Genre Checkboxes -->
+                <div class="flex flex-col gap-3">
+                    <label class="text-on-surface font-label-lg text-label-lg font-semibold flex items-center gap-1.5">
+                        Genre
+                    </label>
+                    <div class="flex flex-col gap-2 max-h-60 overflow-y-auto pr-1 scrollbar-thin">
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="Action" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> Action
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="Adventure" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> Adventure
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="Animation" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> Animation
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="Comedy" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> Comedy
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="Crime" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> Crime
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="Documentary" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> Documentary
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="Drama" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> Drama
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="Family" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> Family
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="Fantasy" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> Fantasy
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="History" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> History
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="Horror" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> Horror
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="Music" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> Music
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="Mystery" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> Mystery
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="Romance" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> Romance
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="Science Fiction" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> Science Fiction
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="TV Movie" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> TV Movie
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="Thriller" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> Thriller
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="War" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> War
+                        </label>
+                        <label class="flex items-center gap-2.5 text-on-surface-variant hover:text-on-surface text-label-md cursor-pointer">
+                            <input type="checkbox" value="Western" class="rounded border-outline-variant accent-primary w-4 h-4 cursor-pointer"> Western
+                        </label>
+                    </div>
                 </div>
-                <div
-                    th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+            </aside>
+
+            <!-- Movie Results (Right) -->
+            <section class="flex-1 w-full flex flex-col gap-6" id="resultsContainer">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-headline-sm text-headline-lg font-semibold text-on-surface flex items-center gap-2">
+                        <span>Search Result</span>
+                    </h2>
+                    <div class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant">
+                    </div>
                 </div>
-                <div
-                    th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div
+                        th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+                    </div>
+                    <div
+                        th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+                    </div>
+                    <div
+                        th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+                    </div>
+                    <div
+                        th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+                    </div>
+                    <div
+                        th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+                    </div>
+                    <div
+                        th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+                    </div>
+                    <div
+                        th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+                    </div>
+                    <div
+                        th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+                    </div>
                 </div>
-                <div
-                    th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
+
+                <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-surface-container-low border border-outline-variant/20">
+                    <div class="flex items-center gap-2 text-on-surface-variant text-body-sm font-body-sm">
+                        <span>Showing Page 1 of 4 (28 Total Movies)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <button
+                            class="flex items-center justify-center px-3 py-1.5 rounded-lg border border-outline-variant/20 bg-surface-container text-on-surface-variant/40 cursor-not-allowed"
+                            disabled="">
+                            <span class="material-symbols-outlined text-sm">arrow_back</span>
+                            <span class="font-label-md text-label-md ml-1 hidden sm:inline">Previous</span>
+                        </button>
+                        <button
+                            class="w-9 h-9 rounded-lg bg-primary-container text-on-primary font-bold text-label-md flex items-center justify-center">
+                            1
+                        </button>
+                        <button
+                            class="w-9 h-9 rounded-lg bg-surface-container-lowest border border-outline-variant/30 text-on-surface hover:text-primary hover:border-primary text-label-md font-label-md flex items-center justify-center transition-colors">
+                            2
+                        </button>
+                        <button
+                            class="w-9 h-9 rounded-lg bg-surface-container-lowest border border-outline-variant/30 text-on-surface hover:text-primary hover:border-primary text-label-md font-label-md flex items-center justify-center transition-colors">
+                            3
+                        </button>
+                        <span class="px-1 text-on-surface-variant">...</span>
+                        <button
+                            class="w-9 h-9 rounded-lg bg-surface-container-lowest border border-outline-variant/30 text-on-surface hover:text-primary hover:border-primary text-label-md font-label-md flex items-center justify-center transition-colors">
+                            7
+                        </button>
+                        <button
+                            class="flex items-center justify-center px-3 py-1.5 rounded-lg border border-outline-variant/30 bg-surface-container hover:bg-surface-container-high text-on-surface hover:text-primary transition-colors">
+                            <span class="font-label-md text-label-md mr-1 hidden sm:inline">Next</span>
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </button>
+                    </div>
                 </div>
-                <div
-                    th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
-                </div>
-                <div
-                    th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
-                </div>
-                <div
-                    th:replace="~{fragments/search-movie-card :: search-movie-card(title='Synapse Protocol: Zero',poster='https://lh3.googleusercontent.com/aida-public/AB6AXuACBduXg0kwRZaORGjkIPt0ztmavfUbLxZ7AIVUfdDl6LuY7LM1fNL3zRkGGLs3hkPkGlVLDxLj6ghgPTP08AXpK4OlXxNY0JUKk_X9Tbe5xyYwC2ZcVtNLhIzNAkOOMxSY9o-pIMJMjiBmtE-VsYmTpj0Z_gVEKZ4R6aF_20YdYQCjdFx7fLoF0bmnl1lWBY9lCDhHFAMJgIW3z37PNNisPZhSvZbv3LrRIwOCGeCe5zutRoc1O4EHBA',rating='8.5',date='Jan 2024',duration='2h 12m',overview='An elite cadre of freelance neural infiltrators take on an impossible memory-extraction job inside an encrypted orbital mainframe.')}">
-                </div>
-            </div>
-            <div
-                class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-surface-container-low border border-outline-variant/20">
-                <div class="flex items-center gap-2 text-on-surface-variant text-body-sm font-body-sm">
-                    <span class="">Showing Page 1 of 4 (28 Total Movies)</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <button
-                        class="flex items-center justify-center px-3 py-1.5 rounded-lg border border-outline-variant/20 bg-surface-container text-on-surface-variant/40 cursor-not-allowed"
-                        disabled="">
-                        <span class="material-symbols-outlined text-sm">arrow_back</span>
-                        <span class="font-label-md text-label-md ml-1 hidden sm:inline">Previous</span>
-                    </button>
-                    <button
-                        class="w-9 h-9 rounded-lg bg-primary-container text-on-primary font-bold text-label-md flex items-center justify-center shadow-[0_0_12px_rgba(245,158,11,0.3)]">
-                        1
-                    </button>
-                    <button
-                        class="w-9 h-9 rounded-lg bg-surface-container-lowest border border-outline-variant/30 text-on-surface hover:text-primary hover:border-primary text-label-md font-label-md flex items-center justify-center transition-colors">
-                        2
-                    </button>
-                    <button
-                        class="w-9 h-9 rounded-lg bg-surface-container-lowest border border-outline-variant/30 text-on-surface hover:text-primary hover:border-primary text-label-md font-label-md flex items-center justify-center transition-colors">
-                        3
-                    </button>
-                    <span class="px-1 text-on-surface-variant">...</span>
-                    <button
-                        class="w-9 h-9 rounded-lg bg-surface-container-lowest border border-outline-variant/30 text-on-surface hover:text-primary hover:border-primary text-label-md font-label-md flex items-center justify-center transition-colors">
-                        7
-                    </button>
-                    <button
-                        class="flex items-center justify-center px-3 py-1.5 rounded-lg border border-outline-variant/30 bg-surface-container hover:bg-surface-container-high text-on-surface hover:text-primary transition-colors">
-                        <span class="font-label-md text-label-md mr-1 hidden sm:inline">Next</span>
-                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                    </button>
-                </div>
-            </div>
-        </section>
-        <section
-            class="w-full bg-surface-container-low border border-outline-variant/30 rounded-2xl p-12 text-center flex flex-col items-center justify-center relative overflow-hidden my-4 hidden"
-            id="emptyStateContainer">
-            <div
-                class="w-20 h-20 rounded-full bg-surface-container-high border border-outline-variant/40 flex items-center justify-center text-primary mb-6 shadow-inner">
-                <span class="material-symbols-outlined text-4xl">search_off</span>
-            </div>
-            <h3 class="font-headline-md text-headline-md font-bold text-on-surface mb-2">No movies found matching your
-                criteria</h3>
-            <p class="text-on-surface-variant font-body-lg text-body-lg max-w-xl mx-auto mb-8">
-                We couldn't find any films matching all applied filters. Try adjusting your mood, release year, or genre
-                filters to discover more cinematic titles.
-            </p>
-            <div class="flex flex-wrap items-center justify-center gap-4">
-                <button
-                    class="px-6 py-3 rounded-lg bg-primary-container text-on-primary font-bold text-label-lg font-label-lg flex items-center gap-2 hover:bg-primary-fixed-dim hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] transition-all"
-                    onclick="toggleEmptyState()">
-                    <span class="material-symbols-outlined text-xl">restart_alt</span>
-                    <span class="">Reset Filters</span>
-                </button>
-                <button
-                    class="px-6 py-3 rounded-lg bg-surface-container hover:bg-surface-container-high border border-outline-variant/40 text-on-surface hover:border-secondary hover:text-secondary text-label-lg font-label-lg flex items-center gap-2 transition-all">
-                    <span class="material-symbols-outlined text-xl">explore</span>
-                    <span class="">Explore Moods</span>
-                </button>
-            </div>
-            <div class="mt-8 pt-8 border-t border-outline-variant/20 flex flex-wrap items-center justify-center gap-2">
-                <span class="text-on-surface-variant text-label-sm font-label-sm">Popular searches:</span>
-                <button
-                    class="px-3 py-1 rounded-full bg-surface-container-lowest border border-outline-variant/30 text-on-surface text-label-sm font-label-sm hover:border-primary">Blade
-                    Runner</button>
-                <button
-                    class="px-3 py-1 rounded-full bg-surface-container-lowest border border-outline-variant/30 text-on-surface text-label-sm font-label-sm hover:border-primary">Dystopian
-                    Thriller</button>
-                <button
-                    class="px-3 py-1 rounded-full bg-surface-container-lowest border border-outline-variant/30 text-on-surface text-label-sm font-label-sm hover:border-primary">Christopher
-                    Nolan</button>
-                <button
-                    class="px-3 py-1 rounded-full bg-surface-container-lowest border border-outline-variant/30 text-on-surface text-label-sm font-label-sm hover:border-primary">Atmospheric
-                    Synth</button>
-            </div>
-        </section>
+
+                <section
+                    class="w-full bg-surface-container-low border border-outline-variant/30 rounded-2xl p-12 text-center flex flex-col items-center justify-center relative overflow-hidden my-4 hidden"
+                    id="emptyStateContainer">
+                    <div
+                        class="w-20 h-20 rounded-full bg-surface-container-high border border-outline-variant/40 flex items-center justify-center text-primary mb-6 shadow-inner">
+                        <span class="material-symbols-outlined text-4xl">search_off</span>
+                    </div>
+                    <h3 class="font-headline-md text-headline-md font-bold text-on-surface mb-2">No movies found matching your
+                        criteria</h3>
+                    <p class="text-on-surface-variant font-body-lg text-body-lg max-w-xl mx-auto mb-8">
+                        We couldn't find any films matching all applied filters. Try adjusting your mood, release year, or genre
+                        filters to discover more cinematic titles.
+                    </p>
+                    <div class="flex flex-wrap items-center justify-center gap-4">
+                        <button
+                            class="px-6 py-3 rounded-lg bg-primary-container text-on-primary font-bold text-label-lg font-label-lg flex items-center gap-2 hover:bg-primary-fixed-dim hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] transition-all"
+                            onclick="toggleEmptyState()">
+                            <span class="material-symbols-outlined text-xl">restart_alt</span>
+                            <span>Reset Filters</span>
+                        </button>
+                        <button
+                            class="px-6 py-3 rounded-lg bg-surface-container hover:bg-surface-container-high border border-outline-variant/40 text-on-surface hover:border-secondary hover:text-secondary text-label-lg font-label-lg flex items-center gap-2 transition-all">
+                            <span class="material-symbols-outlined text-xl">explore</span>
+                            <span>Explore Moods</span>
+                        </button>
+                    </div>
+                </section>
+            </section>
+        </div>
     </main>
     <footer th:replace="fragments/footer :: footer"></footer>
     <script src="../../static/js/search.js"></script>
+    <script>
+        function updateYearSlider(type) {
+            const min = 1900, max = 2026;
+            const startSlider = document.getElementById('yearStartSlider');
+            const endSlider = document.getElementById('yearEndSlider');
+            const yearValue = document.getElementById('yearValue');
+            const yearTrack = document.getElementById('yearTrack');
+
+            let start = parseInt(startSlider.value);
+            let end = parseInt(endSlider.value);
+
+            if (type === 'start' && start > end) {
+                startSlider.value = end;
+                start = end;
+            } else if (type === 'end' && end < start) {
+                endSlider.value = start;
+                end = start;
+            }
+
+            if (yearValue) yearValue.textContent = start + ' - ' + end;
+            if (yearTrack) {
+                yearTrack.style.left = ((start - min) / (max - min) * 100) + '%';
+                yearTrack.style.right = (100 - ((end - min) / (max - min) * 100)) + '%';
+            }
+        }
+    </script>
 </body>
 
 </html>

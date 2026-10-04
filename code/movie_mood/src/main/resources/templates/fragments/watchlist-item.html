@@ -1,13 +1,18 @@
 <a th:fragment="watchlist-item(title, poster)" th:href="@{/playlist/movielist}"
-    class="group flex flex-col md:flex-row items-center gap-4 p-3.5 rounded-xl bg-surface-container border border-[#232D42] hover:border-primary/60 transition-all duration-200">
-    <div
-        class="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-highest border border-[#232D42]">
-        <img class="w-full h-full object-cover" th:src="${poster}">
-    </div>
-    <div class="space-y-1">
-        <h4 class="text-title-md font-title-md font-semibold text-on-surface group-hover:text-primary transition-colors"
+    class="group relative aspect-video w-full rounded-xl overflow-hidden border border-[#232D42] hover:border-primary/60 transition-all duration-200 flex flex-col items-center justify-center p-6 text-center shadow-lg">
+    <!-- Background Image -->
+    <img class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" th:src="${poster}">
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-gradient-to-t from-background/90 via-background/60 to-background/30 group-hover:via-background/50 transition-colors"></div>
+    
+    <!-- Content -->
+    <div class="relative z-10 flex flex-col items-center gap-1">
+        <h4 class="text-headline-sm font-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors drop-shadow-md"
             th:text="${title}">
             Movie Title
         </h4>
+        <span class="text-body-sm font-body-sm text-on-surface-variant/80 font-medium">
+            10 Movies
+        </span>
     </div>
 </a>
