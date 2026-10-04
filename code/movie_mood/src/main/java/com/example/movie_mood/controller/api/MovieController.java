@@ -6,15 +6,24 @@ import com.example.movie_mood.mapper.MovieMapper;
 import com.example.movie_mood.service.MovieService;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.constraints.NotBlank;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Positive;
 import org.springframework.validation.annotation.Validated;
-
+import com.example.movie_mood.dto.response.ErrorResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/movies")
 @Validated
+@Tag(
+        name = "Movies",
+        description = "Browse, search, and view movie details from TMDB"
+)
 public class MovieController {
 
     private final MovieService movieService;
@@ -30,7 +39,14 @@ public class MovieController {
         this.movieDetailFacade = movieDetailFacade;
         this.movieMapper = movieMapper;
     }
-
+    @Operation(
+        summary = "Browse popular movies",
+        description = "Returns a list of popular movies from TMDB"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "Popular movies retrieved successfully"
+    )
     @GetMapping
     public List<MovieResponse> browseMovies() {
 
@@ -39,6 +55,24 @@ public class MovieController {
         );
     }
 
+
+    @Operation(
+        summary = "Search movies",
+        description = "Searches TMDB movies using the provided keyword"
+    )
+    @ApiResponses({
+        @ApiResponse(
+                responseCode = "200",
+                description = "Movies retrieved successfully"
+        ),
+        @ApiResponse(
+                responseCode = "400",
+                description = "Search keyword is blank or invalid",
+                content = @Content(
+                        schema = @Schema(implementation = ErrorResponse.class)
+                )
+        )
+})
    @GetMapping("/search")
     public List<MovieResponse> searchMovies(
         @RequestParam @NotBlank String keyword) {
@@ -47,6 +81,31 @@ public class MovieController {
             movieService.searchMovies(keyword)
     );
     }
+
+    @Operation(
+        summary = "Get movie details",
+        description = "Returns details of a movie using its TMDB movie ID"
+    )
+   @ApiResponses({
+        @ApiResponse(
+                responseCode = "200",
+                description = "Movie retrieved successfully"
+        ),
+        @ApiResponse(
+                responseCode = "400",
+                description = "TMDB movie ID must be positive",
+                content = @Content(
+                        schema = @Schema(implementation = ErrorResponse.class)
+                )
+        ),
+        @ApiResponse(
+                responseCode = "404",
+                description = "Movie not found",
+                content = @Content(
+                        schema = @Schema(implementation = ErrorResponse.class)
+                )
+        )
+})
 
     @GetMapping("/{tmdbMovieId}")
 public MovieResponse getMovieDetails(
