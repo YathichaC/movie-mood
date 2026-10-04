@@ -30,4 +30,11 @@ public class MovieServiceImpl implements MovieService {
     public Movie getMovieDetails(Long tmdbMovieId) {
         return movieProvider.getMovie(tmdbMovieId);
     }
+
+    @Override
+    public List<Movie> filterMoviesByGenre(Integer genreId) {
+    return movieProvider.discoverMoviesByGenres(
+            List.of(genreId)
+    );
+}
 }

@@ -116,4 +116,32 @@ public MovieResponse getMovieDetails(
      );
     }
 
+@Operation(
+        summary = "Filter movies by genre",
+        description = "Returns movies from TMDB filtered by a genre ID"
+        )
+@ApiResponses({
+@ApiResponse(
+                responseCode = "200",
+                description = "Movies filtered successfully"
+        ),
+@ApiResponse(
+                responseCode = "400",
+                description = "Genre ID must be positive",
+                content = @Content(
+                        schema = @Schema(implementation = ErrorResponse.class)
+                )
+        )
+})
+@GetMapping("/filter")
+public List<MovieResponse> filterMoviesByGenre(
+        @RequestParam
+        @Positive(message = "genreId must be greater than 0")
+        Integer genreId) {
+
+    return movieMapper.toResponseList(
+            movieService.filterMoviesByGenre(genreId)
+    );
+}
+
 }

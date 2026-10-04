@@ -11,4 +11,6 @@ public interface MovieService {
     List<Movie> searchMovies(String keyword);
 
     Movie getMovieDetails(Long tmdbMovieId);
+
+    List<Movie> filterMoviesByGenre(Integer genreId);
 }
