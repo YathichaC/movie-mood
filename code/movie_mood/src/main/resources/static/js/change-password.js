@@ -55,28 +55,28 @@ function validatePasswordStrength(pwd) {
 
     if (!pwd) {
         label.textContent = 'Empty';
-        label.className = 'font-label-sm text-label-sm text-on-surface-variant font-semibold';
+        label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
         return;
     }
 
     if (score === 1) {
         label.textContent = 'Weak';
-        label.className = 'font-label-sm text-label-sm text-error font-semibold';
+                    label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
         bars[0].className = 'h-full rounded-full bg-error transition-colors duration-300';
     } else if (score === 2) {
         label.textContent = 'Fair';
-        label.className = 'font-label-sm text-label-sm text-primary font-semibold';
+        label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
         bars[0].className = 'h-full rounded-full bg-primary-container transition-colors duration-300';
         bars[1].className = 'h-full rounded-full bg-primary-container transition-colors duration-300';
     } else if (score === 3) {
         label.textContent = 'Good';
-        label.className = 'font-label-sm text-label-sm text-secondary transition-colors duration-300 font-semibold';
+        label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
         bars[0].className = 'h-full rounded-full bg-secondary transition-colors duration-300';
         bars[1].className = 'h-full rounded-full bg-secondary transition-colors duration-300';
         bars[2].className = 'h-full rounded-full bg-secondary transition-colors duration-300';
     } else if (score === 4) {
         label.textContent = 'Strong';
-        label.className = 'font-label-sm text-label-sm text-secondary-fixed-dim font-bold';
+        label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
         bars.forEach(b => {
             b.className = 'h-full rounded-full bg-secondary transition-colors duration-300';
         });

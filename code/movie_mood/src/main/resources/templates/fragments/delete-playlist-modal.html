@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="delete-playlist-modal">
+    <div class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4" id="deleteModal">
+        <div class="w-full max-w-sm bg-[#0A0A0A] border border-[#262626] rounded-sm p-6 flex flex-col gap-4">
+            <div class="flex flex-col gap-1">
+                <h3 class="text-lg font-medium text-[#F5F5F5]">Delete Playlist?</h3>
+                <p class="text-sm text-[#A3A3A3]">This playlist and its contents will be permanently deleted.</p>
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-[#262626]">
+                <button
+                    class="px-4 py-2 border border-[#262626] bg-[#0A0A0A] hover:bg-[#141414] hover:border-neutral-500 text-xs uppercase tracking-widest text-[#F5F5F5] transition-colors rounded-sm"
+                    onclick="closeModal('deleteModal')" type="button">Cancel</button>
+                <button
+                    class="px-4 py-2 bg-[#F5F5F5] hover:bg-white text-black text-xs font-semibold uppercase tracking-widest transition-colors rounded-sm"
+                    onclick="closeModal('deleteModal')" type="button">Delete Playlist</button>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+</html>

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-
-<html class="dark" lang="en" style="">
+<html class="dark" lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -8,55 +7,55 @@
     <link rel="icon" type="image/png" th:href="@{/img/moviemood_logo.png}">
     <title>MovieMood</title>
     <link href="https://fonts.googleapis.com" rel="preconnect">
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Outfit:wght@400;500;600;700;800&amp;display=swap"
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap"
         rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script th:src="@{/js/tailwind-config.js}"></script>
 </head>
 
-<body
-    class="bg-surface-container-lowest text-on-surface font-body-md min-h-screen flex flex-col antialiased selection:bg-primary selection:text-on-primary">
+<body class="bg-[#000000] text-white font-['Outfit'] min-h-screen flex flex-col antialiased">
     <header th:replace="~{fragments/navbar :: navbar('playlist')}"></header>
-    <main class="flex-1 w-full max-w-[1600px] mx-auto px-6 md:px-12 py-8 space-y-10">
-        <section class="space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <h2 class="text-headline-md font-headline-md font-bold text-on-surface flex items-center gap-2">
-                        <span>Playlist</span>
-                        <span
-                            class="px-2.5 py-0.5 rounded-full bg-surface-container-high border border-[#232D42] text-label-md font-label-md text-primary font-bold">4</span>
-                    </h2>
+    <main class="flex-1 w-full max-w-[1500px] mx-auto px-6 md:px-10 lg:px-14 py-10">
+        <section>
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
+                <div>
+                    <p class="text-[11px] uppercase tracking-[0.28em] text-white/35 mb-2">Your Collection</p>
+                    <h1
+                        class="font-outfit text-4xl md:text-4xl lg:text-5xl font-light text-[#F5F5F5] tracking-tight mb-4 leading-[1.08]">
+                        Playlists
+                    </h1>
                 </div>
-                <div class="flex items-center gap-3">
-                    <button
-                        class="px-4 py-2 rounded-lg bg-primary-container text-on-primary-container hover:bg-[#ffb95f] font-bold text-label-md font-label-md flex items-center gap-2 transition-all duration-200 shadow-md"
-                        onclick="document.getElementById('create-playlist-modal').classList.remove('hidden')">
-                        <span class="material-symbols-outlined text-lg font-bold"
-                            data-icon="playlist_add">playlist_add</span>
-                        <span>Create New Playlist</span>
-                    </button>
+                <button type="button"
+                    onclick="document.getElementById('create-playlist-modal').classList.remove('hidden')"
+                    class="inline-flex items-center justify-center gap-2 rounded-full bg-white text-black px-5 py-3 text-sm font-medium hover:bg-white/90 transition">
+                    <span class="material-symbols-outlined text-[20px]">add</span>
+                    <span>Create Playlist</span>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5" id="playlist-items-list">
+                <div
+                    th:replace="~{fragments/watchlist-item :: watchlist-item('Whispers of the Wild','https://i.pinimg.com/1200x/cf/c9/4a/cfc94ad7e5884ffae2d3a22b48ff1289.jpg','5 Movies')}">
+                </div>
+                <div
+                    th:replace="~{fragments/watchlist-item :: watchlist-item('Stories from the Sea','https://i.pinimg.com/1200x/9b/73/4e/9b734e8497efe0009a2fc6890d78ca4f.jpg','3 Movies')}">
+                </div>
+                <div
+                    th:replace="~{fragments/watchlist-item :: watchlist-item('Wong Kar-wai Essentials','https://i.pinimg.com/736x/a0/26/8a/a0268a8180c50b0c326e220a6c004280.jpg','5 Movies')}">
+                </div>
+                <div
+                    th:replace="~{fragments/watchlist-item :: watchlist-item('Stories in Sound','https://i.pinimg.com/736x/6c/9f/75/6c9f75fa42f9dc02353263a82b38c81f.jpg','4 Movies')}">
+                </div>
+                <div
+                    th:replace="~{fragments/watchlist-item :: watchlist-item('Lost in Tokyo','https://i.pinimg.com/1200x/18/00/e0/1800e066e2a4c2fdfe3a87aa33539086.jpg','6 Movies')}">
+                </div>
+                <div
+                    th:replace="~{fragments/watchlist-item :: watchlist-item('A Little Escape','https://i.pinimg.com/1200x/71/d8/c9/71d8c966f74fdb3721c5956f6e0456ae.jpg','7 Movies')}">
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="playlist-items-list">
-                <div
-                    th:replace="~{fragments/watchlist-item :: watchlist-item('Blade Runner: Nexus Rebirth','https://i.pinimg.com/236x/29/8b/4d/298b4db780a05dd4e6ef2553e169fc59.jpg?nii=t')}">
-                </div>
-                <div
-                    th:replace="~{fragments/watchlist-item :: watchlist-item('Blade Runner: Nexus Rebirth','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRchoWq1ecTtFEKHgffT377-0E67DKnGUJPS6J_bUW_G0__3CUFMEr1NNM&s=10')}">
-                </div>
-                <div
-                    th:replace="~{fragments/watchlist-item :: watchlist-item('Blade Runner: Nexus Rebirth','https://i.pinimg.com/236x/fb/d1/ae/fbd1ae336f6b5dfa01df93549d0639ce.jpg')}">
-                </div>
-                <div
-                    th:replace="~{fragments/watchlist-item :: watchlist-item('Blade Runner: Nexus Rebirth','https://media.tenor.com/tt_Ue76ICcIAAAAe/hamster-hamster-meme.png')}">
-                </div>
-            </div>
-            <div class="pt-2 text-center"></div>
         </section>
     </main>
     <div th:replace="~{fragments/create-playlist-modal :: createPlaylistModal}"></div>

@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (resendBtn) {
         resendBtn.addEventListener('click', () => {
           if (secondsLeft <= 0) {
-            // Trigger feedback toast
             if (toast) {
               toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
               toast.classList.add('translate-y-0', 'opacity-100');
@@ -37,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
               }, 4000);
             }
 
-            // Reset countdown cycle
             secondsLeft = 60;
             resendBtn.disabled = true;
             resendBtn.classList.add('opacity-60', 'cursor-not-allowed');

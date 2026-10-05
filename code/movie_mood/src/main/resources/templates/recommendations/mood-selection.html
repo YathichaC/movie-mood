@@ -1,94 +1,131 @@
 <!DOCTYPE html>
-<html class="dark" lang="en" style="">
+<html class="dark" lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <link rel="icon" type="image/png" th:href="@{/img/moviemood_logo.png}">
     <title>MovieMood</title>
     <link href="https://fonts.googleapis.com" rel="preconnect">
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Outfit:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script th:src="@{/js/tailwind-config.js}"></script>
+    <style>
+        .mood-item.selected {
+            border-color: #FFFFFF !important;
+        }
+        .mood-item.selected .mood-title {
+            color: #FFFFFF !important;
+        }
+    </style>
 </head>
-<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col selection:bg-primary selection:text-on-primary font-body-md text-body-md overflow-x-hidden">
+
+<body
+    class="bg-[#000000] text-[#F5F5F5] font-manrope antialiased selection:bg-[#B8A58A] selection:text-[#000000] min-h-screen flex flex-col">
     <header th:replace="~{fragments/navbar :: navbar('recommendations')}"></header>
-    <main class="flex-1 w-full max-w-[1600px] mx-auto px-6 md:px-12 py-8 flex flex-col gap-10">
-        <section class="flex flex-col items-center text-center max-w-4xl mx-auto space-y-4 pt-4">
-            <h1 class="text-display-hero font-display-hero text-on-surface tracking-tight">
-                How are you feeling right now?
-            </h1>
-            <p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl mx-auto">
-                How are you feeling today? Choose a mood that reflects your emotions, and let Movie Mood guide you on a cinematic journey to discover the perfect films that match your vibe.
+    <main
+        class="mood-page-main flex-grow w-full max-w-7xl mx-auto px-5 md:px-10 pt-8 md:pt-10 pb-6 flex flex-col justify-center">
+        <header class="mood-heading text-center max-w-2xl mx-auto mb-7 md:mb-9">
+            <p class="font-outfit text-xs text-neutral-500 uppercase tracking-[0.2em] mb-2">
+                HOW ARE YOU FEELING?
             </p>
-            <div class="flex flex-wrap items-center justify-center gap-2 pt-2 text-label-sm font-label-sm text-on-surface-variant/80"></div>
+            <h1 class="font-outfit text-5xl md:text-6xl lg:text-4xl font-light text-[#F5F5F5] tracking-tight mb-4 leading-[1.08]">
+                Choose Your Mood
+            </h1>
+            <p class="font-outfit text-body-md text-[#A3A3A3] font-normal leading-relaxed">
+                Tell us how you feel. We'll find films that match your mood.
+            </p>
+        </header>
+        <section aria-label="Mood Options"
+            class="mood-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-10 max-w-5xl mx-auto w-full">
+            <article aria-pressed="false"
+                class="mood-card mood-item group relative flex flex-col items-center text-center cursor-pointer select-none transition-all duration-300 rounded-lg border border-[#A3A3A3] bg-[#050505] px-5 py-6 hover:border-[#FFFFFF] hover:bg-neutral-950"
+                data-mood="Happy" data-selected-class="selected" role="button" tabindex="0">
+                <h3
+                    class="mood-title font-outfit text-lg font-medium text-[#A3A3A3] group-hover:text-[#F5F5F5] transition-colors duration-200 mb-1.5">
+                    Happy
+                </h3>
+                <p
+                    class="font-outfit text-xs text-[#737373] group-hover:text-[#A3A3A3] transition-colors duration-200 leading-relaxed max-w-xs">
+                    High energy, adrenaline, thrilling escapism, and sensory cinematic acceleration.
+                </p>
+            </article>
+            <article aria-pressed="false"
+                class="mood-card mood-item group relative flex flex-col items-center text-center cursor-pointer select-none transition-all duration-300 rounded-lg border border-[#A3A3A3] bg-[#050505] px-5 py-6 hover:border-[#FFFFFF] hover:bg-neutral-950"
+                data-mood="Sad" data-selected-class="selected" role="button" tabindex="0">
+                <h3
+                    class="mood-title font-outfit text-lg font-medium text-[#A3A3A3] group-hover:text-[#F5F5F5] transition-colors duration-200 mb-1.5">
+                    Sad
+                </h3>
+                <p
+                    class="font-outfit text-xs text-[#737373] group-hover:text-[#A3A3A3] transition-colors duration-200 leading-relaxed max-w-xs">
+                    Calm, reflective, comforting storytelling designed to gently unwind mental static.
+                </p>
+            </article>
+            <article aria-pressed="false"
+                class="mood-card mood-item group relative flex flex-col items-center text-center cursor-pointer select-none transition-all duration-300 rounded-lg border border-[#A3A3A3] bg-[#050505] px-5 py-6 hover:border-[#FFFFFF] hover:bg-neutral-950"
+                data-mood="Scary" data-selected-class="selected" role="button" tabindex="0">
+                <h3
+                    class="mood-title font-outfit text-lg font-medium text-[#A3A3A3] group-hover:text-[#F5F5F5] transition-colors duration-200 mb-1.5">
+                    Scary
+                </h3>
+                <p
+                    class="font-outfit text-xs text-[#737373] group-hover:text-[#A3A3A3] transition-colors duration-200 leading-relaxed max-w-xs">
+                    Passion, intimacy, heartwarming connection, and profound emotional depth.
+                </p>
+            </article>
+            <article aria-pressed="false"
+                class="mood-card mood-item group relative flex flex-col items-center text-center cursor-pointer select-none transition-all duration-300 rounded-lg border border-[#A3A3A3] bg-[#050505] px-5 py-6 hover:border-[#FFFFFF] hover:bg-neutral-950"
+                data-mood="Romantic" data-selected-class="selected" role="button" tabindex="0">
+                <h3
+                    class="mood-title font-outfit text-lg font-medium text-[#A3A3A3] group-hover:text-[#F5F5F5] transition-colors duration-200 mb-1.5">
+                    Romantic
+                </h3>
+                <p
+                    class="font-outfit text-xs text-[#737373] group-hover:text-[#A3A3A3] transition-colors duration-200 leading-relaxed max-w-xs">
+                    Cathartic, poignant, touching narratives that evoke honest, deep-felt release.
+                </p>
+            </article>
+            <article aria-pressed="false"
+                class="mood-card mood-item group relative flex flex-col items-center text-center cursor-pointer select-none transition-all duration-300 rounded-lg border border-[#A3A3A3] bg-[#050505] px-5 py-6 hover:border-[#FFFFFF] hover:bg-neutral-950"
+                data-mood="Excited" data-selected-class="selected" role="button" tabindex="0">
+                <h3
+                    class="mood-title font-outfit text-lg font-medium text-[#A3A3A3] group-hover:text-[#F5F5F5] transition-colors duration-200 mb-1.5">
+                    Excited
+                </h3>
+                <p
+                    class="font-outfit text-xs text-[#737373] group-hover:text-[#A3A3A3] transition-colors duration-200 leading-relaxed max-w-xs">
+                    Uplifting, lighthearted, vibrant, and pure comedic joy to brighten the room.
+                </p>
+            </article>
+            <article aria-pressed="false"
+                class="mood-card mood-item group relative flex flex-col items-center text-center cursor-pointer select-none transition-all duration-300 rounded-lg border border-[#A3A3A3] bg-[#050505] px-5 py-6 hover:border-[#FFFFFF] hover:bg-neutral-950"
+                data-mood="Relaxed" data-selected-class="selected" role="button" tabindex="0">
+                <h3
+                    class="mood-title font-outfit text-lg font-medium text-[#A3A3A3] group-hover:text-[#F5F5F5] transition-colors duration-200 mb-1.5">
+                    Relaxed
+                </h3>
+                <p
+                    class="font-outfit text-xs text-[#737373] group-hover:text-[#A3A3A3] transition-colors duration-200 leading-relaxed max-w-xs">
+                    Suspenseful, eerie, psychological dread, and spine-chilling existential mystery.
+                </p>
+            </article>
         </section>
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div data-mood data-selected-class="border-primary-container shadow-[0_0_24px_rgba(245,158,11,0.3)]" class="group relative rounded-xl bg-surface-container-low/80 border border-outline-variant/30 p-6 backdrop-blur-md hover:border-primary-container hover:shadow-[0_0_24px_rgba(245,158,11,0.3)] transition-all duration-300 flex flex-col justify-between cursor-pointer overflow-hidden">
-                <div class="absolute -right-12 -top-12 w-36 h-36 bg-primary-container/10 rounded-full blur-2xl group-hover:bg-primary-container/20 transition-all pointer-events-none"></div>
-                <div>
-                    <h3 class="text-headline-md font-headline-md text-on-surface mb-2 flex items-center gap-2">Happy</h3>
-                    <p class="text-body-md font-body-md text-on-surface-variant mb-6">
-                        High energy, adrenaline, thrilling escapism, and sensory cinematic acceleration.
-                    </p>
-                </div>
-            </div>
-            <div data-mood data-selected-class="border-indigo-500 shadow-[0_0_24px_rgba(99,102,241,0.3)]" class="group relative rounded-xl bg-surface-container-low/80 border border-outline-variant/30 p-6 backdrop-blur-md hover:border-indigo-500 hover:shadow-[0_0_24px_rgba(99,102,241,0.3)] transition-all duration-300 flex flex-col justify-between cursor-pointer overflow-hidden">
-                <div class="absolute -right-12 -top-12 w-36 h-36 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-all pointer-events-none"></div>
-                <div>
-                    <h3 class="text-headline-md font-headline-md text-on-surface mb-2 flex items-center gap-2">Sad</h3>
-                    <p class="text-body-md font-body-md text-on-surface-variant mb-6">
-                        Calm, reflective, comforting storytelling designed to gently unwind mental static.
-                    </p>
-                </div>
-            </div>
-            <div data-mood data-selected-class="border-purple-500/80 shadow-[0_0_24px_rgba(168,85,247,0.25)]" class="group relative rounded-xl bg-surface-container-low/80 border border-outline-variant/30 p-6 backdrop-blur-md hover:border-purple-500/80 hover:shadow-[0_0_24px_rgba(168,85,247,0.25)] transition-all duration-300 flex flex-col justify-between cursor-pointer overflow-hidden">
-                <div class="absolute -right-12 -top-12 w-36 h-36 bg-purple-600/10 rounded-full blur-2xl group-hover:bg-purple-600/20 transition-all pointer-events-none"></div>
-                <div>
-                    <h3 class="text-headline-md font-headline-md text-on-surface mb-2 flex items-center gap-2">Scary</h3>
-                    <p class="text-body-md font-body-md text-on-surface-variant mb-6">
-                        Passion, intimacy, heartwarming connection, and profound emotional depth.
-                    </p>
-                </div>
-            </div>
-            <div data-mood data-selected-class="border-pink-500 shadow-[0_0_24px_rgba(236,72,153,0.3)]" class="group relative rounded-xl bg-surface-container-low/80 border border-outline-variant/30 p-6 backdrop-blur-md hover:border-pink-500 hover:shadow-[0_0_24px_rgba(236,72,153,0.3)] transition-all duration-300 flex flex-col justify-between cursor-pointer overflow-hidden">
-                <div class="absolute -right-12 -top-12 w-36 h-36 bg-pink-500/10 rounded-full blur-2xl group-hover:bg-pink-500/20 transition-all pointer-events-none"></div>
-                <div>
-                    <h3 class="text-headline-md font-headline-md text-on-surface mb-2 flex items-center gap-2">Romantic</h3>
-                    <p class="text-body-md font-body-md text-on-surface-variant mb-6">
-                        Cathartic, poignant, touching narratives that evoke honest, deep-felt release.
-                    </p>
-                </div>
-            </div>
-            <div data-mood data-selected-class="border-orange-500 shadow-[0_0_24px_rgba(249,115,22,0.3)]" class="group relative rounded-xl bg-surface-container-low/80 border border-outline-variant/30 p-6 backdrop-blur-md hover:border-orange-500 hover:shadow-[0_0_24px_rgba(249,115,22,0.3)] transition-all duration-300 flex flex-col justify-between cursor-pointer overflow-hidden">
-                <div class="absolute -right-12 -top-12 w-36 h-36 bg-orange-500/10 rounded-full blur-2xl group-hover:bg-orange-500/20 transition-all pointer-events-none"></div>
-                <div>
-                    <h3 class="text-headline-md font-headline-md text-on-surface mb-2 flex items-center gap-2">Excited</h3>
-                    <p class="text-body-md font-body-md text-on-surface-variant mb-6">
-                        Uplifting, lighthearted, vibrant, and pure comedic joy to brighten the room.
-                    </p>
-                </div>
-            </div>
-            <div data-mood data-selected-class="border-emerald-500 shadow-[0_0_24px_rgba(16,185,129,0.3)]" class="group relative rounded-xl bg-surface-container-low/80 border border-outline-variant/30 p-6 backdrop-blur-md hover:border-emerald-500 hover:shadow-[0_0_24px_rgba(16,185,129,0.3)] transition-all duration-300 flex flex-col justify-between cursor-pointer overflow-hidden">
-                <div class="absolute -right-12 -top-12 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all pointer-events-none"></div>
-                <div>
-                    <h3 class="text-headline-md font-headline-md text-on-surface mb-2 flex items-center gap-2">Relaxed</h3>
-                    <p class="text-body-md font-body-md text-on-surface-variant mb-6">
-                        Suspenseful, eerie, psychological dread, and spine-chilling existential mystery.
-                    </p>
-                </div>
-            </div>
-        </section>
-        <section id="recommendationAction" class="w-full flex items-center justify-center mt-6 hidden">
-            <button id="nextButton" type="button" class="inline-flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-primary-container text-on-primary font-bold text-label-xl hover:bg-primary active:opacity-80 transition-all duration-200 cursor-pointer">
-                <span>Next</span>
-                <span class="material-symbols-outlined text-label-lg">arrow_forward</span>
+        <section id="recommendationAction" aria-label="Action Controls"
+            class="pt-10 flex items-center justify-center text-center hidden">
+            <button id="nextButton" type="button"
+                class="bg-[#FFFFFF] text-[#000000] hover:bg-[#E8E8E8] transition-colors duration-150 font-outfit font-medium text-sm tracking-wide px-10 py-3 rounded-[4px] focus:outline-none focus:ring-1 focus:ring-white">
+                Continue
             </button>
         </section>
-        <script th:src="@{/js/mood-selection.js}"></script>
     </main>
     <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/mood-selection.js}"></script>
 </body>
+
 </html>

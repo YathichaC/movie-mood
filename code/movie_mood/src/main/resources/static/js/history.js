@@ -1,15 +1,25 @@
-function toggleState() {
-    const populated = document.getElementById('populatedWatchHistoryView');
-    const empty = document.getElementById('emptyWatchHistoryView');
-    const btnText = document.getElementById('toggleButtonText');
+const clearBtn = document.getElementById('clear-history-btn');
+const modal = document.getElementById('clear-modal');
+const cancelBtn = document.getElementById('cancel-clear-btn');
+const confirmBtn = document.getElementById('confirm-clear-btn');
+const container = document.getElementById('history-container');
+const emptyState = document.getElementById('empty-state');
 
-    if (populated.classList.contains('hidden')) {
-        populated.classList.remove('hidden');
-        empty.classList.add('hidden');
-        btnText.innerText = 'Preview Empty State';
-    } else {
-        populated.classList.add('hidden');
-        empty.classList.remove('hidden');
-        btnText.innerText = 'View Watched Grid';
-    }
-}
+clearBtn?.addEventListener('click', () => {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+});
+
+cancelBtn?.addEventListener('click', () => {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+});
+
+confirmBtn?.addEventListener('click', () => {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    container.classList.add('hidden');
+    emptyState.classList.remove('hidden');
+    emptyState.classList.add('flex');
+    clearBtn.classList.add('hidden');
+});

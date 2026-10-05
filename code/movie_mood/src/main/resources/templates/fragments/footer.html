@@ -1,51 +1,18 @@
-<footer th:fragment="footer"
-        class="bg-surface-container-lowest
-               w-full
-               mt-auto
-               border-t
-               border-outline-variant/20">
-        <div class="flex flex-col
-                md:flex-row
-                justify-between
-                items-center
-                w-full
-                px-4 md:px-12
-                py-6 md:py-8
-                max-w-[1600px]
-                mx-auto
-                gap-4
-                text-center md:text-left">
-            <div class="flex flex-col
-                    sm:flex-row
-                    items-center
-                    gap-2 md:gap-3">
-                <span class="text-body-sm
-                         font-body-sm
-                         text-on-surface-variant">
-                    © 2026 MovieMood. All rights reserved.
-                </span>
-            </div>
-            <div class="flex flex-wrap
-                    items-center
-                    justify-center
-                    gap-4 md:gap-6">
-                <a class="text-label-sm
-                      font-label-sm
-                      text-on-surface-variant
-                      hover:text-primary
-                      hover:underline
-                      transition-colors duration-200"
-                    th:href="@{/privacy-policy}">
-                    Privacy Policy
-                </a>
-                <a class="text-label-sm
-                      font-label-sm
-                      text-on-surface-variant
-                      hover:text-primary
-                      transition-colors duration-200"
-                    th:href="@{/terms-of-service}">
-                    Terms of Service
-                </a>
-            </div>
-        </div>
-    </footer>
+<footer th:fragment="footer" class="w-full py-8 px-6 md:px-12 border-t border-[#262626] bg-[#000000] text-[#A3A3A3]">
+    <div
+        class="w-full max-w-[380px] md:max-w-none mx-auto flex flex-col md:flex-row items-center md:justify-between gap-3 text-center md:text-left">
+        <span class="font-sans text-[12px] leading-5 tracking-[0.12em] uppercase">
+            © 2026 MOVIEMOOD ARCHIVE.
+        </span>
+        <nav class="flex items-center justify-center gap-5 md:gap-6" aria-label="Footer navigation">
+            <a href="#"
+                class="font-sans text-[12px] tracking-[0.12em] uppercase hover:text-[#B8A58A] transition-colors">
+                Terms of Service
+            </a>
+            <a href="#"
+                class="font-sans text-[12px] tracking-[0.12em] uppercase hover:text-[#B8A58A] transition-colors">
+                Privacy Policy
+            </a>
+        </nav>
+    </div>
+</footer>
