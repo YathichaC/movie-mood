@@ -1,6 +1,7 @@
 package com.example.movie_mood.integration.tmdb;
 
 import com.example.movie_mood.domain.model.Movie;
+import com.example.movie_mood.integration.tmdb.dto.TmdbGenreResponse;
 import com.example.movie_mood.integration.tmdb.dto.TmdbMovieListResponse;
 import com.example.movie_mood.integration.tmdb.dto.TmdbMovieResponse;
 import org.springframework.stereotype.Component;
@@ -62,14 +63,26 @@ public class TmdbMovieAdapter implements MovieProvider {
         movie.setTitle(response.getTitle());
         movie.setSynopsis(response.getOverview());
         movie.setRating(response.getVoteAverage());
-        movie.setGenreIds(response.getGenreIds());
+
+        if (response.getGenreIds() != null) {
+            movie.setGenreIds(response.getGenreIds());
+        } else if (response.getGenres() != null) {
+            movie.setGenreIds(
+                    response.getGenres()
+                            .stream()
+                            .map(TmdbGenreResponse::getId)
+                            .toList()
+            );
+        }
+
         movie.setPosterPath(response.getPosterPath());
         movie.setBackdropPath(response.getBackdropPath());
 
         if (response.getReleaseDate() != null
                 && !response.getReleaseDate().isBlank()) {
             movie.setReleaseDate(
-                    LocalDate.parse(response.getReleaseDate()));
+                    LocalDate.parse(response.getReleaseDate())
+            );
         }
 
         return movie;
@@ -78,7 +91,8 @@ public class TmdbMovieAdapter implements MovieProvider {
     @Override
     public List<Movie> discoverMoviesByGenres(List<Integer> genreIds) {
 
-        TmdbMovieListResponse response = tmdbRestClient.discoverMoviesByGenres(genreIds);
+        TmdbMovieListResponse response =
+                tmdbRestClient.discoverMoviesByGenres(genreIds);
 
         if (response == null || response.getResults() == null) {
             return Collections.emptyList();
