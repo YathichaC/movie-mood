@@ -27,4 +27,41 @@ class TmdbMovieResponseTest {
         assertEquals("/poster.jpg", response.getPosterPath());
         assertEquals("/backdrop.jpg", response.getBackdropPath());
     }
+
+    @Test
+    void shouldDeserializeDetailGenres() throws Exception {
+        String json = """
+                {
+                  "id": 550,
+                  "title": "Fight Club",
+                  "genres": [
+                    {
+                      "id": 18,
+                      "name": "Drama"
+                    },
+                    {
+                      "id": 53,
+                      "name": "Thriller"
+                    }
+                  ]
+                }
+                """;
+
+        TmdbMovieResponse response =
+                objectMapper.readValue(json, TmdbMovieResponse.class);
+
+        assertEquals(2, response.getGenres().size());
+
+        assertEquals(18, response.getGenres().get(0).getId());
+        assertEquals(
+                "Drama",
+                response.getGenres().get(0).getName()
+        );
+
+        assertEquals(53, response.getGenres().get(1).getId());
+        assertEquals(
+                "Thriller",
+                response.getGenres().get(1).getName()
+        );
+    }
 }

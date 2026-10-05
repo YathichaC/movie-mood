@@ -18,6 +18,8 @@ public class TmdbMovieResponse {
     @JsonProperty("genre_ids")
     private List<Integer> genreIds;
 
+    private List<TmdbGenreResponse> genres;
+
     @JsonProperty("poster_path")
     private String posterPath;
 
@@ -86,5 +88,13 @@ public class TmdbMovieResponse {
 
     public void setBackdropPath(String backdropPath) {
         this.backdropPath = backdropPath;
+    }
+
+    public List<TmdbGenreResponse> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<TmdbGenreResponse> genres) {
+        this.genres = genres;
     }
 }
