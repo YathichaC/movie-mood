@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html class="dark" lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -8,39 +8,60 @@
     <link rel="icon" type="image/png" th:href="@{/img/moviemood_logo.png}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Material+Symbols+Outlined:FILL@0..1&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Material+Symbols+Outlined:FILL@0..1&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script th:src="@{/js/tailwind-config.js}"></script>
 </head>
-<body class="min-h-screen flex flex-col justify-between overflow-x-hidden bg-[#000000] text-[#F5F5F5] selection:bg-[#B8A58A] selection:text-[#000000] antialiased">
+
+<body
+    class="min-h-screen flex flex-col justify-between overflow-x-hidden bg-[#000000] text-[#F5F5F5] selection:bg-[#B8A58A] selection:text-[#000000] antialiased">
     <div th:replace="~{fragments/header :: header}"></div>
     <main class="w-full flex-grow flex items-center justify-center px-6 py-12">
         <div class="w-full max-w-[380px] mx-auto flex flex-col text-left">
             <div class="mb-8">
-                <span class="block font-['Outfit'] text-[11px] leading-4 font-medium uppercase tracking-[0.14em] text-[#A3A3A3] mb-2.5">YOUR PERSONAL CINEMA</span>
-                <h1 class="font-['Outfit'] text-[30px] md:text-[36px] leading-tight font-light tracking-[-0.015em] text-[#F5F5F5] mb-2">Welcome back.</h1>
-                <p class="font-['Manrope'] text-[13px] leading-5 font-medium text-[#A3A3A3]">Return to the films that move you.</p>
+                <span
+                    class="block font-['Outfit'] text-[11px] leading-4 font-medium uppercase tracking-[0.14em] text-[#A3A3A3] mb-2.5">YOUR
+                    PERSONAL CINEMA</span>
+                <h1
+                    class="font-['Outfit'] text-[30px] md:text-[36px] leading-tight font-light tracking-[-0.015em] text-[#F5F5F5] mb-2">
+                    Welcome back.</h1>
+                <p class="font-['Manrope'] text-[13px] leading-5 font-medium text-[#A3A3A3]">Return to the films that
+                    move you.</p>
             </div>
             <div class="w-full border-t border-[#262626] mb-8"></div>
             <form class="space-y-5" id="loginForm">
                 <div class="flex flex-col space-y-2">
-                    <label class="font-['Manrope'] text-[11px] font-semibold uppercase tracking-[0.08em] text-[#A3A3A3]" for="email">EMAIL ADDRESS</label>
-                    <input id="email" name="email" type="email" autocomplete="username" placeholder="patron@archive.org" required class="w-full h-[46px] px-3.5 bg-[#0A0A0A] border border-[#262626] rounded-[2px] font-['Manrope'] text-[14px] leading-6 text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:border-[#B8A58A] focus:ring-0 transition-colors duration-150">
+                    <label class="font-['Manrope'] text-[11px] font-semibold uppercase tracking-[0.08em] text-[#A3A3A3]"
+                        for="email">EMAIL ADDRESS</label>
+                    <input id="email" name="email" type="email" autocomplete="username" placeholder="patron@archive.org"
+                        required
+                        class="w-full h-[46px] px-3.5 bg-[#0A0A0A] border border-[#262626] rounded-[2px] font-['Manrope'] text-[14px] leading-6 text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:border-[#B8A58A] focus:ring-0 transition-colors duration-150">
                 </div>
                 <div class="flex flex-col space-y-2">
                     <div class="flex items-center justify-between">
-                        <label class="font-['Manrope'] text-[11px] font-semibold uppercase tracking-[0.08em] text-[#A3A3A3]" for="password">PASSWORD</label>
-                        <a th:href="@{/auth/forgot-password}" class="font-['Manrope'] text-[12px] text-[#D4D4D4] hover:text-[#FFFFFF] underline-offset-4 hover:underline transition-colors">Forgot password?</a>
+                        <label
+                            class="font-['Manrope'] text-[11px] font-semibold uppercase tracking-[0.08em] text-[#A3A3A3]"
+                            for="password">PASSWORD</label>
+                        <a th:href="@{/auth/forgot-password}"
+                            class="font-['Manrope'] text-[12px] text-[#D4D4D4] hover:text-[#FFFFFF] underline-offset-4 hover:underline transition-colors">Forgot
+                            password?</a>
                     </div>
                     <div class="relative w-full">
-                        <input id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••••••" required class="w-full h-[46px] pl-3.5 pr-14 bg-[#0A0A0A] border border-[#262626] rounded-[2px] font-['Manrope'] text-[14px] leading-6 text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:border-[#B8A58A] focus:ring-0 transition-colors duration-150">
-                        <button id="togglePassword" type="button" aria-label="Toggle password visibility" aria-controls="password" aria-pressed="false" class="absolute right-3.5 top-1/2 -translate-y-1/2 font-['Manrope'] text-[12px] font-semibold text-[#D4D4D4] hover:text-[#FFFFFF] uppercase tracking-wider focus:outline-none transition-colors">
-                            <span id="toggleIcon">Show</span>
+                        <input id="password" name="password" type="password" autocomplete="current-password"
+                            placeholder="••••••••••••" required
+                            class="w-full h-[46px] pl-3.5 pr-14 bg-[#0A0A0A] border border-[#262626] rounded-[2px] font-['Manrope'] text-[14px] leading-6 text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:border-[#B8A58A] focus:ring-0 transition-colors duration-150">
+                        <button id="togglePassword" type="button" aria-label="Toggle password visibility"
+                            aria-controls="password" aria-pressed="false"
+                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#D4D4D4] hover:text-white focus:outline-none transition-colors">
+                            <span id="toggleIcon" class="material-symbols-outlined text-xl">visibility</span>
                         </button>
                     </div>
                 </div>
                 <div class="pt-2">
-                    <button id="submitBtn" type="submit" class="w-full h-[46px] bg-[#FFFFFF] text-[#000000] rounded-[2px] font-['Outfit'] text-sm font-medium tracking-[0.06em] uppercase hover:bg-[#F0F0F0] active:bg-[#E5E5E5] disabled:bg-[#737373] disabled:text-[#262626] focus:outline-none focus:ring-1 focus:ring-[#B8A58A] transition-colors">
+                    <button id="submitBtn" type="submit"
+                        class="w-full h-[46px] bg-[#FFFFFF] text-[#000000] rounded-[2px] font-['Outfit'] text-sm font-medium tracking-[0.06em] uppercase hover:bg-[#F0F0F0] active:bg-[#E5E5E5] disabled:bg-[#737373] disabled:text-[#262626] focus:outline-none focus:ring-1 focus:ring-[#B8A58A] transition-colors">
                         <span>Sign In</span>
                         <span class="material-symbols-outlined text-[18px] align-middle ml-1">arrow_forward</span>
                     </button>
@@ -48,14 +69,18 @@
             </form>
             <div class="mt-8 text-left">
                 <p class="font-['Manrope'] text-[13px] leading-5 text-[#A3A3A3]">New to MovieMood?
-                    <a th:href="@{/auth/register}" class="inline-block ml-1 text-[#D4D4D4] hover:text-[#FFFFFF] underline underline-offset-4 decoration-[#262626] hover:decoration-[#FFFFFF] transition-colors">Create an account</a>
+                    <a th:href="@{/auth/register}"
+                        class="inline-block ml-1 text-[#D4D4D4] hover:text-[#FFFFFF] underline underline-offset-4 decoration-[#262626] hover:decoration-[#FFFFFF] transition-colors">Create
+                        an account</a>
                 </p>
             </div>
         </div>
     </main>
     <div th:replace="~{fragments/footer :: footer}"></div>
-    <div id="toast" class="fixed bottom-4 md:bottom-6 left-4 md:left-auto right-4 md:right-6 z-50 translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
-        <div class="bg-[#1F201E] border-l-4 border-[#B8A58A] text-[#F5F5F5] px-4 py-3 rounded-[2px] shadow-2xl flex items-center gap-3 w-full md:max-w-sm">
+    <div id="toast"
+        class="fixed bottom-4 md:bottom-6 left-4 md:left-auto right-4 md:right-6 z-50 translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+        <div
+            class="bg-[#1F201E] border-l-4 border-[#B8A58A] text-[#F5F5F5] px-4 py-3 rounded-[2px] shadow-2xl flex items-center gap-3 w-full md:max-w-sm">
             <span id="toastIcon" class="material-symbols-outlined text-[#B8A58A] text-[22px]">check_circle</span>
             <div>
                 <p id="toastTitle" class="font-['Manrope'] text-[13px] font-semibold">Signing in...</p>
@@ -64,4 +89,5 @@
     </div>
     <script th:src="@{/js/login.js}"></script>
 </body>
+
 </html>
