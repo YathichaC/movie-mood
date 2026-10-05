@@ -17,44 +17,78 @@ public class RecommendationStrategyTest {
     @Test
     @DisplayName("Should filter out disliked genres and calculate match score")
     public void testRecommendationLogic() {
+
         MovieService mockMovieService = new MovieService() {
-    @Override
-    public List<Movie> browseMovies() {
-        Movie m1 = new Movie();
-        m1.setTitle("Inside Out 2");
-        m1.setRating(8.0);
-        m1.setGenreIds(List.of(16, 35));
 
-        Movie m2 = new Movie();
-        m2.setTitle("A Quiet Place: Day One");
-        m2.setRating(7.0);
-        m2.setGenreIds(List.of(27, 53));
+            @Override
+            public List<Movie> browseMovies() {
+                Movie m1 = new Movie();
+                m1.setTitle("Inside Out 2");
+                m1.setRating(8.0);
+                m1.setGenreIds(List.of(16, 35));
 
-        return List.of(m1, m2);
-    }
+                Movie m2 = new Movie();
+                m2.setTitle("A Quiet Place: Day One");
+                m2.setRating(7.0);
+                m2.setGenreIds(List.of(27, 53));
 
-    @Override
-    public List<Movie> searchMovies(String keyword) { return List.of(); }
+                return List.of(m1, m2);
+            }
 
-    @Override
-    public Movie getMovieDetails(Long tmdbMovieId) { return null; }
+            @Override
+            public List<Movie> searchMovies(String keyword) {
+                return List.of();
+            }
 
-    @Override
-    public List<Movie> filterMoviesByGenre(Integer genreId) { return List.of(); }
-};
+            @Override
+            public Movie getMovieDetails(Long tmdbMovieId) {
+                return null;
+            }
+
+            @Override
+            public List<Movie> filterMoviesByGenre(Integer genreId) {
+                return List.of();
+            }
+
+            @Override
+            public List<Movie> filterMoviesByMood(Mood mood) {
+                return List.of();
+            }
+        };
 
         MoodGenreMapper moodGenreMapper = new MoodGenreMapper();
-        MatchScoreStrategy defaultStrategy = new DefaultMatchScoreStrategy(moodGenreMapper);
-        MoodStrategy strategy = new MoodStrategy(mockMovieService, defaultStrategy);
 
-        List<Movie> results = strategy.recommend(Mood.HAPPY, List.of(27));
+        MatchScoreStrategy defaultStrategy =
+                new DefaultMatchScoreStrategy(moodGenreMapper);
 
-        Assertions.assertEquals(1, results.size(), "Disliked horror genre should be excluded");
-        Assertions.assertEquals("Inside Out 2", results.get(0).getTitle());
-        Assertions.assertNotNull(results.get(0).getMatchScore(), "Match score should not be null");
-        
+        MoodStrategy strategy =
+                new MoodStrategy(mockMovieService, defaultStrategy);
+
+        List<Movie> results =
+                strategy.recommend(Mood.HAPPY, List.of(27));
+
+        Assertions.assertEquals(
+                1,
+                results.size(),
+                "Disliked horror genre should be excluded"
+        );
+
+        Assertions.assertEquals(
+                "Inside Out 2",
+                results.get(0).getTitle()
+        );
+
+        Assertions.assertNotNull(
+                results.get(0).getMatchScore(),
+                "Match score should not be null"
+        );
+
         System.out.println("====== TEST PASSED ======");
-        System.out.println("Recommended Movie: " + results.get(0).getTitle());
-        System.out.println("Match Score: " + results.get(0).getMatchScore() + "%");
+        System.out.println(
+                "Recommended Movie: " + results.get(0).getTitle()
+        );
+        System.out.println(
+                "Match Score: " + results.get(0).getMatchScore() + "%"
+        );
     }
 }

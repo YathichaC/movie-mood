@@ -1,5 +1,6 @@
 package com.example.movie_mood.controller.api;
 
+import com.example.movie_mood.domain.enums.Mood;
 import com.example.movie_mood.dto.response.MovieResponse;
 import com.example.movie_mood.facade.MovieDetailFacade;
 import com.example.movie_mood.mapper.MovieMapper;
@@ -20,128 +21,83 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/movies")
 @Validated
-@Tag(
-        name = "Movies",
-        description = "Browse, search, and view movie details from TMDB"
-)
+@Tag(name = "Movies", description = "Browse, search, and view movie details from TMDB")
 public class MovieController {
 
-    private final MovieService movieService;
-    private final MovieDetailFacade movieDetailFacade;
-    private final MovieMapper movieMapper;
+        private final MovieService movieService;
+        private final MovieDetailFacade movieDetailFacade;
+        private final MovieMapper movieMapper;
 
-    public MovieController(
-            MovieService movieService,
-            MovieDetailFacade movieDetailFacade,
-            MovieMapper movieMapper) {
+        public MovieController(
+                        MovieService movieService,
+                        MovieDetailFacade movieDetailFacade,
+                        MovieMapper movieMapper) {
 
-        this.movieService = movieService;
-        this.movieDetailFacade = movieDetailFacade;
-        this.movieMapper = movieMapper;
-    }
-    @Operation(
-        summary = "Browse popular movies",
-        description = "Returns a list of popular movies from TMDB"
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "Popular movies retrieved successfully"
-    )
-    @GetMapping
-    public List<MovieResponse> browseMovies() {
+                this.movieService = movieService;
+                this.movieDetailFacade = movieDetailFacade;
+                this.movieMapper = movieMapper;
+        }
 
-        return movieMapper.toResponseList(
-                movieService.browseMovies()
-        );
-    }
+        @Operation(summary = "Browse popular movies", description = "Returns a list of popular movies from TMDB")
+        @ApiResponse(responseCode = "200", description = "Popular movies retrieved successfully")
+        @GetMapping
+        public List<MovieResponse> browseMovies() {
 
+                return movieMapper.toResponseList(
+                                movieService.browseMovies());
+        }
 
-    @Operation(
-        summary = "Search movies",
-        description = "Searches TMDB movies using the provided keyword"
-    )
-    @ApiResponses({
-        @ApiResponse(
-                responseCode = "200",
-                description = "Movies retrieved successfully"
-        ),
-        @ApiResponse(
-                responseCode = "400",
-                description = "Search keyword is blank or invalid",
-                content = @Content(
-                        schema = @Schema(implementation = ErrorResponse.class)
-                )
-        )
-})
-   @GetMapping("/search")
-    public List<MovieResponse> searchMovies(
-        @RequestParam @NotBlank String keyword) {
+        @Operation(summary = "Search movies", description = "Searches TMDB movies using the provided keyword")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Movies retrieved successfully"),
+                        @ApiResponse(responseCode = "400", description = "Search keyword is blank or invalid", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+        })
+        @GetMapping("/search")
+        public List<MovieResponse> searchMovies(
+                        @RequestParam @NotBlank String keyword) {
 
-    return movieMapper.toResponseList(
-            movieService.searchMovies(keyword)
-    );
-    }
+                return movieMapper.toResponseList(
+                                movieService.searchMovies(keyword));
+        }
 
-    @Operation(
-        summary = "Get movie details",
-        description = "Returns details of a movie using its TMDB movie ID"
-    )
-   @ApiResponses({
-        @ApiResponse(
-                responseCode = "200",
-                description = "Movie retrieved successfully"
-        ),
-        @ApiResponse(
-                responseCode = "400",
-                description = "TMDB movie ID must be positive",
-                content = @Content(
-                        schema = @Schema(implementation = ErrorResponse.class)
-                )
-        ),
-        @ApiResponse(
-                responseCode = "404",
-                description = "Movie not found",
-                content = @Content(
-                        schema = @Schema(implementation = ErrorResponse.class)
-                )
-        )
-})
+        @Operation(summary = "Get movie details", description = "Returns details of a movie using its TMDB movie ID")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Movie retrieved successfully"),
+                        @ApiResponse(responseCode = "400", description = "TMDB movie ID must be positive", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                        @ApiResponse(responseCode = "404", description = "Movie not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+        })
 
-    @GetMapping("/{tmdbMovieId}")
-public MovieResponse getMovieDetails(
-        @PathVariable @Positive Long tmdbMovieId) {
+        @GetMapping("/{tmdbMovieId}")
+        public MovieResponse getMovieDetails(
+                        @PathVariable @Positive Long tmdbMovieId) {
 
-    return movieMapper.toResponse(
-            movieDetailFacade.getMovieDetails(tmdbMovieId)
-     );
-    }
+                return movieMapper.toResponse(
+                                movieDetailFacade.getMovieDetails(tmdbMovieId));
+        }
 
-@Operation(
-        summary = "Filter movies by genre",
-        description = "Returns movies from TMDB filtered by a genre ID"
-        )
-@ApiResponses({
-@ApiResponse(
-                responseCode = "200",
-                description = "Movies filtered successfully"
-        ),
-@ApiResponse(
-                responseCode = "400",
-                description = "Genre ID must be positive",
-                content = @Content(
-                        schema = @Schema(implementation = ErrorResponse.class)
-                )
-        )
-})
-@GetMapping("/filter")
-public List<MovieResponse> filterMoviesByGenre(
-        @RequestParam
-        @Positive(message = "genreId must be greater than 0")
-        Integer genreId) {
+        @Operation(summary = "Filter movies by genre", description = "Returns movies from TMDB filtered by a genre ID")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Movies filtered successfully"),
+                        @ApiResponse(responseCode = "400", description = "Genre ID must be positive", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+        })
+        @GetMapping("/filter")
+        public List<MovieResponse> filterMoviesByGenre(
+                        @RequestParam @Positive(message = "genreId must be greater than 0") Integer genreId) {
 
-    return movieMapper.toResponseList(
-            movieService.filterMoviesByGenre(genreId)
-    );
-}
+                return movieMapper.toResponseList(
+                                movieService.filterMoviesByGenre(genreId));
+        }
 
+        @Operation(summary = "Filter movies by mood", description = "Returns movies from TMDB filtered by genres associated with the selected mood")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Movies filtered by mood successfully"),
+                        @ApiResponse(responseCode = "400", description = "Invalid mood value", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+        })
+        @GetMapping("/filter/mood")
+        public List<MovieResponse> filterMoviesByMood(
+                        @RequestParam Mood mood) {
+
+                return movieMapper.toResponseList(
+                                movieService.filterMoviesByMood(mood));
+        }
 }
