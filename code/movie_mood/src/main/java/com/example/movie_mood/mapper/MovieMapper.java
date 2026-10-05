@@ -15,7 +15,7 @@ public class MovieMapper {
             return null;
         }
 
-        return new MovieResponse(
+        MovieResponse response = new MovieResponse(
                 movie.getTmdbMovieId(),
                 movie.getTitle(),
                 movie.getSynopsis(),
@@ -23,6 +23,11 @@ public class MovieMapper {
                 movie.getReleaseDate(),
                 movie.getGenreIds()
         );
+
+        response.setPosterPath(movie.getPosterPath());
+        response.setBackdropPath(movie.getBackdropPath());
+
+        return response;
     }
 
     public List<MovieResponse> toResponseList(

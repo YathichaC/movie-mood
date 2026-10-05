@@ -11,6 +11,8 @@ public class Movie {
     private Double rating;
     private LocalDate releaseDate;
     private List<Integer> genreIds;
+    private String posterPath;
+    private String backdropPath;
 
     public Movie() {
     }
@@ -87,5 +89,20 @@ public class Movie {
 
     public void setMatchScore(Double matchScore) {
         this.matchScore = matchScore;
+    }
+    public String getPosterPath() {
+    return posterPath;
+    }
+
+    public void setPosterPath(String posterPath) {
+    this.posterPath = posterPath;
+    }
+
+    public String getBackdropPath() {
+    return backdropPath;
+    }
+
+    public void setBackdropPath(String backdropPath) {
+    this.backdropPath = backdropPath;
     }
 }

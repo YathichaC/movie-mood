@@ -63,29 +63,30 @@ public class TmdbMovieAdapter implements MovieProvider {
         movie.setSynopsis(response.getOverview());
         movie.setRating(response.getVoteAverage());
         movie.setGenreIds(response.getGenreIds());
+        movie.setPosterPath(response.getPosterPath());
+        movie.setBackdropPath(response.getBackdropPath());
 
         if (response.getReleaseDate() != null
                 && !response.getReleaseDate().isBlank()) {
             movie.setReleaseDate(
-                    LocalDate.parse(response.getReleaseDate())
-            );
+                    LocalDate.parse(response.getReleaseDate()));
         }
 
         return movie;
     }
+
     @Override
-public List<Movie> discoverMoviesByGenres(List<Integer> genreIds) {
+    public List<Movie> discoverMoviesByGenres(List<Integer> genreIds) {
 
-    TmdbMovieListResponse response =
-            tmdbRestClient.discoverMoviesByGenres(genreIds);
+        TmdbMovieListResponse response = tmdbRestClient.discoverMoviesByGenres(genreIds);
 
-    if (response == null || response.getResults() == null) {
-        return Collections.emptyList();
+        if (response == null || response.getResults() == null) {
+            return Collections.emptyList();
+        }
+
+        return response.getResults()
+                .stream()
+                .map(this::toMovie)
+                .toList();
     }
-
-    return response.getResults()
-            .stream()
-            .map(this::toMovie)
-            .toList();
-}
 }
