@@ -52,7 +52,7 @@ class MovieControllerTest {
                 .thenReturn(List.of(movie));
 
         mockMvc.perform(
-                        get("/api/movies/filter")
+                        get("/api/v1/movies/filter")
                                 .param("genreId", "35")
                 )
                 .andExpect(status().isOk())
