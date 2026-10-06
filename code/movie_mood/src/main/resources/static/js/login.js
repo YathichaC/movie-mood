@@ -35,7 +35,13 @@ loginForm.addEventListener("submit", (event) => {
 
 });
 
-function handleLogin() {
+async function handleLogin() {
+
+    const email =
+        document.getElementById("email").value.trim();
+
+    const password =
+        document.getElementById("password").value;
 
     submitBtn.disabled = true;
 
@@ -51,11 +57,30 @@ function handleLogin() {
 
     showToast(
         "Connecting to MovieMood API",
-        "Verifying Spring Boot JWT authorization token...",
+        "Checking your email and password...",
         "lock_open"
     );
 
-    setTimeout(() => {
+    try {
+
+        const response = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message || "Login failed"
+            );
+        }
 
         submitBtn.innerHTML = `
             <span class="material-symbols-outlined text-[20px]">
@@ -78,13 +103,32 @@ function handleLogin() {
 
         showToast(
             "Login Approved",
-            "Redirecting to your personalized movie ecosystem.",
+            "Login successful. Welcome to MovieMood!",
             "verified"
         );
 
-    }, 1200);
+    } catch (error) {
 
+        showToast(
+            "Login Failed",
+            error.message,
+            "error"
+        );
+
+        submitBtn.disabled = false;
+
+        submitBtn.innerHTML = `
+            <span>
+                Sign In
+            </span>
+
+            <span class="material-symbols-outlined text-[20px]">
+                arrow_forward
+            </span>
+        `;
+    }
 }
+    
 
 function showToast(
     title,
