@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "watch_histories")
+@Table(name = "watch_histories", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_watch_history_user_movie", columnNames = { "user_id", "tmdb_movie_id" })
+})
 public class WatchHistory {
 
     @Id
@@ -26,7 +28,8 @@ public class WatchHistory {
     @Column(name = "watched_at", nullable = false)
     private LocalDateTime watchedAt;
 
-    public WatchHistory() {}
+    public WatchHistory() {
+    }
 
     public WatchHistory(Long userId, Long tmdbMovieId, String title, String posterPath) {
         this.userId = userId;
@@ -37,21 +40,51 @@ public class WatchHistory {
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public Long getTmdbMovieId() { return tmdbMovieId; }
-    public void setTmdbMovieId(Long tmdbMovieId) { this.tmdbMovieId = tmdbMovieId; }
+    public Long getUserId() {
+        return userId;
+    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
-    public String getPosterPath() { return posterPath; }
-    public void setPosterPath(String posterPath) { this.posterPath = posterPath; }
+    public Long getTmdbMovieId() {
+        return tmdbMovieId;
+    }
 
-    public LocalDateTime getWatchedAt() { return watchedAt; }
-    public void setWatchedAt(LocalDateTime watchedAt) { this.watchedAt = watchedAt; }
+    public void setTmdbMovieId(Long tmdbMovieId) {
+        this.tmdbMovieId = tmdbMovieId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
+    }
+
+    public LocalDateTime getWatchedAt() {
+        return watchedAt;
+    }
+
+    public void setWatchedAt(LocalDateTime watchedAt) {
+        this.watchedAt = watchedAt;
+    }
 }

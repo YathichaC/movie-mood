@@ -8,6 +8,8 @@ import com.example.movie_mood.service.PlaylistService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpSession;
+import java.util.Map;
 
 import java.util.List;
 
@@ -17,49 +19,82 @@ public class PlaylistRestController {
 
     private final PlaylistService playlistService;
 
-    private static final Long DEFAULT_USER_ID = 1L;
-
     public PlaylistRestController(PlaylistService playlistService) {
         this.playlistService = playlistService;
     }
 
     @GetMapping
-    public ResponseEntity<List<PlaylistResponse>> getPlaylists() {
-        List<PlaylistResponse> playlists = playlistService.getUserPlaylists(DEFAULT_USER_ID);
+    public ResponseEntity<?> getPlaylists(HttpSession session) {
+        Integer userId = getCurrentUserId(session);
+
+        if (userId == null) {
+            return unauthorized();
+        }
+        List<PlaylistResponse> playlists = playlistService.getUserPlaylists(userId.longValue());
         return ResponseEntity.ok(playlists);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PlaylistResponse> getPlaylistDetail(@PathVariable("id") Long id) {
-        PlaylistResponse playlist = playlistService.getPlaylistDetail(id, DEFAULT_USER_ID);
+    public ResponseEntity<?> getPlaylistDetail(@PathVariable("id") Long id, HttpSession session) {
+        Integer userId = getCurrentUserId(session);
+        if (userId == null) {
+            return unauthorized();
+        }
+        PlaylistResponse playlist = playlistService.getPlaylistDetail(id, userId.longValue());
         return ResponseEntity.ok(playlist);
     }
 
     @PostMapping
-    public ResponseEntity<PlaylistResponse> createPlaylist(@RequestBody PlaylistRequest request) {
-        PlaylistResponse created = playlistService.createPlaylist(DEFAULT_USER_ID, request);
+    public ResponseEntity<?> createPlaylist(@RequestBody PlaylistRequest request, HttpSession session) {
+        Integer userId = getCurrentUserId(session);
+        if (userId == null) {
+            return unauthorized();
+        }
+        PlaylistResponse created = playlistService.createPlaylist(userId.longValue(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePlaylist(@PathVariable("id") Long id) {
-        playlistService.deletePlaylist(id, DEFAULT_USER_ID);
+    public ResponseEntity<?> deletePlaylist(@PathVariable("id") Long id, HttpSession session) {
+        Integer userId = getCurrentUserId(session);
+        if (userId == null) {
+            return unauthorized();
+        }
+        playlistService.deletePlaylist(id, userId.longValue());
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/movies")
-    public ResponseEntity<PlaylistItemResponse> addMovieToPlaylist(
+    public ResponseEntity<?> addMovieToPlaylist(
             @PathVariable("id") Long id,
-            @RequestBody PlaylistItemRequest request) {
-        PlaylistItemResponse item = playlistService.addMovieToPlaylist(id, DEFAULT_USER_ID, request);
+            @RequestBody PlaylistItemRequest request, HttpSession session) {
+        Integer userId = getCurrentUserId(session);
+        if (userId == null) {
+            return unauthorized();
+        }
+        PlaylistItemResponse item = playlistService.addMovieToPlaylist(id, userId.longValue(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(item);
     }
 
     @DeleteMapping("/{id}/movies/{tmdbMovieId}")
-    public ResponseEntity<Void> removeMovieFromPlaylist(
+    public ResponseEntity<?> removeMovieFromPlaylist(
             @PathVariable("id") Long id,
-            @PathVariable("tmdbMovieId") Long tmdbMovieId) {
-        playlistService.removeMovieFromPlaylist(id, tmdbMovieId, DEFAULT_USER_ID);
+            @PathVariable("tmdbMovieId") Long tmdbMovieId, HttpSession session) {
+        Integer userId = getCurrentUserId(session);
+        if (userId == null) {
+            return unauthorized();
+        }
+        playlistService.removeMovieFromPlaylist(id, tmdbMovieId, userId.longValue());
         return ResponseEntity.noContent().build();
+    }
+
+    private Integer getCurrentUserId(HttpSession session) {
+        return (Integer) session.getAttribute("USER_ID");
+    }
+
+    private ResponseEntity<Map<String, String>> unauthorized() {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("message", "Please login first"));
     }
 }

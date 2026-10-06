@@ -3,21 +3,24 @@ package com.example.movie_mood.dto.auth;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 
 public class RegisterRequest {
 
     @NotBlank(message = "Username is required")
-    @Size(min = 3, message = "Username must be at least 3 characters")
+    @Size(min = 3, max = 30, message = "Username must be at least 3 characters")
     private String username;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email is invalid")
     private String email;
 
-    @NotBlank(message = "Password is required")
+    @NotBlank
+    @Size(min = 8, max = 72)
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).+$", message = "Password must contain at least 8 characters, including uppercase, lowercase, number, and special character")
     private String password;
 
-    @NotBlank(message = "Confirm password is required")
+    @NotBlank
     private String confirmPassword;
 
     public RegisterRequest() {
