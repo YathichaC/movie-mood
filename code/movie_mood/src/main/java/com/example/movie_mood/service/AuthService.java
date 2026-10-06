@@ -6,6 +6,7 @@ import com.example.movie_mood.dto.auth.LoginRequest;
 import com.example.movie_mood.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.UUID;
 
 @Service
 public class AuthService {
@@ -32,14 +33,12 @@ public class AuthService {
             throw new IllegalArgumentException("Username is already taken");
         }
 
-        String hashedPassword =
-                passwordEncoder.encode(request.getPassword());
+        String hashedPassword = passwordEncoder.encode(request.getPassword());
 
         User user = new User(
                 request.getUsername(),
                 request.getEmail(),
-                hashedPassword
-        );
+                hashedPassword);
 
         return userRepository.save(user);
     }
@@ -47,17 +46,21 @@ public class AuthService {
     public User login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
-            .orElseThrow(() ->
-                    new IllegalArgumentException("Invalid email or password"));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
 
         if (!passwordEncoder.matches(
-            request.getPassword(),
-            user.getPassword())) {
+                request.getPassword(),
+                user.getPassword())) {
 
             throw new IllegalArgumentException(
-                "Invalid email or password");
+                    "Invalid email or password");
         }
 
         return user;
+    }
+
+    public User getUserById(UUID userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 }

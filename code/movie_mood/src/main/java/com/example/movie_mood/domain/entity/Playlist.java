@@ -10,6 +10,7 @@ import java.util.UUID;
 public class Playlist {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "playlist_id")
     private UUID playlistId;
 

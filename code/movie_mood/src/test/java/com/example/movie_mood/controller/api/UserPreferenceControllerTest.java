@@ -4,7 +4,7 @@ import com.example.movie_mood.service.UserPreferenceService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -18,113 +18,103 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class UserPreferenceControllerTest {
 
-    private MockMvc mockMvc;
-    private UserPreferenceService userPreferenceService;
-    private UUID userId;
-    private MockHttpSession session;
+        private MockMvc mockMvc;
+        private UserPreferenceService userPreferenceService;
+        private Authentication authentication;
+        private UUID userId;
 
-    @BeforeEach
-    void setUp() {
-        userId = UUID.randomUUID();
-        session = new MockHttpSession();
-        session.setAttribute("USER_ID", userId);
+        @BeforeEach
+        void setUp() {
+                userId = UUID.randomUUID();
 
-        userPreferenceService =
-                Mockito.mock(UserPreferenceService.class);
+                authentication = Mockito.mock(Authentication.class);
+                when(authentication.getName()).thenReturn(userId.toString());
 
-        UserPreferenceController controller =
-                new UserPreferenceController(
-                        userPreferenceService
-                );
+                userPreferenceService = Mockito.mock(UserPreferenceService.class);
 
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(controller)
-                .build();
-    }
+                UserPreferenceController controller = new UserPreferenceController(
+                                userPreferenceService);
 
-    @Test
-    void getDislikedGenresShouldReturnPreferences()
-            throws Exception {
+                mockMvc = MockMvcBuilders
+                                .standaloneSetup(controller)
+                                .build();
+        }
 
-        when(userPreferenceService
-                .getDislikedGenreIds(userId))
-                .thenReturn(List.of("28", "27"));
+        @Test
+        void getDislikedGenresShouldReturnPreferences()
+                        throws Exception {
 
-        mockMvc.perform(
-                        get("/api/users/" + userId + "/preferences/disliked-genres")
-                                .session(session)
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userId").value(userId.toString()))
-                .andExpect(
-                        jsonPath("$.dislikedGenreIds[0]")
-                                .value("28")
-                )
-                .andExpect(
-                        jsonPath("$.dislikedGenreIds[1]")
-                                .value("27")
-                );
-    }
+                when(userPreferenceService
+                                .getDislikedGenreIds(userId))
+                                .thenReturn(List.of("28", "27"));
 
-    @Test
-    void updateDislikedGenresShouldReturnUpdatedPreferences()
-            throws Exception {
+                mockMvc.perform(
+                                get("/api/users/" + userId
+                                                + "/preferences/disliked-genres")
+                                                .principal(authentication))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.userId").value(userId.toString()))
+                                .andExpect(
+                                                jsonPath("$.dislikedGenreIds[0]")
+                                                                .value("28"))
+                                .andExpect(
+                                                jsonPath("$.dislikedGenreIds[1]")
+                                                                .value("27"));
+        }
 
-        when(userPreferenceService
-                .updateDislikedGenres(
-                        userId,
-                        List.of("28", "27")
-                ))
-                .thenReturn(List.of("28", "27"));
+        @Test
+        void updateDislikedGenresShouldReturnUpdatedPreferences()
+                        throws Exception {
 
-        mockMvc.perform(
-                        put("/api/users/" + userId + "/preferences/disliked-genres")
-                                .session(session)
-                                .contentType("application/json")
-                                .content("[\"28\",\"27\"]")
-                )
-                .andExpect(status().isOk())
-                .andExpect(
-                        jsonPath("$.message")
-                                .value(
-                                        "Preferences updated successfully"
-                                )
-                )
-                .andExpect(jsonPath("$.userId").value(userId.toString()))
-                .andExpect(
-                        jsonPath("$.dislikedGenreIds[0]")
-                                .value("28")
-                )
-                .andExpect(
-                        jsonPath("$.dislikedGenreIds[1]")
-                                .value("27")
-                );
-    }
+                when(userPreferenceService
+                                .updateDislikedGenres(
+                                                userId,
+                                                List.of("28", "27")))
+                                .thenReturn(List.of("28", "27"));
 
-    @Test
-    void getDislikedGenresShouldReturnBadRequestWhenUserNotFound()
-            throws Exception {
+                mockMvc.perform(
+                                put("/api/users/" + userId
+                                                + "/preferences/disliked-genres")
+                                                .principal(authentication)
+                                                .contentType("application/json")
+                                                .content("[\"28\",\"27\"]"))
+                                .andExpect(status().isOk())
+                                .andExpect(
+                                                jsonPath("$.message")
+                                                                .value("Preferences updated successfully"))
+                                .andExpect(jsonPath("$.userId").value(userId.toString()))
+                                .andExpect(
+                                                jsonPath("$.dislikedGenreIds[0]")
+                                                                .value("28"))
+                                .andExpect(
+                                                jsonPath("$.dislikedGenreIds[1]")
+                                                                .value("27"));
+        }
 
-        UUID randomId = UUID.randomUUID();
-        MockHttpSession nonUserSession = new MockHttpSession();
-        nonUserSession.setAttribute("USER_ID", randomId);
+        @Test
+        void getDislikedGenresShouldReturnBadRequestWhenUserNotFound()
+                        throws Exception {
 
-        when(userPreferenceService
-                .getDislikedGenreIds(randomId))
-                .thenThrow(
-                        new IllegalArgumentException(
-                                "User not found"
-                        )
-                );
+                UUID randomId = UUID.randomUUID();
 
-        mockMvc.perform(
-                        get("/api/users/" + randomId + "/preferences/disliked-genres")
-                                .session(nonUserSession)
-                )
-                .andExpect(status().isBadRequest())
-                .andExpect(
-                        jsonPath("$.message")
-                                .value("User not found")
-                );
-    }
+                Authentication randomUserAuthentication = Mockito.mock(Authentication.class);
+
+                when(randomUserAuthentication.getName())
+                                .thenReturn(randomId.toString());
+
+                when(userPreferenceService
+                                .getDislikedGenreIds(randomId))
+                                .thenThrow(
+                                                new IllegalArgumentException(
+                                                                "User not found"));
+
+                mockMvc.perform(
+                                get("/api/users/" + randomId
+                                                + "/preferences/disliked-genres")
+                                                .principal(randomUserAuthentication))
+                                .andExpect(status().isBadRequest())
+                                .andExpect(
+                                                jsonPath("$.message")
+                                                                .value("User not found"));
+        }
 }
