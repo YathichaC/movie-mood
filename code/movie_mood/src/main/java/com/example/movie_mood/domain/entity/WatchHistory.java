@@ -1,90 +1,56 @@
 package com.example.movie_mood.domain.entity;
 
+import java.util.UUID;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "watch_histories", uniqueConstraints = {
+@Table(name = "WatchHistory", uniqueConstraints = {
         @UniqueConstraint(name = "uk_watch_history_user_movie", columnNames = { "user_id", "tmdb_movie_id" })
 })
 public class WatchHistory {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "history_id")
+    private UUID historyId;
 
     @Column(name = "user_id", nullable = false)
-    private Long userId;
+    private UUID userId;
 
     @Column(name = "tmdb_movie_id", nullable = false)
-    private Long tmdbMovieId;
-
-    @Column(nullable = false)
-    private String title;
-
-    @Column(name = "poster_path")
-    private String posterPath;
-
-    @Column(name = "watched_at", nullable = false)
-    private LocalDateTime watchedAt;
+    private String tmdbMovieId;
 
     public WatchHistory() {
     }
 
-    public WatchHistory(Long userId, Long tmdbMovieId, String title, String posterPath) {
+    public WatchHistory(UUID userId, String tmdbMovieId) {
         this.userId = userId;
         this.tmdbMovieId = tmdbMovieId;
-        this.title = title;
-        this.posterPath = posterPath;
-        this.watchedAt = LocalDateTime.now();
     }
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
+    public UUID getHistoryId() {
+        return historyId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setHistoryId(UUID history_id) {
+        this.historyId = history_id;
     }
 
-    public Long getUserId() {
+    public void setId(UUID history_id) {
+        this.historyId = history_id;
+    }
+
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 
-    public Long getTmdbMovieId() {
+    public String getTmdbMovieId() {
         return tmdbMovieId;
     }
 
-    public void setTmdbMovieId(Long tmdbMovieId) {
+    public void setTmdbMovieId(String tmdbMovieId) {
         this.tmdbMovieId = tmdbMovieId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getPosterPath() {
-        return posterPath;
-    }
-
-    public void setPosterPath(String posterPath) {
-        this.posterPath = posterPath;
-    }
-
-    public LocalDateTime getWatchedAt() {
-        return watchedAt;
-    }
-
-    public void setWatchedAt(LocalDateTime watchedAt) {
-        this.watchedAt = watchedAt;
     }
 }

@@ -6,29 +6,29 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "genres")
+@Table(name = "Genre")
 public class Genre {
 
     @Id
     @Column(name = "genre_id")
-    private Integer genreId;
+    private String genreId;
 
-    @Column(name = "genre_name", nullable = false)
+    @Column(name = "genre_name")
     private String genreName;
 
     public Genre() {
     }
 
-    public Genre(Integer genreId, String genreName) {
+    public Genre(String genreId, String genreName) {
         this.genreId = genreId;
         this.genreName = genreName;
     }
 
-    public Integer getGenreId() {
+    public String getGenreId() {
         return genreId;
     }
 
-    public void setGenreId(Integer genreId) {
+    public void setGenreId(String genreId) {
         this.genreId = genreId;
     }
 
