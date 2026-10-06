@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserPreferenceService {
@@ -28,7 +29,7 @@ public class UserPreferenceService {
         this.userDislikedGenreRepository = userDislikedGenreRepository;
     }
 
-    public List<Integer> getDislikedGenreIds(Integer userId) {
+    public List<String> getDislikedGenreIds(UUID userId) {
 
         if (!userRepository.existsById(userId)) {
             throw new IllegalArgumentException("User not found");
@@ -43,9 +44,9 @@ public class UserPreferenceService {
     }
 
     @Transactional
-    public List<Integer> updateDislikedGenres(
-            Integer userId,
-            List<Integer> genreIds) {
+    public List<String> updateDislikedGenres(
+            UUID userId,
+            List<String> genreIds) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
@@ -53,7 +54,7 @@ public class UserPreferenceService {
 
         userDislikedGenreRepository.deleteByUserUserId(userId);
 
-        for (Integer genreId : genreIds) {
+        for (String genreId : genreIds) {
 
             Genre genre = genreRepository.findById(genreId)
                     .orElseThrow(() ->
@@ -63,6 +64,7 @@ public class UserPreferenceService {
 
             UserDislikedGenre preference =
                     new UserDislikedGenre(user, genre);
+            preference.setId(UUID.randomUUID());
 
             userDislikedGenreRepository.save(preference);
         }

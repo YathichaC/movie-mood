@@ -13,7 +13,7 @@ public class MovieDetailFacade {
         this.movieService = movieService;
     }
 
-    public Movie getMovieDetails(Long tmdbMovieId) {
+    public Movie getMovieDetails(String tmdbMovieId) {
         return movieService.getMovieDetails(tmdbMovieId);
     }
 }

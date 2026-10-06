@@ -23,18 +23,18 @@ class CachingMovieServiceProxyTest {
     void shouldReturnCachedMovieWhenRequestedMoreThanOnce() {
 
         Movie movie = new Movie();
-        movie.setTmdbMovieId(550L);
+        movie.setTmdbMovieId("550");
         movie.setTitle("Test Movie");
 
-        when(movieAdapter.getMovie(550L))
+        when(movieAdapter.getMovie("550"))
                 .thenReturn(movie);
 
-        Movie firstResult = proxy.getMovie(550L);
-        Movie secondResult = proxy.getMovie(550L);
+        Movie firstResult = proxy.getMovie("550");
+        Movie secondResult = proxy.getMovie("550");
 
         assertSame(firstResult, secondResult);
 
         verify(movieAdapter, times(1))
-                .getMovie(550L);
+                .getMovie("550");
     }
 }

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -21,9 +22,11 @@ class UserPreferenceServiceTest {
     private GenreRepository genreRepository;
     private UserDislikedGenreRepository userDislikedGenreRepository;
     private UserPreferenceService userPreferenceService;
+    private UUID userId;
 
     @BeforeEach
     void setUp() {
+        userId = UUID.randomUUID();
         userRepository = mock(UserRepository.class);
         genreRepository = mock(GenreRepository.class);
         userDislikedGenreRepository =
@@ -44,9 +47,10 @@ class UserPreferenceServiceTest {
                 "test@example.com",
                 "hashedPassword"
         );
+        user.setUserId(userId);
 
-        Genre action = new Genre(28, "Action");
-        Genre horror = new Genre(27, "Horror");
+        Genre action = new Genre("28", "Action");
+        Genre horror = new Genre("27", "Horror");
 
         UserDislikedGenre first =
                 new UserDislikedGenre(user, action);
@@ -54,17 +58,17 @@ class UserPreferenceServiceTest {
         UserDislikedGenre second =
                 new UserDislikedGenre(user, horror);
 
-        when(userRepository.existsById(1))
+        when(userRepository.existsById(userId))
                 .thenReturn(true);
 
-        when(userDislikedGenreRepository.findByUserUserId(1))
+        when(userDislikedGenreRepository.findByUserUserId(userId))
                 .thenReturn(List.of(first, second));
 
-        List<Integer> result =
-                userPreferenceService.getDislikedGenreIds(1);
+        List<String> result =
+                userPreferenceService.getDislikedGenreIds(userId);
 
         assertEquals(
-                List.of(28, 27),
+                List.of("28", "27"),
                 result
         );
     }
@@ -72,14 +76,15 @@ class UserPreferenceServiceTest {
     @Test
     void getDislikedGenreIdsShouldRejectUnknownUser() {
 
-        when(userRepository.existsById(999))
+        UUID randomId = UUID.randomUUID();
+        when(userRepository.existsById(randomId))
                 .thenReturn(false);
 
         IllegalArgumentException exception =
                 assertThrows(
                         IllegalArgumentException.class,
                         () -> userPreferenceService
-                                .getDislikedGenreIds(999)
+                                .getDislikedGenreIds(randomId)
                 );
 
         assertEquals(
@@ -88,7 +93,7 @@ class UserPreferenceServiceTest {
         );
 
         verify(userDislikedGenreRepository, never())
-                .findByUserUserId(anyInt());
+                .findByUserUserId(any(UUID.class));
     }
 
     @Test
@@ -99,32 +104,33 @@ class UserPreferenceServiceTest {
                 "test@example.com",
                 "hashedPassword"
         );
+        user.setUserId(userId);
 
-        Genre action = new Genre(28, "Action");
-        Genre horror = new Genre(27, "Horror");
+        Genre action = new Genre("28", "Action");
+        Genre horror = new Genre("27", "Horror");
 
-        when(userRepository.findById(1))
+        when(userRepository.findById(userId))
                 .thenReturn(Optional.of(user));
 
-        when(genreRepository.findById(28))
+        when(genreRepository.findById("28"))
                 .thenReturn(Optional.of(action));
 
-        when(genreRepository.findById(27))
+        when(genreRepository.findById("27"))
                 .thenReturn(Optional.of(horror));
 
-        List<Integer> result =
+        List<String> result =
                 userPreferenceService.updateDislikedGenres(
-                        1,
-                        List.of(28, 27)
+                        userId,
+                        List.of("28", "27")
                 );
 
         assertEquals(
-                List.of(28, 27),
+                List.of("28", "27"),
                 result
         );
 
         verify(userDislikedGenreRepository)
-                .deleteByUserUserId(1);
+                .deleteByUserUserId(userId);
 
         verify(userDislikedGenreRepository, times(2))
                 .save(any(UserDislikedGenre.class));
@@ -133,7 +139,8 @@ class UserPreferenceServiceTest {
     @Test
     void updateDislikedGenresShouldRejectUnknownUser() {
 
-        when(userRepository.findById(999))
+        UUID randomId = UUID.randomUUID();
+        when(userRepository.findById(randomId))
                 .thenReturn(Optional.empty());
 
         IllegalArgumentException exception =
@@ -141,8 +148,8 @@ class UserPreferenceServiceTest {
                         IllegalArgumentException.class,
                         () -> userPreferenceService
                                 .updateDislikedGenres(
-                                        999,
-                                        List.of(28)
+                                        randomId,
+                                        List.of("28")
                                 )
                 );
 
@@ -152,7 +159,7 @@ class UserPreferenceServiceTest {
         );
 
         verify(userDislikedGenreRepository, never())
-                .deleteByUserUserId(anyInt());
+                .deleteByUserUserId(any(UUID.class));
 
         verify(userDislikedGenreRepository, never())
                 .save(any(UserDislikedGenre.class));
@@ -166,11 +173,12 @@ class UserPreferenceServiceTest {
                 "test@example.com",
                 "hashedPassword"
         );
+        user.setUserId(userId);
 
-        when(userRepository.findById(1))
+        when(userRepository.findById(userId))
                 .thenReturn(Optional.of(user));
 
-        when(genreRepository.findById(999))
+        when(genreRepository.findById("999"))
                 .thenReturn(Optional.empty());
 
         IllegalArgumentException exception =
@@ -178,8 +186,8 @@ class UserPreferenceServiceTest {
                         IllegalArgumentException.class,
                         () -> userPreferenceService
                                 .updateDislikedGenres(
-                                        1,
-                                        List.of(999)
+                                        userId,
+                                        List.of("999")
                                 )
                 );
 

@@ -28,13 +28,13 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public Genre getGenreById(Integer genreId) {
-    return genreRepository.findById(genreId)
-            .orElseThrow(() -> new GenreNotFoundException(genreId));
+    public Genre getGenreById(String genreId) {
+        return genreRepository.findById(genreId)
+                .orElseThrow(() -> new GenreNotFoundException(genreId));
     }
 
     @Override
-    public Genre updateGenre(Integer genreId, Genre genre) {
+    public Genre updateGenre(String genreId, Genre genre) {
         Genre existingGenre = getGenreById(genreId);
 
         existingGenre.setGenreName(genre.getGenreName());
@@ -43,7 +43,7 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public void deleteGenre(Integer genreId) {
+    public void deleteGenre(String genreId) {
         Genre existingGenre = getGenreById(genreId);
         genreRepository.delete(existingGenre);
     }

@@ -69,7 +69,7 @@ public class MovieController {
 
         @GetMapping("/{tmdbMovieId}")
         public MovieResponse getMovieDetails(
-                        @PathVariable @Positive Long tmdbMovieId) {
+                        @PathVariable @NotBlank String tmdbMovieId) {
 
                 return movieMapper.toResponse(
                                 movieDetailFacade.getMovieDetails(tmdbMovieId));

@@ -9,8 +9,8 @@ import java.util.Optional;
 
 @Repository
 public interface PlaylistRepository extends JpaRepository<Playlist, UUID> {
-
-    List<Playlist> findByUserIdOrderByCreatedAtDesc(UUID userId);
-
-    Optional<Playlist> findByIdAndUserId(UUID playlistId, UUID userId);
+    List<Playlist> findByUserId(UUID userId);
+    Optional<Playlist> findByPlaylistIdAndUserId(
+            UUID playlistId,
+            UUID userId);
 }

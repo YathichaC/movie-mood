@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -83,7 +84,7 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<?> currentUser(HttpSession session) {
 
-        Integer userId = (Integer) session.getAttribute("USER_ID");
+        UUID userId = (UUID) session.getAttribute("USER_ID");
 
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(

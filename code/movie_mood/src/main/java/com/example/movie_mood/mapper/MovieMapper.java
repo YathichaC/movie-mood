@@ -15,13 +15,19 @@ public class MovieMapper {
             return null;
         }
 
+        List<String> genreIds = movie.getGenreIds() == null
+                ? List.of()
+                : movie.getGenreIds().stream()
+                        .map(String::valueOf)
+                        .toList();
+
         MovieResponse response = new MovieResponse(
-                movie.getTmdbMovieId(),
+                String.valueOf(movie.getTmdbMovieId()),
                 movie.getTitle(),
                 movie.getSynopsis(),
                 movie.getRating(),
                 movie.getReleaseDate(),
-                movie.getGenreIds()
+                genreIds
         );
 
         response.setPosterPath(movie.getPosterPath());
@@ -30,8 +36,7 @@ public class MovieMapper {
         return response;
     }
 
-    public List<MovieResponse> toResponseList(
-            List<Movie> movies) {
+    public List<MovieResponse> toResponseList(List<Movie> movies) {
 
         if (movies == null) {
             return List.of();

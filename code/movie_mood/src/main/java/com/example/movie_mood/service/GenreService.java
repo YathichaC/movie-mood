@@ -10,9 +10,9 @@ public interface GenreService {
 
     Page<Genre> getAllGenres(Pageable pageable);
 
-    Genre getGenreById(Integer genreId);
+    Genre getGenreById(String genreId);
 
-    Genre updateGenre(Integer genreId, Genre genre);
+    Genre updateGenre(String genreId, Genre genre);
 
-    void deleteGenre(Integer genreId);
+    void deleteGenre(String genreId);
 }

@@ -20,7 +20,7 @@ class TmdbMovieAdapterTest {
         TmdbMovieAdapter adapter = new TmdbMovieAdapter(tmdbRestClient);
 
         TmdbMovieResponse response = new TmdbMovieResponse();
-        response.setId(123L);
+        response.setId("123");
         response.setTitle("Test Movie");
         response.setOverview("Test overview");
         response.setVoteAverage(8.5);
@@ -29,13 +29,13 @@ class TmdbMovieAdapterTest {
         response.setPosterPath("/poster-test.jpg");
         response.setBackdropPath("/backdrop-test.jpg");
 
-        when(tmdbRestClient.getMovie(123L)).thenReturn(response);
+        when(tmdbRestClient.getMovie("123")).thenReturn(response);
 
         // Act
-        Movie movie = adapter.getMovie(123L);
+        Movie movie = adapter.getMovie("123");
 
         // Assert
-        assertEquals(123L, movie.getTmdbMovieId());
+        assertEquals("123", movie.getTmdbMovieId());
         assertEquals("Test Movie", movie.getTitle());
         assertEquals("/poster-test.jpg", movie.getPosterPath());
         assertEquals("/backdrop-test.jpg", movie.getBackdropPath());
@@ -56,14 +56,14 @@ class TmdbMovieAdapterTest {
         thriller.setName("Thriller");
 
         TmdbMovieResponse response = new TmdbMovieResponse();
-        response.setId(550L);
+        response.setId("550");
         response.setTitle("Fight Club");
         response.setGenres(List.of(drama, thriller));
 
-        when(tmdbRestClient.getMovie(550L)).thenReturn(response);
+        when(tmdbRestClient.getMovie("550")).thenReturn(response);
 
         // Act
-        Movie movie = adapter.getMovie(550L);
+        Movie movie = adapter.getMovie("550");
 
         // Assert
         assertEquals(List.of(18, 53), movie.getGenreIds());

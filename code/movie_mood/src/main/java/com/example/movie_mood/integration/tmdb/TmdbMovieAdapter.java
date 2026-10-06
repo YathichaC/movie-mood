@@ -48,7 +48,7 @@ public class TmdbMovieAdapter implements MovieProvider {
     }
 
     @Override
-    public Movie getMovie(Long tmdbMovieId) {
+    public Movie getMovie(String tmdbMovieId) {
         return toMovie(tmdbRestClient.getMovie(tmdbMovieId));
     }
 

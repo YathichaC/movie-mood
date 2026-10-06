@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/history")
@@ -23,60 +24,56 @@ public class WatchHistoryRestController {
 
     @GetMapping
     public ResponseEntity<?> getHistory(HttpSession session) {
-        Integer userId = getCurrentUserId(session);
+        UUID userId = getCurrentUserId(session);
         if (userId == null) {
             return unauthorized();
         }
-        List<WatchHistoryResponse> history = watchHistoryService.getUserWatchHistory(userId.longValue());
+        List<WatchHistoryResponse> history = watchHistoryService.getUserWatchHistory(userId);
         return ResponseEntity.ok(history);
     }
 
-    // บันทึกว่าดูหนังแล้ว
     @PostMapping
     public ResponseEntity<?> recordWatched(@RequestBody WatchHistoryRequest request, HttpSession session) {
-        Integer userId = getCurrentUserId(session);
+        UUID userId = getCurrentUserId(session);
         if (userId == null) {
             return unauthorized();
         }
-        WatchHistoryResponse response = watchHistoryService.recordWatchedMovie(userId.longValue(), request);
+        WatchHistoryResponse response = watchHistoryService.recordWatchedMovie(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // เช็คว่าหนังเรื่องนี้เคยดูหรือยัง
     @GetMapping("/check/{tmdbMovieId}")
-    public ResponseEntity<?> checkWatched(@PathVariable Long tmdbMovieId, HttpSession session) {
-        Integer userId = getCurrentUserId(session);
+    public ResponseEntity<?> checkWatched(@PathVariable String tmdbMovieId, HttpSession session) {
+        UUID userId = getCurrentUserId(session);
         if (userId == null) {
             return unauthorized();
         }
-        boolean watched = watchHistoryService.isMovieWatched(userId.longValue(), tmdbMovieId);
+        boolean watched = watchHistoryService.isMovieWatched(userId, tmdbMovieId);
         return ResponseEntity.ok(Map.of("watched", watched));
     }
 
-    // ลบหนังออกจากประวัติ
     @DeleteMapping("/{tmdbMovieId}")
-    public ResponseEntity<?> removeWatched(@PathVariable Long tmdbMovieId, HttpSession session) {
-        Integer userId = getCurrentUserId(session);
+    public ResponseEntity<?> removeWatched(@PathVariable String tmdbMovieId, HttpSession session) {
+        UUID userId = getCurrentUserId(session);
         if (userId == null) {
             return unauthorized();
         }
-        watchHistoryService.removeWatchedMovie(userId.longValue(), tmdbMovieId);
+        watchHistoryService.removeWatchedMovie(userId, tmdbMovieId);
         return ResponseEntity.noContent().build();
     }
 
-    // ล้างประวัติทั้งหมด
     @DeleteMapping
     public ResponseEntity<?> clearHistory(HttpSession session) {
-        Integer userId = getCurrentUserId(session);
+        UUID userId = getCurrentUserId(session);
         if (userId == null) {
             return unauthorized();
         }
-        watchHistoryService.clearUserHistory(userId.longValue());
+        watchHistoryService.clearUserHistory(userId);
         return ResponseEntity.noContent().build();
     }
 
-    private Integer getCurrentUserId(HttpSession session) {
-        return (Integer) session.getAttribute("USER_ID");
+    private UUID getCurrentUserId(HttpSession session) {
+        return (UUID) session.getAttribute("USER_ID");
     }
 
     private ResponseEntity<Map<String, String>> unauthorized() {

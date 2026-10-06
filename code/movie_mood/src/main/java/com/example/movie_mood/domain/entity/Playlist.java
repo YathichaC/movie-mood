@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "playlists")
+@Table(name = "Playlist")
 public class Playlist {
 
     @Id
@@ -18,6 +18,9 @@ public class Playlist {
 
     @Column(name = "playlist_name", nullable = false)
     private String playlistName;
+
+    @Column(name = "cover_image_path")
+    private String coverImagePath;
 
     @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Movielist> items = new ArrayList<>();
@@ -62,6 +65,14 @@ public class Playlist {
 
     public void setPlaylistName(String playlistName) {
         this.playlistName = playlistName;
+    }
+
+    public String getCoverImagePath() {
+        return coverImagePath;
+    }
+
+    public void setCoverImagePath(String coverImagePath) {
+        this.coverImagePath = coverImagePath;
     }
 
     public List<Movielist> getItems() {

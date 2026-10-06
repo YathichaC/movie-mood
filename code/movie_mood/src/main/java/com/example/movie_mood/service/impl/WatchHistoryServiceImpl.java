@@ -7,8 +7,7 @@ import com.example.movie_mood.repository.WatchHistoryRepository;
 import com.example.movie_mood.service.WatchHistoryService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
+import java.util.UUID;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,57 +22,45 @@ public class WatchHistoryServiceImpl implements WatchHistoryService {
 
     @Override
     @Transactional
-    public WatchHistoryResponse recordWatchedMovie(Long userId, WatchHistoryRequest request) {
+    public WatchHistoryResponse recordWatchedMovie(UUID userId, WatchHistoryRequest request) {
         WatchHistory history = watchHistoryRepository.findByUserIdAndTmdbMovieId(userId, request.getTmdbMovieId())
-                .map(existing -> {
-                    existing.setWatchedAt(LocalDateTime.now());
-                    return existing;
-                })
                 .orElseGet(() -> new WatchHistory(
                         userId,
-                        request.getTmdbMovieId(),
-                        request.getTitle(),
-                        request.getPosterPath()
-                ));
-
+                        request.getTmdbMovieId()));
         WatchHistory saved = watchHistoryRepository.save(history);
         return mapToResponse(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<WatchHistoryResponse> getUserWatchHistory(Long userId) {
-    return watchHistoryRepository.findByUserIdOrderByTitleAsc(userId)
-            .stream()
-            .map(this::mapToResponse)
-            .collect(Collectors.toList());
-}
+    public List<WatchHistoryResponse> getUserWatchHistory(UUID userId) {
+        return watchHistoryRepository.findByUserId(userId)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
 
     @Override
     @Transactional(readOnly = true)
-    public boolean isMovieWatched(Long userId, Long tmdbMovieId) {
+    public boolean isMovieWatched(UUID userId, String tmdbMovieId) {
         return watchHistoryRepository.findByUserIdAndTmdbMovieId(userId, tmdbMovieId).isPresent();
     }
 
     @Override
     @Transactional
-    public void removeWatchedMovie(Long userId, Long tmdbMovieId) {
+    public void removeWatchedMovie(UUID userId, String tmdbMovieId) {
         watchHistoryRepository.deleteByUserIdAndTmdbMovieId(userId, tmdbMovieId);
     }
 
     @Override
     @Transactional
-    public void clearUserHistory(Long userId) {
+    public void clearUserHistory(UUID userId) {
         watchHistoryRepository.deleteByUserId(userId);
     }
 
     private WatchHistoryResponse mapToResponse(WatchHistory history) {
         return new WatchHistoryResponse(
-                history.getId(),
-                history.getTmdbMovieId(),
-                history.getTitle(),
-                history.getPosterPath(),
-                history.getWatchedAt()
-        );
+                history.getHistoryId(),
+                history.getTmdbMovieId());
     }
 }

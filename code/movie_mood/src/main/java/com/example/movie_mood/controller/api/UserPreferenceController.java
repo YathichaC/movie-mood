@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users/{userId}/preferences")
@@ -22,8 +23,8 @@ public class UserPreferenceController {
 
         @GetMapping("/disliked-genres")
         public ResponseEntity<?> getDislikedGenres(
-                        @PathVariable Integer userId, HttpSession session) {
-                Integer currentUserId = (Integer) session.getAttribute("USER_ID");
+                        @PathVariable UUID userId, HttpSession session) {
+                UUID currentUserId = (UUID) session.getAttribute("USER_ID");
                 if (currentUserId == null) {
                         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                                         .body(Map.of("message", "Please login first"));
@@ -33,7 +34,7 @@ public class UserPreferenceController {
                                         Map.of("message", "Access denied"));
                 }
                 try {
-                        List<Integer> genreIds = userPreferenceService
+                        List<String> genreIds = userPreferenceService
                                         .getDislikedGenreIds(userId);
                         return ResponseEntity.ok(
                                         Map.of(
@@ -47,9 +48,9 @@ public class UserPreferenceController {
 
         @PutMapping("/disliked-genres")
         public ResponseEntity<?> updateDislikedGenres(
-                        @PathVariable Integer userId,
-                        @RequestBody List<Integer> genreIds, HttpSession session) {
-                Integer currentUserId = (Integer) session.getAttribute("USER_ID");
+                        @PathVariable UUID userId,
+                        @RequestBody List<String> genreIds, HttpSession session) {
+                UUID currentUserId = (UUID) session.getAttribute("USER_ID");
                 if (currentUserId == null) {
                         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                                         Map.of("message", "Please login first"));
@@ -63,7 +64,7 @@ public class UserPreferenceController {
                                         Map.of("message", "Genre list cannot be null"));
                 }
                 try {
-                        List<Integer> updatedGenreIds = userPreferenceService
+                        List<String> updatedGenreIds = userPreferenceService
                                         .updateDislikedGenres(userId, genreIds);
                         return ResponseEntity.ok(
                                         Map.of(

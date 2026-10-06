@@ -19,18 +19,18 @@ class MovieDetailFacadeTest {
                 new MovieDetailFacade(movieService);
 
         Movie movie = new Movie();
-        movie.setTmdbMovieId(550L);
+        movie.setTmdbMovieId("550");
         movie.setTitle("Test Movie");
 
-        when(movieService.getMovieDetails(550L))
+        when(movieService.getMovieDetails("550"))
                 .thenReturn(movie);
 
         Movie result =
-                facade.getMovieDetails(550L);
+                facade.getMovieDetails("550");
 
         assertSame(movie, result);
 
         verify(movieService, times(1))
-                .getMovieDetails(550L);
+                .getMovieDetails("550");
     }
 }

@@ -10,11 +10,20 @@ import java.util.Optional;
 @Repository
 public interface MovielistRepository extends JpaRepository<Movielist, UUID> {
 
-    List<Movielist> findByPlaylistIdOrderByAddedAtDesc(UUID playlistId);
+    List<Movielist> findByPlaylist_PlaylistId(UUID playlistId);
 
-    boolean existsByPlaylistIdAndTmdbMovieId(UUID playlistId, String tmdbMovieId);
+    boolean existsByPlaylist_PlaylistIdAndTmdbMovieId(
+            UUID playlistId,
+            String tmdbMovieId
+    );
 
-    Optional<Movielist> findByPlaylistIdAndTmdbMovieId(UUID playlistId, String tmdbMovieId);
+    Optional<Movielist> findByPlaylist_PlaylistIdAndTmdbMovieId(
+            UUID playlistId,
+            String tmdbMovieId
+    );
 
-    void deleteByPlaylistIdAndTmdbMovieId(UUID playlistId, String tmdbMovieId);
+    void deleteByPlaylist_PlaylistIdAndTmdbMovieId(
+            UUID playlistId,
+            String tmdbMovieId
+    );
 }
