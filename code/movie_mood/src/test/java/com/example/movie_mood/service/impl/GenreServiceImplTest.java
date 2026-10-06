@@ -3,6 +3,7 @@ package com.example.movie_mood.service.impl;
 import com.example.movie_mood.domain.entity.Genre;
 import com.example.movie_mood.exception.GenreNotFoundException;
 import com.example.movie_mood.repository.GenreRepository;
+import com.example.movie_mood.exception.GenreAlreadyExistsException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,126 +16,140 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class GenreServiceImplTest {
 
-    private GenreRepository genreRepository;
-    private GenreServiceImpl genreService;
+        private GenreRepository genreRepository;
+        private GenreServiceImpl genreService;
 
-    @BeforeEach
-    void setUp() {
-        genreRepository = mock(GenreRepository.class);
-        genreService = new GenreServiceImpl(genreRepository);
-    }
+        @BeforeEach
+        void setUp() {
+                genreRepository = mock(GenreRepository.class);
+                genreService = new GenreServiceImpl(genreRepository);
+        }
 
-    @Test
-    void createGenre_shouldSaveAndReturnGenre() {
-        Genre genre = new Genre("35", "Comedy");
+        @Test
+        void createGenre_shouldSaveAndReturnGenre() {
+                Genre genre = new Genre("35", "Comedy");
 
-        when(genreRepository.save(genre)).thenReturn(genre);
+                when(genreRepository.existsById("35")).thenReturn(false);
+                when(genreRepository.save(genre)).thenReturn(genre);
 
-        Genre result = genreService.createGenre(genre);
+                Genre result = genreService.createGenre(genre);
 
-        assertEquals("35", result.getGenreId());
-        assertEquals("Comedy", result.getGenreName());
+                assertEquals("35", result.getGenreId());
+                assertEquals("Comedy", result.getGenreName());
 
-        verify(genreRepository).save(genre);
-    }
+                verify(genreRepository).existsById("35");
+                verify(genreRepository).save(genre);
+        }
 
-    @Test
-    void getAllGenres_shouldReturnPageOfGenres() {
-        Pageable pageable = PageRequest.of(0, 2);
+        @Test
+        void createGenre_shouldThrowException_whenGenreAlreadyExists() {
+                Genre genre = new Genre("35", "Comedy");
 
-        List<Genre> genres = List.of(
-                new Genre("28", "Action"),
-                new Genre("35", "Comedy")
-        );
+                when(genreRepository.existsById("35")).thenReturn(true);
 
-        Page<Genre> genrePage = new PageImpl<>(
-                genres,
-                pageable,
-                genres.size()
-        );
+                GenreAlreadyExistsException exception = assertThrows(
+                                GenreAlreadyExistsException.class,
+                                () -> genreService.createGenre(genre));
 
-        when(genreRepository.findAll(pageable))
-                .thenReturn(genrePage);
+                assertEquals(
+                                "Genre already exists with id: 35",
+                                exception.getMessage());
 
-        Page<Genre> result =
-                genreService.getAllGenres(pageable);
+                verify(genreRepository).existsById("35");
+                verify(genreRepository, never()).save(any(Genre.class));
+        }
 
-        assertEquals(2, result.getContent().size());
-        assertEquals("Action", result.getContent().get(0).getGenreName());
-        assertEquals("Comedy", result.getContent().get(1).getGenreName());
+        @Test
+        void getAllGenres_shouldReturnPageOfGenres() {
+                Pageable pageable = PageRequest.of(0, 2);
 
-        verify(genreRepository).findAll(pageable);
-    }
+                List<Genre> genres = List.of(
+                                new Genre("28", "Action"),
+                                new Genre("35", "Comedy"));
 
-    @Test
-    void getGenreById_shouldReturnGenre_whenGenreExists() {
-        Genre genre = new Genre("35", "Comedy");
+                Page<Genre> genrePage = new PageImpl<>(
+                                genres,
+                                pageable,
+                                genres.size());
 
-        when(genreRepository.findById("35"))
-                .thenReturn(Optional.of(genre));
+                when(genreRepository.findAll(pageable))
+                                .thenReturn(genrePage);
 
-        Genre result = genreService.getGenreById("35");
+                Page<Genre> result = genreService.getAllGenres(pageable);
 
-        assertEquals("35", result.getGenreId());
-        assertEquals("Comedy", result.getGenreName());
+                assertEquals(2, result.getContent().size());
+                assertEquals("Action", result.getContent().get(0).getGenreName());
+                assertEquals("Comedy", result.getContent().get(1).getGenreName());
 
-        verify(genreRepository).findById("35");
-    }
+                verify(genreRepository).findAll(pageable);
+        }
 
-    @Test
-    void getGenreById_shouldThrowException_whenGenreDoesNotExist() {
-        when(genreRepository.findById("999"))
-                .thenReturn(Optional.empty());
+        @Test
+        void getGenreById_shouldReturnGenre_whenGenreExists() {
+                Genre genre = new Genre("35", "Comedy");
 
-        GenreNotFoundException exception =
-                assertThrows(
-                        GenreNotFoundException.class,
-                        () -> genreService.getGenreById("999")
-                );
+                when(genreRepository.findById("35"))
+                                .thenReturn(Optional.of(genre));
 
-        assertEquals(
-                "Genre not found with id: 999",
-                exception.getMessage()
-        );
+                Genre result = genreService.getGenreById("35");
 
-        verify(genreRepository).findById("999");
-    }
+                assertEquals("35", result.getGenreId());
+                assertEquals("Comedy", result.getGenreName());
 
-    @Test
-    void updateGenre_shouldUpdateGenreName() {
-        Genre existingGenre = new Genre("35", "Comedy");
-        Genre updatedGenre = new Genre("35", "Comedy Updated");
+                verify(genreRepository).findById("35");
+        }
 
-        when(genreRepository.findById("35"))
-                .thenReturn(Optional.of(existingGenre));
+        @Test
+        void getGenreById_shouldThrowException_whenGenreDoesNotExist() {
+                when(genreRepository.findById("999"))
+                                .thenReturn(Optional.empty());
 
-        when(genreRepository.save(existingGenre))
-                .thenReturn(existingGenre);
+                GenreNotFoundException exception = assertThrows(
+                                GenreNotFoundException.class,
+                                () -> genreService.getGenreById("999"));
 
-        Genre result =
-                genreService.updateGenre("35", updatedGenre);
+                assertEquals(
+                                "Genre not found with id: 999",
+                                exception.getMessage());
 
-        assertEquals("35", result.getGenreId());
-        assertEquals("Comedy Updated", result.getGenreName());
+                verify(genreRepository).findById("999");
+        }
 
-        verify(genreRepository).findById("35");
-        verify(genreRepository).save(existingGenre);
-    }
+        @Test
+        void updateGenre_shouldUpdateGenreName() {
+                Genre existingGenre = new Genre("35", "Comedy");
+                Genre updatedGenre = new Genre("35", "Comedy Updated");
 
-    @Test
-    void deleteGenre_shouldDeleteGenre_whenGenreExists() {
-        Genre genre = new Genre("35", "Comedy");
+                when(genreRepository.findById("35"))
+                                .thenReturn(Optional.of(existingGenre));
 
-        when(genreRepository.findById("35"))
-                .thenReturn(Optional.of(genre));
+                when(genreRepository.save(existingGenre))
+                                .thenReturn(existingGenre);
 
-        genreService.deleteGenre("35");
+                Genre result = genreService.updateGenre("35", updatedGenre);
 
-        verify(genreRepository).findById("35");
-        verify(genreRepository).delete(genre);
-    }
+                assertEquals("35", result.getGenreId());
+                assertEquals("Comedy Updated", result.getGenreName());
+
+                verify(genreRepository).findById("35");
+                verify(genreRepository).save(existingGenre);
+        }
+
+        @Test
+        void deleteGenre_shouldDeleteGenre_whenGenreExists() {
+                Genre genre = new Genre("35", "Comedy");
+
+                when(genreRepository.findById("35"))
+                                .thenReturn(Optional.of(genre));
+
+                genreService.deleteGenre("35");
+
+                verify(genreRepository).findById("35");
+                verify(genreRepository).delete(genre);
+        }
 }

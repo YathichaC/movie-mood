@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.example.movie_mood.exception.GenreNotFoundException;
+import com.example.movie_mood.exception.GenreAlreadyExistsException;
 
 @Service
 public class GenreServiceImpl implements GenreService {
@@ -19,6 +20,10 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public Genre createGenre(Genre genre) {
+        if (genreRepository.existsById(genre.getGenreId())) {
+            throw new GenreAlreadyExistsException(genre.getGenreId());
+        }
+
         return genreRepository.save(genre);
     }
 
