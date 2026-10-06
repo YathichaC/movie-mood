@@ -11,6 +11,7 @@ import com.example.movie_mood.repository.PlaylistRepository;
 import com.example.movie_mood.service.PlaylistService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.movie_mood.domain.entity.PlaylistDetail;
 import java.util.UUID;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +24,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     private final MovielistRepository movielistRepository;
 
     public PlaylistServiceImpl(PlaylistRepository playlistRepository,
-                               MovielistRepository movielistRepository) {
+            MovielistRepository movielistRepository) {
         this.playlistRepository = playlistRepository;
         this.movielistRepository = movielistRepository;
     }
@@ -48,6 +49,14 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Override
     public PlaylistResponse createPlaylist(UUID userId, PlaylistRequest request) {
         Playlist playlist = new Playlist(userId, request.getPlaylistName());
+
+        PlaylistDetail detail = new PlaylistDetail(
+                playlist,
+                request.getDetail(),
+                request.getCoverImagePath());
+
+        playlist.setDetail(detail);
+
         Playlist saved = playlistRepository.save(playlist);
         return new PlaylistResponse(saved);
     }
@@ -70,8 +79,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         Movielist item = new Movielist(
                 playlist,
-                request.getTmdbMovieId()
-        );
+                request.getTmdbMovieId());
 
         playlist.addItem(item);
         Movielist savedItem = movielistRepository.save(item);

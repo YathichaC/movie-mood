@@ -19,8 +19,13 @@ public class Playlist {
     @Column(name = "playlist_name", nullable = false)
     private String playlistName;
 
-    @Column(name = "cover_image_path")
-    private String coverImagePath;
+    @OneToOne(
+        mappedBy = "playlist",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+
+    private PlaylistDetail detail;
 
     @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Movielist> items = new ArrayList<>();
@@ -67,12 +72,12 @@ public class Playlist {
         this.playlistName = playlistName;
     }
 
-    public String getCoverImagePath() {
-        return coverImagePath;
+    public PlaylistDetail getDetail() {
+        return detail;
     }
 
-    public void setCoverImagePath(String coverImagePath) {
-        this.coverImagePath = coverImagePath;
+    public void setDetail(PlaylistDetail detail) {
+        this.detail = detail;
     }
 
     public List<Movielist> getItems() {

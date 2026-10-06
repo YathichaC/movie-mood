@@ -44,8 +44,7 @@ class PlaylistServiceTest {
 
         mockPlaylist = new Playlist(
                 userId,
-                "Favorite Movies"
-        );
+                "Favorite Movies");
 
         mockPlaylist.setPlaylistId(UUID.randomUUID());
     }
@@ -54,6 +53,8 @@ class PlaylistServiceTest {
     void testCreatePlaylist_Success() {
         PlaylistRequest request = new PlaylistRequest();
         request.setPlaylistName("Weekend Binge");
+        request.setDetail("Movies to watch this weekend");
+        request.setCoverImagePath("playlists/weekend.jpg");
 
         when(playlistRepository.save(any(Playlist.class)))
                 .thenAnswer(invocation -> {
@@ -62,12 +63,13 @@ class PlaylistServiceTest {
                     return playlist;
                 });
 
-        PlaylistResponse response =
-                playlistService.createPlaylist(userId, request);
+        PlaylistResponse response = playlistService.createPlaylist(userId, request);
 
         assertNotNull(response);
         assertNotNull(response.getPlaylistId());
         assertEquals("Weekend Binge", response.getPlaylistName());
+        assertEquals("Movies to watch this weekend", response.getDetail());
+        assertEquals("playlists/weekend.jpg", response.getCoverImagePath());
 
         verify(playlistRepository, times(1))
                 .save(any(Playlist.class));
@@ -77,8 +79,7 @@ class PlaylistServiceTest {
     void testAddMovieToPlaylist_Success() {
         UUID playlistId = mockPlaylist.getPlaylistId();
 
-        MovielistRequest request =
-                new MovielistRequest("550");
+        MovielistRequest request = new MovielistRequest("550");
 
         when(playlistRepository
                 .findByPlaylistIdAndUserId(playlistId, userId))
@@ -97,12 +98,10 @@ class PlaylistServiceTest {
                     return item;
                 });
 
-        MovielistResponse response =
-                playlistService.addMovieToPlaylist(
-                        playlistId,
-                        userId,
-                        request
-                );
+        MovielistResponse response = playlistService.addMovieToPlaylist(
+                playlistId,
+                userId,
+                request);
 
         assertNotNull(response);
         assertEquals("550", response.getTmdbMovieId());
@@ -115,8 +114,7 @@ class PlaylistServiceTest {
     void testAddMovieToPlaylist_DuplicateMovie_ThrowsException() {
         UUID playlistId = mockPlaylist.getPlaylistId();
 
-        MovielistRequest request =
-                new MovielistRequest("550");
+        MovielistRequest request = new MovielistRequest("550");
 
         when(playlistRepository
                 .findByPlaylistIdAndUserId(playlistId, userId))
@@ -128,20 +126,16 @@ class PlaylistServiceTest {
                         "550"))
                 .thenReturn(true);
 
-        IllegalStateException exception =
-                assertThrows(
-                        IllegalStateException.class,
-                        () -> playlistService.addMovieToPlaylist(
-                                playlistId,
-                                userId,
-                                request
-                        )
-                );
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> playlistService.addMovieToPlaylist(
+                        playlistId,
+                        userId,
+                        request));
 
         assertEquals(
                 "Movie is already in this playlist",
-                exception.getMessage()
-        );
+                exception.getMessage());
 
         verify(movielistRepository, never())
                 .save(any(Movielist.class));
@@ -157,10 +151,32 @@ class PlaylistServiceTest {
 
         playlistService.deletePlaylist(
                 playlistId,
-                userId
-        );
+                userId);
 
         verify(playlistRepository, times(1))
                 .delete(mockPlaylist);
+    }
+
+    @Test
+    void testCreatePlaylist_WithoutDetailAndCoverImage_Success() {
+        PlaylistRequest request = new PlaylistRequest();
+        request.setPlaylistName("Simple Playlist");
+
+        when(playlistRepository.save(any(Playlist.class)))
+                .thenAnswer(invocation -> {
+                    Playlist playlist = invocation.getArgument(0);
+                    playlist.setPlaylistId(UUID.randomUUID());
+                    return playlist;
+                });
+
+        PlaylistResponse response = playlistService.createPlaylist(userId, request);
+
+        assertNotNull(response);
+        assertEquals("Simple Playlist", response.getPlaylistName());
+        assertNull(response.getDetail());
+        assertNull(response.getCoverImagePath());
+
+        verify(playlistRepository, times(1))
+                .save(any(Playlist.class));
     }
 }
