@@ -11,5 +11,7 @@ public interface MovieProvider {
 
     Movie getMovie(String tmdbMovieId);
 
+    List<Video> getMovieVideos(String tmdbMovieId);
+
     List<Movie> discoverMoviesByGenres(List<Integer> genreIds);
 }

@@ -45,15 +45,15 @@ public class AuthService {
 
     public User login(LoginRequest request) {
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
 
         if (!passwordEncoder.matches(
                 request.getPassword(),
                 user.getPassword())) {
 
             throw new IllegalArgumentException(
-                    "Invalid email or password");
+                    "Invalid username or password");
         }
 
         return user;

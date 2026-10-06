@@ -1,6 +1,7 @@
 package com.example.movie_mood.integration.tmdb.proxy;
 
 import com.example.movie_mood.domain.model.Movie;
+import com.example.movie_mood.domain.model.Video;
 import com.example.movie_mood.integration.tmdb.MovieProvider;
 import com.example.movie_mood.integration.tmdb.TmdbMovieAdapter;
 import org.springframework.context.annotation.Primary;
@@ -16,8 +17,7 @@ public class CachingMovieServiceProxy implements MovieProvider {
 
     private final TmdbMovieAdapter movieAdapter;
 
-    private final Map<String, Movie> movieCache =
-            new ConcurrentHashMap<>();
+    private final Map<String, Movie> movieCache = new ConcurrentHashMap<>();
 
     public CachingMovieServiceProxy(
             TmdbMovieAdapter movieAdapter) {
@@ -39,8 +39,12 @@ public class CachingMovieServiceProxy implements MovieProvider {
 
         return movieCache.computeIfAbsent(
                 tmdbMovieId,
-                movieAdapter::getMovie
-        );
+                movieAdapter::getMovie);
+    }
+
+    @Override
+    public List<Video> getMovieVideos(String tmdbMovieId) {
+        return movieAdapter.getMovieVideos(tmdbMovieId);
     }
 
     @Override

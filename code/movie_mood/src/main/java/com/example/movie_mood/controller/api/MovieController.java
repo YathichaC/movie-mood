@@ -1,5 +1,8 @@
 package com.example.movie_mood.controller.api;
 
+import com.example.movie_mood.domain.model.Video;
+import org.springframework.http.ResponseEntity;
+import java.util.Map;
 import com.example.movie_mood.domain.enums.Mood;
 import com.example.movie_mood.dto.response.MovieResponse;
 import com.example.movie_mood.facade.MovieDetailFacade;
@@ -73,6 +76,26 @@ public class MovieController {
 
                 return movieMapper.toResponse(
                                 movieDetailFacade.getMovieDetails(tmdbMovieId));
+        }
+
+        @Operation(summary = "Get movie trailer", description = "Returns the official YouTube trailer of a movie from TMDB")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Trailer retrieved successfully"),
+                        @ApiResponse(responseCode = "404", description = "Trailer not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+        })
+        @GetMapping("/{tmdbMovieId}/trailer")
+        public ResponseEntity<Map<String, String>> getMovieTrailer(
+                        @PathVariable @NotBlank String tmdbMovieId) {
+
+                Video trailer = movieService.getMovieTrailer(tmdbMovieId);
+
+                if (trailer == null) {
+                        throw new IllegalArgumentException(
+                                        "Trailer not found for movie: " + tmdbMovieId);
+                }
+
+                return ResponseEntity.ok(
+                                Map.of("key", trailer.getKey()));
         }
 
         @Operation(summary = "Filter movies by genre", description = "Returns movies from TMDB filtered by a genre ID")

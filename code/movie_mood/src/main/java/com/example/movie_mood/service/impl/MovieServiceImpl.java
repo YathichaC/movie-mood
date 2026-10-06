@@ -6,6 +6,8 @@ import com.example.movie_mood.service.MovieService;
 import org.springframework.stereotype.Service;
 import com.example.movie_mood.domain.enums.Mood;
 import com.example.movie_mood.mapper.MoodGenreMapper;
+import com.example.movie_mood.domain.model.Video;
+import java.util.Comparator;
 
 import java.util.List;
 
@@ -48,5 +50,20 @@ public class MovieServiceImpl implements MovieService {
     public List<Movie> filterMoviesByGenre(Integer genreId) {
         return movieProvider.discoverMoviesByGenres(
                 List.of(genreId));
+    }
+
+    @Override
+    public Video getMovieTrailer(String tmdbMovieId) {
+
+        List<Video> videos = movieProvider.getMovieVideos(tmdbMovieId);
+
+        return videos.stream()
+                .filter(video -> "YouTube".equalsIgnoreCase(video.getSite()))
+                .filter(video -> "Trailer".equalsIgnoreCase(video.getType()))
+                .sorted(
+                        Comparator.comparing(
+                                Video::isOfficial).reversed())
+                .findFirst()
+                .orElse(null);
     }
 }
