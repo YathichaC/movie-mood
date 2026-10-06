@@ -20,12 +20,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class MovieControllerTest {
 
         private MovieService movieService;
+        private MovieDetailFacade movieDetailFacade;
         private MockMvc mockMvc;
 
         @BeforeEach
         void setUp() {
                 movieService = mock(MovieService.class);
-                MovieDetailFacade movieDetailFacade = mock(MovieDetailFacade.class);
+                movieDetailFacade = mock(MovieDetailFacade.class);
                 MovieMapper movieMapper = new MovieMapper();
 
                 MovieController controller = new MovieController(
@@ -99,4 +100,76 @@ class MovieControllerTest {
                 verifyNoInteractions(movieService);
         }
 
+        @Test
+        void browseMovies_shouldReturnMovies() throws Exception {
+                Movie movie = new Movie();
+                movie.setTmdbMovieId(10L);
+                movie.setTitle("Popular Movie");
+                movie.setRating(8.2);
+                movie.setGenreIds(List.of(28, 12));
+
+                when(movieService.browseMovies())
+                                .thenReturn(List.of(movie));
+
+                mockMvc.perform(get("/api/v1/movies"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$[0].tmdbMovieId").value(10))
+                                .andExpect(jsonPath("$[0].title").value("Popular Movie"))
+                                .andExpect(jsonPath("$[0].rating").value(8.2))
+                                .andExpect(jsonPath("$[0].genreIds[0]").value(28))
+                                .andExpect(jsonPath("$[0].genreIds[1]").value(12));
+
+                verify(movieService).browseMovies();
+        }
+
+        @Test
+        void searchMovies_shouldReturnMatchingMovies() throws Exception {
+                Movie movie = new Movie();
+                movie.setTmdbMovieId(11L);
+                movie.setTitle("Batman");
+                movie.setRating(8.0);
+                movie.setGenreIds(List.of(28));
+
+                when(movieService.searchMovies("Batman"))
+                                .thenReturn(List.of(movie));
+
+                mockMvc.perform(
+                                get("/api/v1/movies/search")
+                                                .param("keyword", "Batman"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$[0].tmdbMovieId").value(11))
+                                .andExpect(jsonPath("$[0].title").value("Batman"))
+                                .andExpect(jsonPath("$[0].rating").value(8.0));
+
+                verify(movieService).searchMovies("Batman");
+        }
+
+        @Test
+        void getMovieDetails_shouldReturnMovie() throws Exception {
+                Movie movie = new Movie();
+                movie.setTmdbMovieId(550L);
+                movie.setTitle("Fight Club");
+                movie.setRating(8.4);
+                movie.setGenreIds(List.of(18, 53));
+                movie.setPosterPath("/fight-club-poster.jpg");
+                movie.setBackdropPath("/fight-club-backdrop.jpg");
+
+                when(movieDetailFacade.getMovieDetails(550L))
+                                .thenReturn(movie);
+
+                mockMvc.perform(get("/api/v1/movies/550"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.tmdbMovieId").value(550))
+                                .andExpect(jsonPath("$.title").value("Fight Club"))
+                                .andExpect(jsonPath("$.rating").value(8.4))
+                                .andExpect(jsonPath("$.genreIds[0]").value(18))
+                                .andExpect(jsonPath("$.genreIds[1]").value(53))
+                                .andExpect(jsonPath("$.posterPath").value("/fight-club-poster.jpg"))
+                                .andExpect(jsonPath("$.backdropPath").value("/fight-club-backdrop.jpg"));
+
+                verify(movieDetailFacade).getMovieDetails(550L);
+                verifyNoInteractions(movieService);
+        }
+
+       
 }
