@@ -12,6 +12,9 @@ public class MovieResponse {
     private LocalDate releaseDate;
     private List<Integer> genreIds;
 
+    private String posterPath;
+    private String backdropPath;
+
     public MovieResponse() {
     }
 
@@ -77,5 +80,21 @@ public class MovieResponse {
 
     public void setGenreIds(List<Integer> genreIds) {
         this.genreIds = genreIds;
+    }
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
+    }
+
+    public String getBackdropPath() {
+        return backdropPath;
+    }
+
+    public void setBackdropPath(String backdropPath) {
+        this.backdropPath = backdropPath;
     }
 }

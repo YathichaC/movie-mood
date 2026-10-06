@@ -4,6 +4,8 @@ import com.example.movie_mood.domain.model.Movie;
 import com.example.movie_mood.integration.tmdb.MovieProvider;
 import com.example.movie_mood.service.MovieService;
 import org.springframework.stereotype.Service;
+import com.example.movie_mood.domain.enums.Mood;
+import com.example.movie_mood.mapper.MoodGenreMapper;
 
 import java.util.List;
 
@@ -11,9 +13,20 @@ import java.util.List;
 public class MovieServiceImpl implements MovieService {
 
     private final MovieProvider movieProvider;
+    private final MoodGenreMapper moodGenreMapper;
 
-    public MovieServiceImpl(MovieProvider movieProvider) {
+    public MovieServiceImpl(
+            MovieProvider movieProvider,
+            MoodGenreMapper moodGenreMapper) {
         this.movieProvider = movieProvider;
+        this.moodGenreMapper = moodGenreMapper;
+    }
+
+    @Override
+    public List<Movie> filterMoviesByMood(Mood mood) {
+        List<Integer> genreIds = moodGenreMapper.getGenreIds(mood);
+
+        return movieProvider.discoverMoviesByGenres(genreIds);
     }
 
     @Override
@@ -29,5 +42,11 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Movie getMovieDetails(Long tmdbMovieId) {
         return movieProvider.getMovie(tmdbMovieId);
+    }
+
+    @Override
+    public List<Movie> filterMoviesByGenre(Integer genreId) {
+        return movieProvider.discoverMoviesByGenres(
+                List.of(genreId));
     }
 }

@@ -1,43 +1,29 @@
 <div th:fragment="createPlaylistModal"
     class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 hidden"
     id="create-playlist-modal">
-    <div class="glass-panel w-full max-w-lg rounded-2xl p-6 border border-[#232D42] shadow-2xl space-y-5">
-        <div class="flex items-center justify-between border-b border-outline-variant/20 pb-4">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary text-xl">
-                    playlist_add
-                </span>
-                <h3 class="text-headline-sm font-headline-sm font-bold text-on-surface">
-                    Create New Movie Playlist
-                </h3>
+    <div role="dialog" aria-modal="true" aria-labelledby="modal-title"
+        class="w-full max-w-[420px] bg-black border border-[#262626] rounded p-6 sm:p-7 flex flex-col gap-6">
+        <div>
+            <h2 id="modal-title"
+                class="text-xl sm:text-[22px] font-semibold tracking-tight text-[#F5F5F5] leading-none font-['Outfit']">
+                Create Playlist</h2>
+        </div>
+        <form onsubmit="event.preventDefault();" class="flex flex-col gap-6">
+            <div class="flex flex-col gap-2">
+                <label for="playlist-name"
+                    class="text-xs font-medium tracking-wide uppercase text-[#A3A3A3] font-['Outfit']">Playlist
+                    Name</label>
+                <input type="text" id="playlist-name" name="playlistName" placeholder="Enter playlist name"
+                    autocomplete="off" autofocus
+                    class="w-full h-11 px-3.5 bg-[#0A0A0A] border border-[#262626] rounded text-sm text-[#F5F5F5] placeholder-[#737373] outline-none transition-colors duration-150 focus:border-[#525252] focus:bg-black font-['Outfit']">
             </div>
-            <button type="button"
-                class="p-1 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container"
-                onclick="document.getElementById('create-playlist-modal').classList.add('hidden')">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
-        <div class="space-y-4">
-            <div>
-                <label for="playlist-name" class="block text-label-md font-label-md text-on-surface mb-1.5 font-medium">
-                    Playlist Name
-                </label>
-                <input id="playlist-name" name="playlistName"
-                    class="w-full px-4 py-2.5 rounded-lg bg-surface-container-low border border-[#232D42] text-on-surface focus:outline-none focus:border-primary text-body-md"
-                    placeholder="" type="text">
+            <div class="flex items-center justify-end gap-3 pt-1">
+                <button type="button"
+                    class="h-9 px-4 rounded border border-[#262626] bg-black text-[#A3A3A3] text-xs sm:text-sm font-medium hover:text-[#F5F5F5] hover:border-[#525252] transition-colors duration-150 font-['Outfit']"
+                    onclick="document.getElementById('create-playlist-modal').classList.add('hidden')">Cancel</button>
+                <button type="submit"
+                    class="h-9 px-5 rounded bg-white text-black text-xs sm:text-sm font-medium hover:bg-[#E5E5E5] transition-colors duration-150 font-['Outfit']">Save</button>
             </div>
-        </div>
-        <div class="pt-3 flex items-center justify-end gap-3 border-t border-outline-variant/20">
-            <button type="button"
-                class="px-4 py-2 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high text-label-md font-label-md"
-                onclick="document.getElementById('create-playlist-modal').classList.add('hidden')">
-                Cancel
-            </button>
-            <button type="button"
-                class="px-5 py-2 rounded-lg bg-primary-container text-on-primary-container font-bold hover:bg-[#ffb95f] text-label-md font-label-md"
-                onclick="alert('Playlist created via Spring Boot REST endpoint!'); document.getElementById('create-playlist-modal').classList.add('hidden')">
-                Save
-            </button>
-        </div>
+        </form>
     </div>
 </div>

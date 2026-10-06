@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="edit-playlist-modal">
+    <div class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4" id="editModal">
+        <div class="w-full max-w-lg bg-[#0A0A0A] border border-[#262626] rounded-sm p-6 flex flex-col gap-6">
+            <div class="flex items-center justify-between border-b border-[#262626] pb-4">
+                <h3 class="text-lg font-medium text-[#F5F5F5]">Edit Playlist</h3>
+                <button class="text-[#737373] hover:text-[#F5F5F5] transition-colors p-1 leading-none text-xl"
+                    onclick="closeModal('editModal')" type="button">×</button>
+            </div>
+            <div class="flex flex-col gap-2">
+                <label class="text-xs uppercase tracking-widest text-[#737373]" for="playlistName">Playlist Name</label>
+                <input
+                    class="w-full bg-[#111111] border border-[#262626] focus:border-white focus:ring-0 text-sm text-[#F5F5F5] px-3.5 py-2.5 rounded-sm outline-none transition-colors"
+                    id="playlistName" type="text" value="Whispers of the Wild" placeholder="Enter playlist name">
+            </div>
+            <div class="flex flex-col gap-2">
+                <label class="text-xs uppercase tracking-widest text-[#737373]">Playlist Cover</label>
+                <div class="flex items-center gap-4 p-3 bg-[#111111] border border-[#262626] rounded-sm">
+                    <div class="relative w-16 h-16 border border-[#262626] bg-[#0A0A0A] overflow-hidden rounded-sm shrink-0">
+                        <img id="coverPreview" alt="Playlist cover preview" class="w-full h-full object-cover "
+                            src="https://i.pinimg.com/1200x/cf/c9/4a/cfc94ad7e5884ffae2d3a22b48ff1289.jpg">
+                    </div>
+                    <div class="flex flex-col gap-1.5 min-w-0 flex-1">
+                        <input id="playlistCoverInput" type="file" accept="image/*" class="hidden" onchange="if(this.files[0]){document.getElementById('coverPreview').src=URL.createObjectURL(this.files[0])}">
+                        <button type="button" onclick="document.getElementById('playlistCoverInput').click()"
+                            class="inline-flex items-center justify-center gap-2 px-3 py-1.5 border border-[#262626] bg-[#0A0A0A] hover:bg-[#161616] hover:border-white text-xs uppercase tracking-wider text-[#F5F5F5] transition-colors rounded-sm w-fit">
+                            <span class="material-symbols-outlined text-sm">upload</span>
+                            <span>Upload Cover Image</span>
+                        </button>
+                        <span class="text-[10px] text-[#737373] truncate">PNG, JPG, WEBP up to 5MB</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col gap-2">
+                <label class="text-xs uppercase tracking-widest text-[#737373]">Movies In Playlist</label>
+                <div
+                    class="max-h-48 overflow-y-auto divide-y divide-[#262626] border border-[#262626] rounded-sm bg-[#111111] pr-1">
+                    <div class="flex items-center justify-between p-2 hover:bg-[#161616] transition-colors">
+                        <div class="flex items-center gap-3">
+                            <img alt="Resident Evil" class="w-7 h-9 object-cover rounded-sm"
+                                src="https://image.tmdb.org/t/p/w1280/i7UyjfPio0VFHB9rBUZSFyhOoM8.jpg">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-medium text-[#F5F5F5]">Resident Evil</span>
+                                <span class="text-[10px] text-[#737373]">2026</span>
+                            </div>
+                        </div>
+                        <button
+                            class="px-2 py-1 text-[11px] uppercase tracking-wider text-[#A3A3A3] hover:text-[#F5F5F5] border border-[#262626] hover:border-white transition-colors rounded-sm"
+                            onclick="toggleRemoveRow(this)" type="button">Remove</button>
+                    </div>
+                    <div class="flex items-center justify-between p-2 hover:bg-[#161616] transition-colors">
+                        <div class="flex items-center gap-3">
+                            <img alt="Cold War thumbnail" class="w-7 h-9 object-cover rounded-sm"
+                                src="https://image.tmdb.org/t/p/w1280/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-medium text-[#F5F5F5]">Deadpool & Wolverine</span>
+                                <span class="text-[10px] text-[#737373]">2024</span>
+                            </div>
+                        </div>
+                        <button
+                            class="px-2 py-1 text-[11px] uppercase tracking-wider text-[#A3A3A3] hover:text-[#F5F5F5] border border-[#262626] hover:border-white transition-colors rounded-sm"
+                            onclick="toggleRemoveRow(this)" type="button">Remove</button>
+                    </div>
+                    <div class="flex items-center justify-between p-2 hover:bg-[#161616] transition-colors">
+                        <div class="flex items-center gap-3">
+                            <img alt="Drive My Car thumbnail" class="w-7 h-9 object-cover rounded-sm"
+                                src="https://image.tmdb.org/t/p/w1280/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-medium text-[#F5F5F5]">Oppenheimer</span>
+                                <span class="text-[10px] text-[#737373]">2023</span>
+                            </div>
+                        </div>
+                        <button
+                            class="px-2 py-1 text-[11px] uppercase tracking-wider text-[#A3A3A3] hover:text-[#F5F5F5] border border-[#262626] hover:border-white transition-colors rounded-sm"
+                            onclick="toggleRemoveRow(this)" type="button">Remove</button>
+                    </div>
+                    <div class="flex items-center justify-between p-2 hover:bg-[#161616] transition-colors">
+                        <div class="flex items-center gap-3">
+                            <img alt="Anatomy of a Fall thumbnail" class="w-7 h-9 object-cover rounded-sm"
+                                src="https://image.tmdb.org/t/p/w1280/rhGx6E3qRNMgj3i5su2oukNHwIQ.jpg">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-medium text-[#F5F5F5]">Backrooms</span>
+                                <span class="text-[10px] text-[#737373]">2026</span>
+                            </div>
+                        </div>
+                        <button
+                            class="px-2 py-1 text-[11px] uppercase tracking-wider text-[#A3A3A3] hover:text-[#F5F5F5] border border-[#262626] hover:border-white transition-colors rounded-sm"
+                            onclick="toggleRemoveRow(this)" type="button">Remove</button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-3 border-t border-[#262626]">
+                <button
+                    class="px-4 py-2 border border-[#262626] bg-[#0A0A0A] hover:bg-[#141414] hover:border-neutral-500 text-xs uppercase tracking-widest text-[#F5F5F5] transition-colors rounded-sm"
+                    onclick="closeModal('editModal')" type="button">Cancel</button>
+                <button
+                    class="px-4 py-2 bg-[#F5F5F5] hover:bg-white text-black text-xs font-semibold uppercase tracking-widest transition-colors rounded-sm"
+                    onclick="closeModal('editModal')" type="button">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+</html>

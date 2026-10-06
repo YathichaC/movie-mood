@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="icon" type="image/png" th:href="@{/img/moviemood_logo.png}">
+    <title>MovieMood</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script th:src="@{/js/tailwind-config.js}"></script>
+</head>
+
+<body
+    class="bg-[#000000] text-on-surface antialiased min-h-screen flex flex-col selection:bg-neutral-800 selection:text-white">
+    <header th:replace="~{fragments/navbar :: navbar('history')}"></header>
+    <main class="flex-grow w-full max-w-full px-space-lg md:px-margin pt-10 pb-20">
+        <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-surface-variant pb-8 mb-12">
+            <div>
+                <h1
+                    class="font-outfit text-4xl md:text-3xl lg:text-4xl font-light text-[#F5F5F5] tracking-tight mb-4 leading-[1.08]">
+                    Watch History</h1>
+                <p class="text-body-md font-body-md mt-2">Movies you’ve watched</p>
+            </div>
+        </div>
+        <div class="" id="history-container">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-10 gap-x-6">
+                <div
+                    th:replace="~{fragments/home-movie-card :: home-movie-card('Resident Evil','https://image.tmdb.org/t/p/w1280/i7UyjfPio0VFHB9rBUZSFyhOoM8.jpg',7.3,2026)}">
+                </div>
+                <div
+                    th:replace="~{fragments/home-movie-card :: home-movie-card('Deadpool & Wolverine','https://image.tmdb.org/t/p/w1280/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg',7.6,2024)}">
+                </div>
+                <div
+                    th:replace="~{fragments/home-movie-card :: home-movie-card('Oppenheimer','https://image.tmdb.org/t/p/w1280/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',8.0,2023)}">
+                </div>
+                <div
+                    th:replace="~{fragments/home-movie-card :: home-movie-card('Backrooms','https://image.tmdb.org/t/p/w1280/rhGx6E3qRNMgj3i5su2oukNHwIQ.jpg',7.0,2026)}">
+                </div>
+                <div
+                    th:replace="~{fragments/home-movie-card :: home-movie-card('Dune: Part Two','https://image.tmdb.org/t/p/w1280/6izwz7rsy95ARzTR3poZ8H6c5pp.jpg',8.1,2024)}">
+                </div>
+                <div
+                    th:replace="~{fragments/home-movie-card :: home-movie-card('Interstellar','https://image.tmdb.org/t/p/w1280/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg',8.7,2014)}">
+                </div>
+                <div
+                    th:replace="~{fragments/home-movie-card :: home-movie-card('The Dark Knight','https://image.tmdb.org/t/p/w1280/qJ2tW6WMUDux911r6m7haRef0WH.jpg',9.0,2008)}">
+                </div>
+                <div
+                    th:replace="~{fragments/home-movie-card :: home-movie-card('Inception','https://image.tmdb.org/t/p/w1280/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg',8.4,2010)}">
+                </div>
+                <div
+                    th:replace="~{fragments/home-movie-card :: home-movie-card('Spider-Man: No Way Home','https://image.tmdb.org/t/p/w1280/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg',8.0,2021)}">
+                </div>
+                <div
+                    th:replace="~{fragments/home-movie-card :: home-movie-card('Parasite','https://image.tmdb.org/t/p/w1280/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',8.5,2019)}">
+                </div>
+                <div
+                    th:replace="~{fragments/home-movie-card :: home-movie-card('Everything Everywhere All at Once','https://image.tmdb.org/t/p/w1280/w3LxiVYdWWRvEVdn5RYq6jIqkb1.jpg',7.8,2022)}">
+                </div>
+                <div
+                    th:replace="~{fragments/home-movie-card :: home-movie-card('Obsession','https://image.tmdb.org/t/p/w1280/bRwnj8WEKBCvmfeUNOukJPwB43K.jpg',8.2,2026)}">
+                </div>
+                <div
+                    th:replace="~{fragments/home-movie-card :: home-movie-card('The Shawshank Redemption','https://image.tmdb.org/t/p/w1280/9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg',8.7,1994)}">
+                </div>
+                <div
+                    th:replace="~{fragments/home-movie-card :: home-movie-card('Mad Max: Fury Road','https://image.tmdb.org/t/p/w1280/hA2ple9q4qnwxp3hKVNhroipsir.jpg',8.1,2015)}">
+                </div>
+                <div
+                    th:replace="~{fragments/home-movie-card :: home-movie-card('The Matrix','https://image.tmdb.org/t/p/w1280/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg',8.2,1999)}">
+                </div>
+            </div>
+        </div>
+        <!-- EMPTY STATE (Toggleable when history cleared) -->
+        <div class="hidden flex-col items-center justify-center py-28 text-center max-w-md mx-auto" id="empty-state">
+            <div
+                class="w-16 h-16 rounded border border-surface-variant flex items-center justify-center mb-6 text-secondary bg-surface-container">
+                <span class="material-symbols-outlined text-3xl" data-icon="movie">movie</span>
+            </div>
+            <h2 class="text-headline-sm font-headline-sm text-on-surface font-medium">
+                No watch history yet
+            </h2>
+            <p class="text-body-md font-body-md text-secondary mt-2 mb-8">
+                Movies you watch will appear here.
+            </p>
+            <a class="px-6 py-2.5 bg-white text-black font-semibold text-body-sm rounded-sm hover:bg-neutral-200 transition-colors uppercase tracking-wider"
+                href="#">
+                Discover Movies
+            </a>
+        </div>
+    </main>
+    <!-- CONFIRMATION MODAL (Strictly Monochrome) -->
+    <div class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 p-4" id="clear-modal">
+        <div class="w-full max-w-sm bg-surface-container border border-surface-variant p-6 rounded-sm space-y-4">
+            <div class="flex items-center space-x-3 text-on-surface">
+                <span class="material-symbols-outlined" data-icon="history">history</span>
+                <h3 class="text-headline-sm font-headline-sm font-medium">Clear watch history?</h3>
+            </div>
+            <p class="text-body-sm font-body-sm text-secondary">
+                This will remove all recorded movie screenings from your archive account. This action cannot be
+                reversed.
+            </p>
+            <div class="flex items-center justify-end space-x-3 pt-4 border-t border-surface-variant">
+                <button
+                    class="px-3.5 py-1.5 text-body-sm font-body-sm text-secondary hover:text-white border border-surface-variant rounded-sm transition-colors"
+                    id="cancel-clear-btn" type="button">
+                    Cancel
+                </button>
+                <button
+                    class="px-3.5 py-1.5 text-body-sm font-body-sm bg-white text-black font-semibold hover:bg-neutral-200 rounded-sm transition-colors"
+                    id="confirm-clear-btn" type="button">
+                    Clear All
+                </button>
+            </div>
+        </div>
+    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+
+</html>

@@ -1,4 +1,4 @@
-package com.example.movie_mood.controller;
+package com.example.movie_mood.controller.web;
 
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
@@ -72,5 +72,20 @@ public class PageController {
     @GetMapping("/playlist/movielist")
     public String movieList() {
         return "Playlist/movielist";
+    }
+
+    @GetMapping("/history")
+    public String history() {
+        return "history/movie-history";
+    }
+
+    @GetMapping("/profile")
+    public String profile() {
+        return "profile/profile";
+    }
+
+    @GetMapping("/auth/change-password")
+    public String changePassword() {
+        return "auth/changepassword";
     }
 }

@@ -1,14 +1,14 @@
 <div th:fragment="playlist-item(name,count,checked)"
-    class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low/80 border border-outline-variant/30 hover:border-primary/40 cursor-pointer transition-colors group">
-    <div class="flex items-center gap-3">
-        <input type="checkbox" th:checked="${checked}"
-            class="w-4 h-4 rounded border-outline-variant text-primary-container focus:ring-primary/40 bg-surface-container-lowest cursor-pointer accent-amber-500">
-        <div class="flex flex-col">
-            <span data-playlist-name
-                class="font-label-lg text-label-lg text-on-surface group-hover:text-primary transition-colors font-medium"
-                th:text="${name}"></span>
-            <span class="font-body-sm text-body-sm text-on-surface-variant"
-                th:text="${count} + ' films'"></span>
+    onclick="const cb = this.querySelector('input[type=checkbox]'); if (event.target !== cb) cb.checked = !cb.checked;"
+    class="group flex items-center justify-between gap-3 px-2 py-2.5 rounded-md hover:bg-[#141414] transition-colors cursor-pointer select-none font-outfit">
+    <label class="flex min-w-0 flex-1 items-center gap-3 cursor-pointer">
+        <input type="checkbox" th:checked="${checked}" class="w-4 h-4 shrink-0 cursor-pointer accent-white">
+        <div class="min-w-0">
+            <p data-playlist-name th:text="${name}"
+                class="truncate text-[13px] font-medium leading-[1.5] tracking-normal text-[#F5F5F5] transition-colors group-hover:text-white">
+            </p>
+            <span th:text="${count} + ' films'"
+                class="mt-0.5 block text-[11px] font-normal leading-[1.5] tracking-normal text-[#737373]"></span>
         </div>
-    </div>
+    </label>
 </div>
