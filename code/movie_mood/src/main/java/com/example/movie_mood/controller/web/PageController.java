@@ -88,4 +88,9 @@ public class PageController {
     public String changePassword() {
         return "auth/changepassword";
     }
+
+    @GetMapping("/")
+    public String landingPage() {
+        return "/landing-page";
+    }
 }
