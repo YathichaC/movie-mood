@@ -3,6 +3,7 @@ package com.example.movie_mood.controller.api;
 import com.example.movie_mood.domain.entity.User;
 import com.example.movie_mood.dto.auth.RegisterRequest;
 import com.example.movie_mood.service.AuthService;
+import com.example.movie_mood.dto.auth.LoginRequest;    
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,28 @@ public class AuthController {
 
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(
+                    Map.of("message", e.getMessage())
+            );
+            
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+        try {
+            User user = authService.login(request);
+
+            return ResponseEntity.ok(
+                    Map.of(
+                            "message", "Login successful",
+                            "userId", user.getUserId(),
+                            "username", user.getUsername(),
+                            "email", user.getEmail()
+                    )
+            );
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                     Map.of("message", e.getMessage())
             );
         }

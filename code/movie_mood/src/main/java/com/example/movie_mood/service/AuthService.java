@@ -2,6 +2,7 @@ package com.example.movie_mood.service;
 
 import com.example.movie_mood.domain.entity.User;
 import com.example.movie_mood.dto.auth.RegisterRequest;
+import com.example.movie_mood.dto.auth.LoginRequest;
 import com.example.movie_mood.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,5 +42,22 @@ public class AuthService {
         );
 
         return userRepository.save(user);
+    }
+
+    public User login(LoginRequest request) {
+
+        User user = userRepository.findByEmail(request.getEmail())
+            .orElseThrow(() ->
+                    new IllegalArgumentException("Invalid email or password"));
+
+        if (!passwordEncoder.matches(
+            request.getPassword(),
+            user.getPassword())) {
+
+            throw new IllegalArgumentException(
+                "Invalid email or password");
+        }
+
+        return user;
     }
 }
