@@ -41,19 +41,13 @@
 
 <body
     class="bg-[#000000] text-on-surface min-h-screen flex flex-col font-body-md selection:bg-primary selection:text-surface">
-    <!-- TOP APP BAR -->
     <header th:replace="~{fragments/navbar :: navbar('account')}"></header>
-
-    <!-- TOP-RIGHT NOTIFICATION TOAST -->
     <div id="notification-toast"
         class="fixed top-6 right-6 z-50 transform transition-all duration-300 flex items-center gap-3 bg-[#121212] border border-[#262626] text-[#F5F5F5] px-5 py-3.5 rounded-lg shadow-2xl translate-x-full opacity-0 pointer-events-none">
         <span class="material-symbols-outlined text-green-400 text-xl">check_circle</span>
         <span class="text-sm font-medium tracking-wide">Save Successful</span>
     </div>
-
-    <!-- MAIN VIEW CONTAINER -->
     <main class="flex-grow w-full max-w-4xl mx-auto px-6 py-12 md:py-16">
-        <!-- PAGE HEADER -->
         <div class="mb-12 border-b border-outline-variant pb-8">
             <h1
                 class="font-outfit text-5xl md:text-4xl lg:text-5xl font-light text-[#F5F5F5] tracking-tight mb-4 leading-[1.08]">
@@ -62,7 +56,6 @@
                 Manage your account credentials and algorithmic curation parameters.
             </p>
         </div>
-        <!-- SECTION 1: ACCOUNT INFORMATION -->
         <section class="border border-[#262626] bg-[#0A0A0A] p-6 md:p-8 mb-12">
             <div class="flex items-center justify-between mb-8 pb-4 border-b border-[#262626]">
                 <div>
@@ -159,7 +152,6 @@
                         id="save-account-btn" type="submit">Save Changes</button>
             </form>
         </section>
-        <!-- SECTION 2: DISLIKED GENRES -->
         <section class="border border-[#262626] bg-[#0A0A0A] p-6 md:p-8 mb-12">
             <div class="flex items-center justify-between mb-4 pb-4 border-b border-[#262626]">
                 <div>
@@ -172,7 +164,6 @@
                 Curator algorithms will permanently suppress these narrative categories from custom playlists and
                 archival spotlights.
             </p>
-            <!-- Selectable Genre Boxes Grid -->
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-8" id="genre-container">
                 <label
                     class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input
@@ -264,7 +255,6 @@
                 <span class="text-xs text-[#737373]" id="genre-counter">2 categories excluded</span>
             </div>
         </section>
-        <!-- SECTION 3: DANGER ZONE -->
         <section class="border border-red-900/60 bg-[#0D0D0D] p-6 md:p-8 mb-16">
             <div class="flex items-center gap-2 mb-3"><span class="w-2 h-2 bg-red-600 inline-block"></span>
                 <h3 class="uppercase tracking-wider text-xs font-semibold text-red-500">Danger Zone</h3>
@@ -280,7 +270,6 @@
             </div>
         </section>
     </main>
-    <!-- DELETE ACCOUNT CONFIRMATION MODAL -->
     <div aria-labelledby="modal-headline" aria-modal="true"
         class="fixed inset-0 z-50 flex items-center justify-center px-4 bg-[#000000]/80 backdrop-blur-none transition-opacity duration-150 hidden opacity-0"
         id="delete-modal" role="dialog">
@@ -323,10 +312,7 @@
                     disabled="" id="modal-delete-confirm-btn" type="button">Delete Account</button></div>
         </div>
     </div>
-    <!-- COLOPHON FOOTER -->
     <footer th:replace="~{fragments/footer :: footer}"></footer>
-    <!-- CUSTOM STYLING FOR GENRE CHIPS IN CLEAN CSS -->
-    <!-- INTERACTIVITY JAVASCRIPT -->
     <script th:src="@{/js/profile.js}"></script>
 </body>
 
