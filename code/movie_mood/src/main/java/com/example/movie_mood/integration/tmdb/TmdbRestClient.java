@@ -45,7 +45,7 @@ public class TmdbRestClient {
                 .body(TmdbMovieListResponse.class);
     }
 
-    public TmdbMovieResponse getMovie(Long tmdbMovieId) {
+    public TmdbMovieResponse getMovie(String tmdbMovieId) {
     return restClient.get()
             .uri("/movie/{id}", tmdbMovieId)
             .retrieve()

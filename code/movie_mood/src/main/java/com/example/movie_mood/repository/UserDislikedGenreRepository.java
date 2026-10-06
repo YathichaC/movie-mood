@@ -4,16 +4,17 @@ import com.example.movie_mood.domain.entity.UserDislikedGenre;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface UserDislikedGenreRepository
-        extends JpaRepository<UserDislikedGenre, Long> {
+        extends JpaRepository<UserDislikedGenre, UUID> {
 
-    List<UserDislikedGenre> findByUserUserId(Integer userId);
+    List<UserDislikedGenre> findByUserUserId(UUID userId);
 
-    void deleteByUserUserId(Integer userId);
+    void deleteByUserUserId(UUID userId);
 
     boolean existsByUserUserIdAndGenreGenreId(
-            Integer userId,
-            Integer genreId
+            UUID userId,
+            String genreId
     );
 }

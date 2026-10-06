@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import org.springdoc.core.annotations.ParameterObject;
 
 import org.springframework.data.domain.Page;
@@ -75,9 +74,9 @@ public class GenreController {
     public Page<GenreResponse> getAllGenres(
         @ParameterObject Pageable pageable) {
 
-    return genreService.getAllGenres(pageable)
-            .map(genreMapper::toResponse);
-}
+        return genreService.getAllGenres(pageable)
+                .map(genreMapper::toResponse);
+    }
 
     @Operation(summary = "Get genre by ID")
     @ApiResponses({
@@ -96,8 +95,7 @@ public class GenreController {
     @GetMapping("/{genreId}")
     public GenreResponse getGenreById(
             @PathVariable
-            @Positive(message = "genreId must be greater than 0")
-            Integer genreId) {
+            String genreId) {
 
         return genreMapper.toResponse(
                 genreService.getGenreById(genreId)
@@ -108,8 +106,7 @@ public class GenreController {
     @PutMapping("/{genreId}")
     public GenreResponse updateGenre(
             @PathVariable
-            @Positive(message = "genreId must be greater than 0")
-            Integer genreId,
+            String genreId,
             @Valid @RequestBody GenreRequest request) {
 
         Genre genre = genreMapper.toEntity(request);
@@ -136,8 +133,7 @@ public class GenreController {
     @DeleteMapping("/{genreId}")
     public ResponseEntity<Void> deleteGenre(
             @PathVariable
-            @Positive(message = "genreId must be greater than 0")
-            Integer genreId) {
+            String genreId) {
 
         genreService.deleteGenre(genreId);
 

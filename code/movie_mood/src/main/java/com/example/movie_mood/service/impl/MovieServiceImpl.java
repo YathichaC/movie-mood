@@ -40,7 +40,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public Movie getMovieDetails(Long tmdbMovieId) {
+    public Movie getMovieDetails(String tmdbMovieId) {
         return movieProvider.getMovie(tmdbMovieId);
     }
 

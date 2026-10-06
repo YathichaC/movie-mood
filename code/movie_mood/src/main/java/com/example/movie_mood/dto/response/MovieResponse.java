@@ -5,12 +5,12 @@ import java.util.List;
 
 public class MovieResponse {
 
-    private Long tmdbMovieId;
+    private String tmdbMovieId;
     private String title;
     private String synopsis;
     private Double rating;
     private LocalDate releaseDate;
-    private List<Integer> genreIds;
+    private List<String> genreIds;
 
     private String posterPath;
     private String backdropPath;
@@ -19,12 +19,12 @@ public class MovieResponse {
     }
 
     public MovieResponse(
-            Long tmdbMovieId,
+            String tmdbMovieId,
             String title,
             String synopsis,
             Double rating,
             LocalDate releaseDate,
-            List<Integer> genreIds) {
+            List<String> genreIds) {
 
         this.tmdbMovieId = tmdbMovieId;
         this.title = title;
@@ -34,11 +34,11 @@ public class MovieResponse {
         this.genreIds = genreIds;
     }
 
-    public Long getTmdbMovieId() {
+    public String getTmdbMovieId() {
         return tmdbMovieId;
     }
 
-    public void setTmdbMovieId(Long tmdbMovieId) {
+    public void setTmdbMovieId(String tmdbMovieId) {
         this.tmdbMovieId = tmdbMovieId;
     }
 
@@ -74,11 +74,11 @@ public class MovieResponse {
         this.releaseDate = releaseDate;
     }
 
-    public List<Integer> getGenreIds() {
+    public List<String> getGenreIds() {
         return genreIds;
     }
 
-    public void setGenreIds(List<Integer> genreIds) {
+    public void setGenreIds(List<String> genreIds) {
         this.genreIds = genreIds;
     }
 

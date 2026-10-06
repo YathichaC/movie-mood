@@ -12,7 +12,7 @@ public interface MovieService {
 
     List<Movie> filterMoviesByMood(Mood mood);
     
-    Movie getMovieDetails(Long tmdbMovieId);
+    Movie getMovieDetails(String tmdbMovieId);
 
     List<Movie> filterMoviesByGenre(Integer genreId);
 }

@@ -1,36 +1,21 @@
 package com.example.movie_mood.dto;
-
+import java.util.UUID;
 import java.time.LocalDateTime;
 
 public class WatchHistoryResponse {
-    private Long id;
-    private Long tmdbMovieId;
-    private String title;
-    private String posterPath;
-    private LocalDateTime watchedAt;
+    private UUID history_id;
+    private String tmdbMovieId;
 
     public WatchHistoryResponse() {}
 
-    public WatchHistoryResponse(Long id, Long tmdbMovieId, String title, String posterPath, LocalDateTime watchedAt) {
-        this.id = id;
+    public WatchHistoryResponse(UUID history_id, String tmdbMovieId) {
+        this.history_id = history_id;
         this.tmdbMovieId = tmdbMovieId;
-        this.title = title;
-        this.posterPath = posterPath;
-        this.watchedAt = watchedAt;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public UUID getHistoryId() { return history_id; }
+    public void setHistoryId(UUID history_id) { this.history_id = history_id; }
 
-    public Long getTmdbMovieId() { return tmdbMovieId; }
-    public void setTmdbMovieId(Long tmdbMovieId) { this.tmdbMovieId = tmdbMovieId; }
-
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-
-    public String getPosterPath() { return posterPath; }
-    public void setPosterPath(String posterPath) { this.posterPath = posterPath; }
-
-    public LocalDateTime getWatchedAt() { return watchedAt; }
-    public void setWatchedAt(LocalDateTime watchedAt) { this.watchedAt = watchedAt; }
+    public String getTmdbMovieId() { return tmdbMovieId; }
+    public void setTmdbMovieId(String tmdbMovieId) { this.tmdbMovieId = tmdbMovieId; }
 }

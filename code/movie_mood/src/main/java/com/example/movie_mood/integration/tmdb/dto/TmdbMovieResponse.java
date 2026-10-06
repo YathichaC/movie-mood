@@ -5,7 +5,7 @@ import java.util.List;
 
 public class TmdbMovieResponse {
 
-    private Long id;
+    private String id;
     private String title;
     private String overview;
 
@@ -26,11 +26,11 @@ public class TmdbMovieResponse {
     @JsonProperty("backdrop_path")
     private String backdropPath;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

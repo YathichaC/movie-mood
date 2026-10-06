@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Movie {
 
-    private Long tmdbMovieId;
+    private String tmdbMovieId;
     private String title;
     private String synopsis;
     private Double rating;
@@ -18,7 +18,7 @@ public class Movie {
     }
 
     public Movie(
-            Long tmdbMovieId,
+            String tmdbMovieId,
             String title,
             String synopsis,
             Double rating,
@@ -33,11 +33,11 @@ public class Movie {
         this.genreIds = genreIds;
     }
 
-    public Long getTmdbMovieId() {
+    public String getTmdbMovieId() {
         return tmdbMovieId;
     }
 
-    public void setTmdbMovieId(Long tmdbMovieId) {
+    public void setTmdbMovieId(String tmdbMovieId) {
         this.tmdbMovieId = tmdbMovieId;
     }
 
@@ -90,19 +90,20 @@ public class Movie {
     public void setMatchScore(Double matchScore) {
         this.matchScore = matchScore;
     }
+
     public String getPosterPath() {
-    return posterPath;
+        return posterPath;
     }
 
     public void setPosterPath(String posterPath) {
-    this.posterPath = posterPath;
+        this.posterPath = posterPath;
     }
 
     public String getBackdropPath() {
-    return backdropPath;
+        return backdropPath;
     }
 
     public void setBackdropPath(String backdropPath) {
-    this.backdropPath = backdropPath;
+        this.backdropPath = backdropPath;
     }
 }

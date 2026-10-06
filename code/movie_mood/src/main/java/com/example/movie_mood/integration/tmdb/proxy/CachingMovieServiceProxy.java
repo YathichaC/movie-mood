@@ -16,7 +16,7 @@ public class CachingMovieServiceProxy implements MovieProvider {
 
     private final TmdbMovieAdapter movieAdapter;
 
-    private final Map<Long, Movie> movieCache =
+    private final Map<String, Movie> movieCache =
             new ConcurrentHashMap<>();
 
     public CachingMovieServiceProxy(
@@ -35,7 +35,7 @@ public class CachingMovieServiceProxy implements MovieProvider {
     }
 
     @Override
-    public Movie getMovie(Long tmdbMovieId) {
+    public Movie getMovie(String tmdbMovieId) {
 
         return movieCache.computeIfAbsent(
                 tmdbMovieId,

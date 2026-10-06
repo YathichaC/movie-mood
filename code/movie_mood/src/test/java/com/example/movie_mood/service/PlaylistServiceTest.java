@@ -1,12 +1,12 @@
 package com.example.movie_mood.service;
 
+import com.example.movie_mood.domain.entity.Movielist;
 import com.example.movie_mood.domain.entity.Playlist;
-import com.example.movie_mood.domain.entity.PlaylistItem;
-import com.example.movie_mood.dto.PlaylistItemRequest;
-import com.example.movie_mood.dto.PlaylistItemResponse;
+import com.example.movie_mood.dto.MovielistRequest;
+import com.example.movie_mood.dto.MovielistResponse;
 import com.example.movie_mood.dto.PlaylistRequest;
 import com.example.movie_mood.dto.PlaylistResponse;
-import com.example.movie_mood.repository.PlaylistItemRepository;
+import com.example.movie_mood.repository.MovielistRepository;
 import com.example.movie_mood.repository.PlaylistRepository;
 import com.example.movie_mood.service.impl.PlaylistServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +16,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,82 +30,137 @@ class PlaylistServiceTest {
     private PlaylistRepository playlistRepository;
 
     @Mock
-    private PlaylistItemRepository playlistItemRepository;
+    private MovielistRepository movielistRepository;
 
     @InjectMocks
     private PlaylistServiceImpl playlistService;
 
-    private Long userId;
+    private UUID userId;
     private Playlist mockPlaylist;
 
     @BeforeEach
     void setUp() {
-        userId = 1L;
-        mockPlaylist = new Playlist(userId, "Favorite Movies", "My personal list");
-        mockPlaylist.setId(10L);
+        userId = UUID.randomUUID();
+
+        mockPlaylist = new Playlist(
+                userId,
+                "Favorite Movies"
+        );
+
+        mockPlaylist.setPlaylistId(UUID.randomUUID());
     }
 
     @Test
     void testCreatePlaylist_Success() {
-        PlaylistRequest request = new PlaylistRequest("Weekend Binge", "Chill vibes");
-        when(playlistRepository.save(any(Playlist.class))).thenAnswer(invocation -> {
-            Playlist p = invocation.getArgument(0);
-            p.setId(100L);
-            return p;
-        });
+        PlaylistRequest request = new PlaylistRequest();
+        request.setPlaylistName("Weekend Binge");
 
-        PlaylistResponse response = playlistService.createPlaylist(userId, request);
+        when(playlistRepository.save(any(Playlist.class)))
+                .thenAnswer(invocation -> {
+                    Playlist playlist = invocation.getArgument(0);
+                    playlist.setPlaylistId(UUID.randomUUID());
+                    return playlist;
+                });
+
+        PlaylistResponse response =
+                playlistService.createPlaylist(userId, request);
 
         assertNotNull(response);
-        assertEquals(100L, response.getId());
-        assertEquals("Weekend Binge", response.getName());
-        verify(playlistRepository, times(1)).save(any(Playlist.class));
+        assertNotNull(response.getPlaylistId());
+        assertEquals("Weekend Binge", response.getPlaylistName());
+
+        verify(playlistRepository, times(1))
+                .save(any(Playlist.class));
     }
 
     @Test
     void testAddMovieToPlaylist_Success() {
-        Long playlistId = 10L;
-        PlaylistItemRequest request = new PlaylistItemRequest(550L, "Fight Club", "/poster.jpg", 8.8);
+        UUID playlistId = mockPlaylist.getPlaylistId();
 
-        when(playlistRepository.findByIdAndUserId(playlistId, userId)).thenReturn(Optional.of(mockPlaylist));
-        when(playlistItemRepository.existsByPlaylistIdAndTmdbMovieId(playlistId, 550L)).thenReturn(false);
-        when(playlistItemRepository.save(any(PlaylistItem.class))).thenAnswer(invocation -> {
-            PlaylistItem item = invocation.getArgument(0);
-            item.setId(1L);
-            return item;
-        });
+        MovielistRequest request =
+                new MovielistRequest("550");
 
-        PlaylistItemResponse response = playlistService.addMovieToPlaylist(playlistId, userId, request);
+        when(playlistRepository
+                .findByPlaylistIdAndUserId(playlistId, userId))
+                .thenReturn(Optional.of(mockPlaylist));
+
+        when(movielistRepository
+                .existsByPlaylist_PlaylistIdAndTmdbMovieId(
+                        playlistId,
+                        "550"))
+                .thenReturn(false);
+
+        when(movielistRepository.save(any(Movielist.class)))
+                .thenAnswer(invocation -> {
+                    Movielist item = invocation.getArgument(0);
+                    item.setId(UUID.randomUUID());
+                    return item;
+                });
+
+        MovielistResponse response =
+                playlistService.addMovieToPlaylist(
+                        playlistId,
+                        userId,
+                        request
+                );
 
         assertNotNull(response);
-        assertEquals("Fight Club", response.getTitle());
-        assertEquals(550L, response.getTmdbMovieId());
-        verify(playlistItemRepository, times(1)).save(any(PlaylistItem.class));
+        assertEquals("550", response.getTmdbMovieId());
+
+        verify(movielistRepository, times(1))
+                .save(any(Movielist.class));
     }
 
     @Test
     void testAddMovieToPlaylist_DuplicateMovie_ThrowsException() {
-        Long playlistId = 10L;
-        PlaylistItemRequest request = new PlaylistItemRequest(550L, "Fight Club", "/poster.jpg", 8.8);
+        UUID playlistId = mockPlaylist.getPlaylistId();
 
-        when(playlistRepository.findByIdAndUserId(playlistId, userId)).thenReturn(Optional.of(mockPlaylist));
-        when(playlistItemRepository.existsByPlaylistIdAndTmdbMovieId(playlistId, 550L)).thenReturn(true);
+        MovielistRequest request =
+                new MovielistRequest("550");
 
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
-            playlistService.addMovieToPlaylist(playlistId, userId, request);
-        });
+        when(playlistRepository
+                .findByPlaylistIdAndUserId(playlistId, userId))
+                .thenReturn(Optional.of(mockPlaylist));
 
-        assertEquals("Movie is already in this playlist", exception.getMessage());
-        verify(playlistItemRepository, never()).save(any(PlaylistItem.class));
+        when(movielistRepository
+                .existsByPlaylist_PlaylistIdAndTmdbMovieId(
+                        playlistId,
+                        "550"))
+                .thenReturn(true);
+
+        IllegalStateException exception =
+                assertThrows(
+                        IllegalStateException.class,
+                        () -> playlistService.addMovieToPlaylist(
+                                playlistId,
+                                userId,
+                                request
+                        )
+                );
+
+        assertEquals(
+                "Movie is already in this playlist",
+                exception.getMessage()
+        );
+
+        verify(movielistRepository, never())
+                .save(any(Movielist.class));
     }
 
     @Test
     void testDeletePlaylist_Success() {
-        Long playlistId = 10L;
-        when(playlistRepository.findByIdAndUserId(playlistId, userId)).thenReturn(Optional.of(mockPlaylist));
+        UUID playlistId = mockPlaylist.getPlaylistId();
 
-        playlistService.deletePlaylist(playlistId, userId);
+        when(playlistRepository
+                .findByPlaylistIdAndUserId(playlistId, userId))
+                .thenReturn(Optional.of(mockPlaylist));
 
-        verify(playlistRepository, times(1)).delete(mockPlaylist);
+        playlistService.deletePlaylist(
+                playlistId,
+                userId
+        );
+
+        verify(playlistRepository, times(1))
+                .delete(mockPlaylist);
     }
 }

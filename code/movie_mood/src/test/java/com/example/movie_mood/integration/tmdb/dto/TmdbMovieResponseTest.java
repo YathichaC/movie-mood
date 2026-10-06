@@ -23,7 +23,7 @@ class TmdbMovieResponseTest {
         TmdbMovieResponse response =
                 objectMapper.readValue(json, TmdbMovieResponse.class);
 
-        assertEquals(550L, response.getId());
+        assertEquals("550", response.getId());
         assertEquals("/poster.jpg", response.getPosterPath());
         assertEquals("/backdrop.jpg", response.getBackdropPath());
     }

@@ -33,7 +33,7 @@ class MovieServiceImplTest {
                 Integer genreId = 35;
 
                 Movie movie = new Movie();
-                movie.setTmdbMovieId(1L);
+                movie.setTmdbMovieId("1");
                 movie.setTitle("Comedy Movie");
                 movie.setGenreIds(List.of(35));
 
@@ -57,7 +57,7 @@ class MovieServiceImplTest {
                 List<Integer> genreIds = List.of(35, 16, 10751, 10402, 14);
 
                 Movie movie = new Movie();
-                movie.setTmdbMovieId(2L);
+                movie.setTmdbMovieId("2");
                 movie.setTitle("Happy Movie");
                 movie.setGenreIds(List.of(35));
 
@@ -81,7 +81,7 @@ class MovieServiceImplTest {
         @Test
         void browseMovies_shouldReturnPopularMoviesFromProvider() {
                 Movie movie = new Movie();
-                movie.setTmdbMovieId(10L);
+                movie.setTmdbMovieId("10");
                 movie.setTitle("Popular Movie");
 
                 List<Movie> expectedMovies = List.of(movie);
@@ -100,7 +100,7 @@ class MovieServiceImplTest {
                 String keyword = "Batman";
 
                 Movie movie = new Movie();
-                movie.setTmdbMovieId(11L);
+                movie.setTmdbMovieId("11");
                 movie.setTitle("Batman");
 
                 List<Movie> expectedMovies = List.of(movie);
@@ -116,7 +116,7 @@ class MovieServiceImplTest {
 
         @Test
         void getMovieDetails_shouldReturnMovieFromProvider() {
-                Long tmdbMovieId = 550L;
+                String tmdbMovieId = "550";
 
                 Movie expectedMovie = new Movie();
                 expectedMovie.setTmdbMovieId(tmdbMovieId);

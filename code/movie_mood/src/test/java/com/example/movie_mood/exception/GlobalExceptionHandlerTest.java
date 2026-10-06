@@ -38,8 +38,8 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void shouldReturn404WhenMovieNotFound() throws Exception {
-        when(movieDetailFacade.getMovieDetails(999999999L))
-                .thenThrow(new MovieNotFoundException(999999999L));
+        when(movieDetailFacade.getMovieDetails("999999999"))
+                .thenThrow(new MovieNotFoundException("999999999"));
 
         mockMvc.perform(get("/api/v1/movies/999999999"))
                 .andExpect(status().isNotFound())

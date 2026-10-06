@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class GenreResponse {
 
     @Schema(example = "35")
-    private Integer genreId;
+    private String genreId;
 
     @Schema(example = "Comedy")
     private String genreName;
@@ -14,16 +14,16 @@ public class GenreResponse {
     public GenreResponse() {
     }
 
-    public GenreResponse(Integer genreId, String genreName) {
+    public GenreResponse(String genreId, String genreName) {
         this.genreId = genreId;
         this.genreName = genreName;
     }
 
-    public Integer getGenreId() {
+    public String getGenreId() {
         return genreId;
     }
 
-    public void setGenreId(Integer genreId) {
+    public void setGenreId(String genreId) {
         this.genreId = genreId;
     }
 

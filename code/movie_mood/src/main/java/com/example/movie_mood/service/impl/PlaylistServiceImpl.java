@@ -1,17 +1,17 @@
 package com.example.movie_mood.service.impl;
 
 import com.example.movie_mood.domain.entity.Playlist;
-import com.example.movie_mood.domain.entity.PlaylistItem;
-import com.example.movie_mood.dto.PlaylistItemRequest;
-import com.example.movie_mood.dto.PlaylistItemResponse;
+import com.example.movie_mood.domain.entity.Movielist;
+import com.example.movie_mood.dto.MovielistRequest;
+import com.example.movie_mood.dto.MovielistResponse;
 import com.example.movie_mood.dto.PlaylistRequest;
 import com.example.movie_mood.dto.PlaylistResponse;
-import com.example.movie_mood.repository.PlaylistItemRepository;
+import com.example.movie_mood.repository.MovielistRepository;
 import com.example.movie_mood.repository.PlaylistRepository;
 import com.example.movie_mood.service.PlaylistService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.UUID;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,18 +20,18 @@ import java.util.stream.Collectors;
 public class PlaylistServiceImpl implements PlaylistService {
 
     private final PlaylistRepository playlistRepository;
-    private final PlaylistItemRepository playlistItemRepository;
+    private final MovielistRepository movielistRepository;
 
     public PlaylistServiceImpl(PlaylistRepository playlistRepository,
-                               PlaylistItemRepository playlistItemRepository) {
+                               MovielistRepository movielistRepository) {
         this.playlistRepository = playlistRepository;
-        this.playlistItemRepository = playlistItemRepository;
+        this.movielistRepository = movielistRepository;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<PlaylistResponse> getUserPlaylists(Long userId) {
-        return playlistRepository.findByUserIdOrderByCreatedAtDesc(userId)
+    public List<PlaylistResponse> getUserPlaylists(UUID userId) {
+        return playlistRepository.findByUserId(userId)
                 .stream()
                 .map(PlaylistResponse::new)
                 .collect(Collectors.toList());
@@ -39,53 +39,50 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     @Transactional(readOnly = true)
-    public PlaylistResponse getPlaylistDetail(Long playlistId, Long userId) {
-        Playlist playlist = playlistRepository.findByIdAndUserId(playlistId, userId)
+    public PlaylistResponse getPlaylistDetail(UUID playlistId, UUID userId) {
+        Playlist playlist = playlistRepository.findByPlaylistIdAndUserId(playlistId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("Playlist not found or access denied"));
         return new PlaylistResponse(playlist);
     }
 
     @Override
-    public PlaylistResponse createPlaylist(Long userId, PlaylistRequest request) {
-        Playlist playlist = new Playlist(userId, request.getName(), request.getDescription());
+    public PlaylistResponse createPlaylist(UUID userId, PlaylistRequest request) {
+        Playlist playlist = new Playlist(userId, request.getPlaylistName());
         Playlist saved = playlistRepository.save(playlist);
         return new PlaylistResponse(saved);
     }
 
     @Override
-    public void deletePlaylist(Long playlistId, Long userId) {
-        Playlist playlist = playlistRepository.findByIdAndUserId(playlistId, userId)
+    public void deletePlaylist(UUID playlistId, UUID userId) {
+        Playlist playlist = playlistRepository.findByPlaylistIdAndUserId(playlistId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("Playlist not found or access denied"));
         playlistRepository.delete(playlist);
     }
 
     @Override
-    public PlaylistItemResponse addMovieToPlaylist(Long playlistId, Long userId, PlaylistItemRequest request) {
-        Playlist playlist = playlistRepository.findByIdAndUserId(playlistId, userId)
+    public MovielistResponse addMovieToPlaylist(UUID playlistId, UUID userId, MovielistRequest request) {
+        Playlist playlist = playlistRepository.findByPlaylistIdAndUserId(playlistId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("Playlist not found or access denied"));
 
-        if (playlistItemRepository.existsByPlaylistIdAndTmdbMovieId(playlistId, request.getTmdbMovieId())) {
+        if (movielistRepository.existsByPlaylist_PlaylistIdAndTmdbMovieId(playlistId, request.getTmdbMovieId())) {
             throw new IllegalStateException("Movie is already in this playlist");
         }
 
-        PlaylistItem item = new PlaylistItem(
+        Movielist item = new Movielist(
                 playlist,
-                request.getTmdbMovieId(),
-                request.getTitle(),
-                request.getPosterPath(),
-                request.getRating()
+                request.getTmdbMovieId()
         );
 
         playlist.addItem(item);
-        PlaylistItem savedItem = playlistItemRepository.save(item);
-        return new PlaylistItemResponse(savedItem);
+        Movielist savedItem = movielistRepository.save(item);
+        return new MovielistResponse(savedItem);
     }
 
     @Override
-    public void removeMovieFromPlaylist(Long playlistId, Long tmdbMovieId, Long userId) {
-        playlistRepository.findByIdAndUserId(playlistId, userId)
+    public void removeMovieFromPlaylist(UUID playlistId, String tmdbMovieId, UUID userId) {
+        playlistRepository.findByPlaylistIdAndUserId(playlistId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("Playlist not found or access denied"));
 
-        playlistItemRepository.deleteByPlaylistIdAndTmdbMovieId(playlistId, tmdbMovieId);
+        movielistRepository.deleteByPlaylist_PlaylistIdAndTmdbMovieId(playlistId, tmdbMovieId);
     }
 }

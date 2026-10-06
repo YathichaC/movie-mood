@@ -91,6 +91,6 @@ public class PageController {
 
     @GetMapping("/")
     public String landingPage() {
-        return "/landing-page";
+        return "landing-page";
     }
 }

@@ -1,101 +1,85 @@
 package com.example.movie_mood.domain.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
-@Table(name = "playlists")
+@Table(name = "Playlist")
 public class Playlist {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "playlist_id")
+    private UUID playlistId;
 
     @Column(name = "user_id", nullable = false)
-    private Long userId;
+    private UUID userId;
 
-    @Column(nullable = false, length = 100)
-    private String name;
+    @Column(name = "playlist_name", nullable = false)
+    private String playlistName;
 
-    @Column(length = 255)
-    private String description;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "cover_image_path")
+    private String coverImagePath;
 
     @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlaylistItem> items = new ArrayList<>();
+    private List<Movielist> items = new ArrayList<>();
 
     public Playlist() {
-        this.createdAt = LocalDateTime.now();
     }
 
-    public Playlist(Long userId, String name, String description) {
+    public Playlist(UUID userId, String playlistName) {
         this.userId = userId;
-        this.name = name;
-        this.description = description;
-        this.createdAt = LocalDateTime.now();
+        this.playlistName = playlistName;
     }
 
-    // Helper methods
-    public void addItem(PlaylistItem item) {
+    public void addItem(Movielist item) {
         items.add(item);
         item.setPlaylist(this);
     }
 
-    public void removeItem(PlaylistItem item) {
+    public void removeItem(Movielist item) {
         items.remove(item);
         item.setPlaylist(null);
     }
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
+    public UUID getPlaylistId() {
+        return playlistId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPlaylistId(UUID playlistId) {
+        this.playlistId = playlistId;
     }
 
-    public Long getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 
-    public String getName() {
-        return name;
+    public String getPlaylistName() {
+        return playlistName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPlaylistName(String playlistName) {
+        this.playlistName = playlistName;
     }
 
-    public String getDescription() {
-        return description;
+    public String getCoverImagePath() {
+        return coverImagePath;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCoverImagePath(String coverImagePath) {
+        this.coverImagePath = coverImagePath;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public List<PlaylistItem> getItems() {
+    public List<Movielist> getItems() {
         return items;
     }
 
-    public void setItems(List<PlaylistItem> items) {
+    public void setItems(List<Movielist> items) {
         this.items = items;
     }
 }

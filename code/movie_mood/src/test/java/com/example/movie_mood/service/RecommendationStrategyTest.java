@@ -41,7 +41,7 @@ public class RecommendationStrategyTest {
             }
 
             @Override
-            public Movie getMovieDetails(Long tmdbMovieId) {
+            public Movie getMovieDetails(String tmdbMovieId) {
                 return null;
             }
 

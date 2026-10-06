@@ -1,21 +1,15 @@
 package com.example.movie_mood.domain.entity;
 
+import java.util.UUID;
 import jakarta.persistence.*;
 
 @Entity
-@Table(
-        name = "user_disliked_genres",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        columnNames = {"user_id", "genre_id"}
-                )
-        }
-)
+@Table(name = "UserDislikedGenre")
 public class UserDislikedGenre {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id")
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -33,11 +27,11 @@ public class UserDislikedGenre {
         this.genre = genre;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

@@ -9,7 +9,7 @@ public interface MovieProvider {
 
     List<Movie> searchMovies(String keyword);
 
-    Movie getMovie(Long tmdbMovieId);
+    Movie getMovie(String tmdbMovieId);
 
     List<Movie> discoverMoviesByGenres(List<Integer> genreIds);
 }
