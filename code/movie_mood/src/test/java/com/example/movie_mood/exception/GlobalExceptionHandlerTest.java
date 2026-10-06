@@ -16,38 +16,72 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class GlobalExceptionHandlerTest {
 
-    private MovieDetailFacade movieDetailFacade;
-    private MockMvc mockMvc;
+        private MovieService movieService;
+        private MovieDetailFacade movieDetailFacade;
+        private GlobalExceptionHandler exceptionHandler;
+        private MockMvc mockMvc;
 
-    @BeforeEach
-    void setUp() {
-        MovieService movieService = mock(MovieService.class);
-        movieDetailFacade = mock(MovieDetailFacade.class);
+        @BeforeEach
+        void setUp() {
+                movieService = mock(MovieService.class);
+                movieDetailFacade = mock(MovieDetailFacade.class);
 
-        MovieController controller = new MovieController(
-                movieService,
-                movieDetailFacade,
-                new MovieMapper()
-        );
+                MovieController controller = new MovieController(
+                                movieService,
+                                movieDetailFacade,
+                                new MovieMapper());
 
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(controller)
-                .setControllerAdvice(new GlobalExceptionHandler())
-                .build();
-    }
+                exceptionHandler = new GlobalExceptionHandler();
 
-    @Test
-    void shouldReturn404WhenMovieNotFound() throws Exception {
-        when(movieDetailFacade.getMovieDetails("999999999"))
-                .thenThrow(new MovieNotFoundException("999999999"));
+                mockMvc = MockMvcBuilders
+                                .standaloneSetup(controller)
+                                .setControllerAdvice(exceptionHandler)
+                                .build();
+        }
 
-        mockMvc.perform(get("/api/v1/movies/999999999"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.status").value(404))
-                .andExpect(jsonPath("$.error").value("Not Found"))
-                .andExpect(jsonPath("$.message")
-                        .value("Movie not found with TMDB ID: 999999999"))
-                .andExpect(jsonPath("$.path")
-                        .value("/api/v1/movies/999999999"));
-    }
+        @Test
+        void shouldReturn404WhenMovieNotFound() throws Exception {
+                when(movieDetailFacade.getMovieDetails("999999999"))
+                                .thenThrow(new MovieNotFoundException("999999999"));
+
+                mockMvc.perform(get("/api/v1/movies/999999999"))
+                                .andExpect(status().isNotFound())
+                                .andExpect(jsonPath("$.status").value(404))
+                                .andExpect(jsonPath("$.error").value("Not Found"))
+                                .andExpect(jsonPath("$.message")
+                                                .value("Movie not found with TMDB ID: 999999999"))
+                                .andExpect(jsonPath("$.path")
+                                                .value("/api/v1/movies/999999999"));
+        }
+
+        @Test
+        void shouldReturn409WhenGenreAlreadyExists() throws Exception {
+                when(movieService.browseMovies())
+                                .thenThrow(new GenreAlreadyExistsException("35"));
+
+                mockMvc.perform(get("/api/v1/movies"))
+                                .andExpect(status().isConflict())
+                                .andExpect(jsonPath("$.status").value(409))
+                                .andExpect(jsonPath("$.error").value("Conflict"))
+                                .andExpect(jsonPath("$.message")
+                                                .value("Genre already exists with id: 35"))
+                                .andExpect(jsonPath("$.path")
+                                                .value("/api/v1/movies"));
+        }
+
+        @Test
+        void shouldReturn500WhenUnexpectedExceptionOccurs() throws Exception {
+                when(movieService.browseMovies())
+                                .thenThrow(new RuntimeException("Database connection failed"));
+
+                mockMvc.perform(get("/api/v1/movies"))
+                                .andExpect(status().isInternalServerError())
+                                .andExpect(jsonPath("$.status").value(500))
+                                .andExpect(jsonPath("$.error")
+                                                .value("Internal Server Error"))
+                                .andExpect(jsonPath("$.message")
+                                                .value("An unexpected error occurred"))
+                                .andExpect(jsonPath("$.path")
+                                                .value("/api/v1/movies"));
+        }
 }
