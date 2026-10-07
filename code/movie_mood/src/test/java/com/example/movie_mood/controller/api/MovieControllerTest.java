@@ -109,21 +109,31 @@ class MovieControllerTest {
                 movie.setRating(8.2);
                 movie.setGenreIds(List.of(28, 12));
 
-                when(movieService.browseMovies())
-                                .thenReturn(List.of(movie));
+                MoviePage moviePage = new MoviePage(
+                                List.of(movie),
+                                1,
+                                10,
+                                200);
 
-                mockMvc.perform(get("/api/v1/movies"))
+                when(movieService.browseMovies(1))
+                                .thenReturn(moviePage);
+
+                mockMvc.perform(
+                                get("/api/v1/movies")
+                                                .param("page", "1"))
                                 .andExpect(status().isOk())
-                                .andExpect(jsonPath("$[0].tmdbMovieId").value("10"))
-                                .andExpect(jsonPath("$[0].title").value("Popular Movie"))
-                                .andExpect(jsonPath("$[0].rating").value(8.2))
-                                .andExpect(jsonPath("$[0].genreIds[0]").value(28))
-                                .andExpect(jsonPath("$[0].genreIds[1]").value(12));
+                                .andExpect(jsonPath("$.content[0].tmdbMovieId").value("10"))
+                                .andExpect(jsonPath("$.content[0].title").value("Popular Movie"))
+                                .andExpect(jsonPath("$.content[0].rating").value(8.2))
+                                .andExpect(jsonPath("$.content[0].genreIds[0]").value(28))
+                                .andExpect(jsonPath("$.content[0].genreIds[1]").value(12))
+                                .andExpect(jsonPath("$.page").value(1))
+                                .andExpect(jsonPath("$.totalPages").value(10))
+                                .andExpect(jsonPath("$.totalElements").value(200));
 
-                verify(movieService).browseMovies();
+                verify(movieService).browseMovies(1);
         }
 
-        
         @Test
         void searchMovies_shouldReturnMatchingMovies() throws Exception {
                 Movie movie = new Movie();
@@ -154,6 +164,64 @@ class MovieControllerTest {
 
                 verify(movieService).searchMovies("Batman", 1);
         }
+
+        @Test
+        void discoverMovies_shouldReturnMovies() throws Exception {
+                Movie movie = new Movie();
+                movie.setTmdbMovieId("100");
+                movie.setTitle("Action Movie");
+                movie.setRating(8.5);
+                movie.setGenreIds(List.of(28));
+
+                MoviePage moviePage = new MoviePage(
+                                List.of(movie),
+                                1,
+                                5,
+                                100);
+
+                when(movieService.discoverMovies(
+                                28,
+                                2020,
+                                2026,
+                                7.0,
+                                "rating_desc",
+                                1))
+                                .thenReturn(moviePage);
+
+                mockMvc.perform(
+                                get("/api/v1/movies/discover")
+                                                .param("genreId", "28")
+                                                .param("startYear", "2020")
+                                                .param("endYear", "2026")
+                                                .param("minRating", "7.0")
+                                                .param("sortBy", "rating_desc")
+                                                .param("page", "1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.content[0].tmdbMovieId")
+                                                .value("100"))
+                                .andExpect(jsonPath("$.content[0].title")
+                                                .value("Action Movie"))
+                                .andExpect(jsonPath("$.content[0].rating")
+                                                .value(8.5))
+                                .andExpect(jsonPath("$.content[0].genreIds[0]")
+                                                .value(28))
+                                .andExpect(jsonPath("$.page").value(1))
+                                .andExpect(jsonPath("$.totalPages").value(5))
+                                .andExpect(jsonPath("$.totalElements").value(100));
+
+                verify(movieService).discoverMovies(
+                                28,
+                                2020,
+                                2026,
+                                7.0,
+                                "rating_desc",
+                                1);
+        }
+
+        
+
+
+        
 
         @Test
         void getMovieDetails_shouldReturnMovie() throws Exception {

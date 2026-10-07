@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.UUID;
 import java.util.List;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/playlists")
@@ -39,11 +40,18 @@ public class PlaylistRestController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createPlaylist(Authentication authentication, @RequestBody PlaylistRequest request) {
+    public ResponseEntity<?> createPlaylist(
+            Authentication authentication,
+           @Valid @RequestBody PlaylistRequest request) {
+
         UUID userId = getCurrentUserId(authentication);
         PlaylistResponse created = playlistService.createPlaylist(userId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(created);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePlaylist(@PathVariable("id") UUID id, Authentication authentication) {
@@ -79,5 +87,21 @@ public class PlaylistRestController {
 
     private UUID getCurrentUserId(Authentication authentication) {
         return UUID.fromString(authentication.getName());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updatePlaylist(
+            @PathVariable("id") UUID id,
+            Authentication authentication,
+            @Valid @RequestBody PlaylistRequest request) {
+
+        UUID userId = getCurrentUserId(authentication);
+
+        PlaylistResponse updated = playlistService.updatePlaylist(
+                id,
+                userId,
+                request);
+
+        return ResponseEntity.ok(updated);
     }
 }

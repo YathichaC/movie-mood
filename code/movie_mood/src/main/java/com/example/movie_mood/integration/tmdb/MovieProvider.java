@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface MovieProvider {
 
-    List<Movie> getPopularMovies();
+    MoviePage getPopularMovies(int page);
 
     MoviePage searchMovies(String keyword, int page);
 
@@ -17,4 +17,12 @@ public interface MovieProvider {
     List<Video> getMovieVideos(String tmdbMovieId);
 
     List<Movie> discoverMoviesByGenres(List<Integer> genreIds);
+
+    MoviePage discoverMovies(
+            Integer genreId,
+            Integer startYear,
+            Integer endYear,
+            Double minRating,
+            String sortBy,
+            int page);
 }

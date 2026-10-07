@@ -62,6 +62,38 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
+    public PlaylistResponse updatePlaylist(
+            UUID playlistId,
+            UUID userId,
+            PlaylistRequest request) {
+
+        Playlist playlist = playlistRepository
+                .findByPlaylistIdAndUserId(playlistId, userId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Playlist not found or access denied"));
+
+        playlist.setPlaylistName(request.getPlaylistName());
+
+        PlaylistDetail detail = playlist.getDetail();
+
+        if (detail == null) {
+            detail = new PlaylistDetail(
+                    playlist,
+                    request.getDetail(),
+                    request.getCoverImagePath());
+
+            playlist.setDetail(detail);
+        } else {
+            detail.setDetail(request.getDetail());
+            detail.setCoverImagePath(request.getCoverImagePath());
+        }
+
+        Playlist saved = playlistRepository.save(playlist);
+
+        return new PlaylistResponse(saved);
+    }
+
+    @Override
     public void deletePlaylist(UUID playlistId, UUID userId) {
         Playlist playlist = playlistRepository.findByPlaylistIdAndUserId(playlistId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("Playlist not found or access denied"));

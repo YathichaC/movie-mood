@@ -31,7 +31,7 @@ public class MoodStrategy implements Strategy {
     public List<Movie> recommend(Mood mood, List<Integer> dislikedGenreIds, MatchScoreStrategy strategy) {
         MatchScoreStrategy scoreStrategy = strategy != null ? strategy : defaultStrategy;
 
-        List<Movie> allMovies = movieService.browseMovies();
+        List<Movie> allMovies = movieService.browseMovies(1).getMovies();
         if (allMovies == null || allMovies.isEmpty()) {
             allMovies = getFallbackMockMovies();
         }

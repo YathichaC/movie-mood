@@ -214,4 +214,22 @@ public class GlobalExceptionHandler {
                                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                                 .body(response);
         }
+
+        @ExceptionHandler(IllegalArgumentException.class)
+        public ResponseEntity<ErrorResponse> handleIllegalArgument(
+                        IllegalArgumentException exception,
+                        HttpServletRequest request) {
+
+                ErrorResponse response = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                                exception.getMessage(),
+                                request.getRequestURI());
+
+                return ResponseEntity
+                                .status(HttpStatus.BAD_REQUEST)
+                                .body(response);
+        }
+
 }

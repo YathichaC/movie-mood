@@ -132,35 +132,31 @@
     <main class="mx-auto max-w-[1600px] px-5 py-10 sm:px-8 lg:px-12 lg:py-14">
         <section class="mb-10">
             <div class="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+
                 <div>
                     <h1
                         class="font-outfit text-5xl md:text-6xl lg:text-7xl font-light text-[#F5F5F5] tracking-tight mb-4 leading-[1.08]">
-                        Discover
-                        films
+                        Discover films
                     </h1>
+
                     <p class="text-sm md:text-base text-neutral-400 leading-relaxed max-w-lg mb-8">
                         Find something worth watching. Explore films by rating, release year, and the genres you love.
                     </p>
                 </div>
+
                 <div
                     class="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.035] px-4 py-3 lg:max-w-md">
+
                     <span class="material-symbols-outlined text-neutral-500">search</span>
-                    <input id="searchInput" ...>
 
-                    <div id="resultsContainer"
-                        class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-5 lg:grid-cols-4 xl:gap-x-6">
-                    </div>
+                    <input id="searchInput" type="search" placeholder="Search movies..."
+                        class="min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-white placeholder:text-neutral-600 focus:ring-0">
 
-                    <div id="emptyStateContainer" class="hidden">
-                        ...
-                    </div>
-
-                    <div id="paginationContainer"
-                        class="mt-10 flex items-center justify-between border-t border-white/10 pt-6">
-                    </div>
-                    <kbd
-                        class="hidden rounded border border-white/10 px-2 py-1 text-[10px] text-neutral-500 sm:block">SEARCH</kbd>
+                    <kbd class="hidden rounded border border-white/10 px-2 py-1 text-[10px] text-neutral-500 sm:block">
+                        SEARCH
+                    </kbd>
                 </div>
+
             </div>
         </section>
         <div
@@ -169,8 +165,10 @@
                 class="hidden h-fit rounded-2xl border border-white/10 bg-white/[0.025] p-5 md:sticky md:top-24 md:block">
                 <div class="mb-6 flex items-center justify-between">
                     <h2 class="text-lg font-medium">Refine results</h2>
-                    <button type="button" onclick="window.location.reload()"
-                        class="text-xs text-neutral-500 transition hover:text-white">Reset</button>
+                    <button id="resetFiltersButton" type="button"
+                        class="text-xs text-neutral-500 transition hover:text-white">
+                        Reset
+                    </button>
                 </div>
                 <div class="space-y-7">
                     <section>
@@ -221,7 +219,65 @@
                     <section>
                         <h3 class="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">Genres</h3>
                         <div class="grid grid-cols-2 gap-y-3 gap-x-2">
-                            >
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="28">
+                                Action
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="12">
+                                Adventure
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="16">
+                                Animation
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="35">
+                                Comedy
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="80">
+                                Crime
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="18">
+                                Drama
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="14">
+                                Fantasy
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="27">
+                                Horror
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="9648">
+                                Mystery
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="10749">
+                                Romance
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="878">
+                                Sci-Fi
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="53">
+                                Thriller
+                            </label>
                         </div>
                     </section>
                 </div>
@@ -246,142 +302,7 @@
                 </div>
                 <div id="resultsContainer"
                     class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-5 lg:grid-cols-4 xl:gap-x-6">
-                    <article class="movie-card min-w-0">
-                        <a th:href="@{/movie/detail}" class="group block overflow-hidden rounded-xl bg-neutral-900">
-                            <div class="aspect-[2/3] overflow-hidden">
-                                <img src="https://image.tmdb.org/t/p/w500/6izwz7rsy95ARzTR3poZ8H6c5pp.jpg"
-                                    alt="Dune Part Two movie poster" loading="lazy" class="h-full w-full object-cover">
-                            </div>
-                        </a>
-                        <div class="pt-3">
-                            <div class="mb-1.5 flex items-center justify-between gap-2">
-                                <span class="text-[11px] text-neutral-500">2024</span>
-                                <span class="flex items-center gap-1 text-xs text-neutral-300"><span
-                                        class="material-symbols-outlined text-[15px] text-neutral-400">star</span>8.2</span>
-                            </div>
-                            <h3
-                                class="movie-title truncate font-display text-base font-medium text-neutral-200 transition">
-                                Dune: Part Two</h3>
-                            <p class="mt-1 truncate text-xs text-neutral-500">Sci-Fi · Adventure</p>
-                        </div>
-                    </article>
-                    <article class="movie-card min-w-0">
-                        <a th:href="@{/movie/detail}" class="group block overflow-hidden rounded-xl bg-neutral-900">
-                            <div class="aspect-[2/3] overflow-hidden">
-                                <img src="https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg"
-                                    alt="Deadpool and Wolverine movie poster" loading="lazy"
-                                    class="h-full w-full object-cover">
-                            </div>
-                        </a>
-                        <div class="pt-3">
-                            <div class="mb-1.5 flex items-center justify-between gap-2">
-                                <span class="text-[11px] text-neutral-500">2024</span>
-                                <span class="flex items-center gap-1 text-xs text-neutral-300"><span
-                                        class="material-symbols-outlined text-[15px] text-neutral-400">star</span>7.6</span>
-                            </div>
-                            <h3
-                                class="movie-title truncate font-display text-base font-medium text-neutral-200 transition">
-                                Deadpool & Wolverine</h3>
-                            <p class="mt-1 truncate text-xs text-neutral-500">Action · Comedy</p>
-                        </div>
-                    </article>
-                    <article class="movie-card min-w-0">
-                        <a th:href="@{/movie/detail}" class="group block overflow-hidden rounded-xl bg-neutral-900">
-                            <div class="aspect-[2/3] overflow-hidden">
-                                <img src="https://image.tmdb.org/t/p/w500/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg"
-                                    alt="Interstellar movie poster" loading="lazy" class="h-full w-full object-cover">
-                            </div>
-                        </a>
-                        <div class="pt-3">
-                            <div class="mb-1.5 flex items-center justify-between gap-2">
-                                <span class="text-[11px] text-neutral-500">2014</span>
-                                <span class="flex items-center gap-1 text-xs text-neutral-300"><span
-                                        class="material-symbols-outlined text-[15px] text-neutral-400">star</span>8.7</span>
-                            </div>
-                            <h3
-                                class="movie-title truncate font-display text-base font-medium text-neutral-200 transition">
-                                Interstellar</h3>
-                            <p class="mt-1 truncate text-xs text-neutral-500">Sci-Fi · Drama</p>
-                        </div>
-                    </article>
-                    <article class="movie-card min-w-0">
-                        <a th:href="@{/movie/detail}" class="group block overflow-hidden rounded-xl bg-neutral-900">
-                            <div class="aspect-[2/3] overflow-hidden">
-                                <img src="https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg"
-                                    alt="The Dark Knight movie poster" loading="lazy"
-                                    class="h-full w-full object-cover">
-                            </div>
-                        </a>
-                        <div class="pt-3">
-                            <div class="mb-1.5 flex items-center justify-between gap-2">
-                                <span class="text-[11px] text-neutral-500">2008</span>
-                                <span class="flex items-center gap-1 text-xs text-neutral-300"><span
-                                        class="material-symbols-outlined text-[15px] text-neutral-400">star</span>9.0</span>
-                            </div>
-                            <h3
-                                class="movie-title truncate font-display text-base font-medium text-neutral-200 transition">
-                                The Dark Knight</h3>
-                            <p class="mt-1 truncate text-xs text-neutral-500">Action · Crime</p>
-                        </div>
-                    </article>
-                    <article class="movie-card min-w-0">
-                        <a th:href="@{/movie/detail}" class="group block overflow-hidden rounded-xl bg-neutral-900">
-                            <div class="aspect-[2/3] overflow-hidden">
-                                <img src="https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg"
-                                    alt="Parasite movie poster" loading="lazy" class="h-full w-full object-cover">
-                            </div>
-                        </a>
-                        <div class="pt-3">
-                            <div class="mb-1.5 flex items-center justify-between gap-2">
-                                <span class="text-[11px] text-neutral-500">2019</span>
-                                <span class="flex items-center gap-1 text-xs text-neutral-300"><span
-                                        class="material-symbols-outlined text-[15px] text-neutral-400">star</span>8.5</span>
-                            </div>
-                            <h3
-                                class="movie-title truncate font-display text-base font-medium text-neutral-200 transition">
-                                Parasite</h3>
-                            <p class="mt-1 truncate text-xs text-neutral-500">Thriller · Drama</p>
-                        </div>
-                    </article>
-                    <article class="movie-card min-w-0">
-                        <a th:href="@{/movie/detail}" class="group block overflow-hidden rounded-xl bg-neutral-900">
-                            <div class="aspect-[2/3] overflow-hidden">
-                                <img src="https://image.tmdb.org/t/p/w500/u68AjlvlutfEIcpmbYpKcdi09ut.jpg"
-                                    alt="Everything Everywhere All at Once movie poster" loading="lazy"
-                                    class="h-full w-full object-cover">
-                            </div>
-                        </a>
-                        <div class="pt-3">
-                            <div class="mb-1.5 flex items-center justify-between gap-2">
-                                <span class="text-[11px] text-neutral-500">2022</span>
-                                <span class="flex items-center gap-1 text-xs text-neutral-300"><span
-                                        class="material-symbols-outlined text-[15px] text-neutral-400">star</span>7.8</span>
-                            </div>
-                            <h3
-                                class="movie-title truncate font-display text-base font-medium text-neutral-200 transition">
-                                Everything Everywhere All at Once</h3>
-                            <p class="mt-1 truncate text-xs text-neutral-500">Sci-Fi · Adventure</p>
-                        </div>
-                    </article>
-                    <article class="movie-card min-w-0">
-                        <a th:href="@{/movie/detail}" class="group block overflow-hidden rounded-xl bg-neutral-900">
-                            <div class="aspect-[2/3] overflow-hidden">
-                                <img src="https://image.tmdb.org/t/p/w500/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg"
-                                    alt="Barbie movie poster" loading="lazy" class="h-full w-full object-cover">
-                            </div>
-                        </a>
-                        <div class="pt-3">
-                            <div class="mb-1.5 flex items-center justify-between gap-2">
-                                <span class="text-[11px] text-neutral-500">2023</span>
-                                <span class="flex items-center gap-1 text-xs text-neutral-300"><span
-                                        class="material-symbols-outlined text-[15px] text-neutral-400">star</span>7.0</span>
-                            </div>
-                            <h3
-                                class="movie-title truncate font-display text-base font-medium text-neutral-200 transition">
-                                Barbie</h3>
-                            <p class="mt-1 truncate text-xs text-neutral-500">Comedy · Fantasy</p>
-                        </div>
-                    </article>
+
                 </div>
                 <div id="emptyStateContainer"
                     class="hidden rounded-2xl border border-white/10 bg-white/[0.02] px-6 py-20 text-center">
@@ -398,20 +319,9 @@
                         <span>Show Movie Grid</span>
                     </button>
                 </div>
-                <div class="mt-10 flex items-center justify-between border-t border-white/10 pt-6">
-                    <div id="paginationContainer"
-                        class="mt-10 flex items-center justify-between border-t border-white/10 pt-6">
-                        <div class="flex items-center gap-2">
-                            <button type="button" aria-label="Previous page" disabled
-                                class="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-neutral-700"><span
-                                    class="material-symbols-outlined text-lg">chevron_left</span></button>
-                            <button type="button" aria-label="Current page"
-                                class="flex h-9 min-w-9 items-center justify-center rounded-lg border border-white/20 bg-white text-sm font-semibold text-black">1</button>
-                            <button type="button" aria-label="Next page"
-                                class="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-neutral-400 transition hover:border-white/30 hover:text-white"><span
-                                    class="material-symbols-outlined text-lg">chevron_right</span></button>
-                        </div>
-                    </div>
+                <div id="paginationContainer"
+                    class="mt-10 flex items-center justify-between border-t border-white/10 pt-6">
+                </div>
             </section>
         </div>
     </main>
