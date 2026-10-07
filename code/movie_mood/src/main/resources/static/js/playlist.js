@@ -12,12 +12,124 @@ document.addEventListener('DOMContentLoaded', () => {
     const feedbackBanner = document.getElementById('feedbackBanner');
     const playlistItemsList = document.getElementById('playlist-items-list');
     const createPlaylistModal = document.getElementById('create-playlist-modal');
+    const playlistNameInput = document.getElementById('playlistName');
+    const playlistCoverInput = document.getElementById('playlistCoverInput');
+    const coverPreview = document.getElementById('coverPreview');
+    const savePlaylistChangesBtn = document.getElementById('savePlaylistChangesBtn');
+
+    const playlistTitle = document.getElementById('playlistTitle');
+    const playlistCover = document.getElementById('playlistCover');
+    const playlistCoverPlaceholder = document.getElementById('playlistCoverPlaceholder');
+    const playlistMovieCount = document.getElementById('playlistMovieCount');
+
+    const currentPlaylistId =
+        new URLSearchParams(window.location.search).get('playlistId');
+
+    let currentPlaylist = null;
+    async function loadCurrentPlaylist() {
+        if (!currentPlaylistId) {
+            return;
+        }
+
+        try {
+            const response = await apiFetch(
+                `/v1/playlists/${currentPlaylistId}`
+            );
+
+            if (!response || !response.ok) {
+                const data = response ? await response.json() : {};
+                throw new Error(
+                    data.message || 'Failed to load playlist'
+                );
+            }
+
+            currentPlaylist = await response.json();
+
+            if (playlistTitle) {
+                playlistTitle.textContent =
+                    currentPlaylist.playlistName;
+            }
+
+            if (playlistMovieCount) {
+                const count = currentPlaylist.itemCount || 0;
+
+                playlistMovieCount.textContent =
+                    `${count} ${count === 1 ? 'movie' : 'movies'}`;
+            }
+
+            if (playlistCover) {
+                if (currentPlaylist.coverImagePath) {
+                    playlistCover.src =
+                        currentPlaylist.coverImagePath;
+
+                    playlistCover.classList.remove('hidden');
+
+                    if (playlistCoverPlaceholder) {
+                        playlistCoverPlaceholder.classList.add('hidden');
+                    }
+                } else {
+                    playlistCover.removeAttribute('src');
+                    playlistCover.classList.add('hidden');
+
+                    if (playlistCoverPlaceholder) {
+                        playlistCoverPlaceholder.classList.remove('hidden');
+                    }
+                }
+            }
+
+        } catch (error) {
+            showPlaylistFeedback(
+                'Failed to load playlist',
+                error.message
+            );
+        }
+    }
+
+
+
+
+
 
     const openModal = async (id = 'playlistModal') => {
         const target = document.getElementById(id);
         if (!target) {
             return;
         }
+        // เตรียมข้อมูลจริงก่อนเปิด Edit Playlist
+        if (id === 'editModal') {
+
+            // ถ้ายังไม่มีข้อมูล ให้โหลดจาก API ก่อน
+            if (!currentPlaylist && currentPlaylistId) {
+                await loadCurrentPlaylist();
+            }
+
+            if (currentPlaylist) {
+
+                if (playlistNameInput) {
+                    playlistNameInput.value =
+                        currentPlaylist.playlistName || '';
+                }
+
+                if (coverPreview) {
+                    if (currentPlaylist.coverImagePath) {
+                        coverPreview.src =
+                            currentPlaylist.coverImagePath;
+
+                        coverPreview.classList.remove('hidden');
+                    } else {
+                        coverPreview.removeAttribute('src');
+                        coverPreview.classList.add('hidden');
+                    }
+                }
+
+                // ล้างไฟล์ที่เคยเลือกไว้
+                if (playlistCoverInput) {
+                    playlistCoverInput.value = '';
+                }
+            }
+        }
+
+
         target.classList.remove('hidden');
         target.classList.add('flex');
         target.style.display = 'flex';
@@ -210,6 +322,92 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    if (savePlaylistChangesBtn) {
+        savePlaylistChangesBtn.addEventListener('click', async () => {
+
+            if (!currentPlaylistId) {
+                showPlaylistFeedback(
+                    'Unable to update playlist',
+                    'Playlist ID was not found'
+                );
+                return;
+            }
+
+            const playlistName = playlistNameInput
+                ? playlistNameInput.value.trim()
+                : '';
+
+            if (!playlistName) {
+                showPlaylistFeedback(
+                    'Unable to update playlist',
+                    'Playlist name is required'
+                );
+                return;
+            }
+
+            const formData = new FormData();
+
+            formData.append('playlistName', playlistName);
+
+            if (
+                playlistCoverInput &&
+                playlistCoverInput.files.length > 0
+            ) {
+                formData.append(
+                    'coverImage',
+                    playlistCoverInput.files[0]
+                );
+            }
+
+            savePlaylistChangesBtn.disabled = true;
+
+            try {
+                const response = await apiFetch(
+                    `/v1/playlists/${currentPlaylistId}`,
+                    {
+                        method: 'PUT',
+                        body: formData
+                    }
+                );
+
+                if (!response || !response.ok) {
+                    const data = response
+                        ? await response.json()
+                        : {};
+
+                    throw new Error(
+                        data.message ||
+                        'Failed to update playlist'
+                    );
+                }
+
+                currentPlaylist = await response.json();
+
+                closeModal('editModal');
+
+                // โหลดข้อมูลใหม่มาแสดงบนหน้า
+                await loadCurrentPlaylist();
+
+                if (typeof showToast === 'function') {
+                    showToast(
+                        'Playlist Updated',
+                        'Playlist updated successfully.',
+                        'check_circle'
+                    );
+                }
+
+            } catch (error) {
+                showPlaylistFeedback(
+                    'Failed to update playlist',
+                    error.message
+                );
+            } finally {
+                savePlaylistChangesBtn.disabled = false;
+            }
+        });
+    }
+
+
 
     if (searchInput && playlistsList) {
         searchInput.addEventListener('input', (event) => {
@@ -352,4 +550,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (playlistItemsList) {
         loadPlaylists();
     }
+
+    if (currentPlaylistId) {
+        loadCurrentPlaylist();
+    }
+
+
+
 });

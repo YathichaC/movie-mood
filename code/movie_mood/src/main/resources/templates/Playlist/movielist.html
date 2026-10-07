@@ -45,12 +45,22 @@
     <main class="flex-1 w-full max-w-[1440px] mx-auto px-6 lg:px-12 py-10 flex flex-col gap-10">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-[#262626]">
             <div class="flex items-center gap-6">
-                <img alt="Collage poster 1" class="w-[200px] h-[200px] object-cover"
-                    src="https://i.pinimg.com/1200x/cf/c9/4a/cfc94ad7e5884ffae2d3a22b48ff1289.jpg">
+                <div
+                    class="w-[200px] h-[200px] bg-[#0A0A0A] border border-[#262626] flex items-center justify-center overflow-hidden">
+                    <img id="playlistCover" alt="Playlist cover" class="w-full h-full object-cover hidden" src="">
+                    <span id="playlistCoverPlaceholder" class="material-symbols-outlined text-white/20 text-5xl">
+                        movie
+                    </span>
+                </div>
                 <div class="flex flex-col justify-center gap-1.5">
                     <span class="text-[11px] tracking-widest text-[#737373] uppercase">PLAYLIST</span>
-                    <h1 class="text-3xl lg:text-4xl font-medium text-[#F5F5F5] tracking-tight">Whispers of the Wild</h1>
-                    <p class="text-sm text-[#A3A3A3] tracking-wide">5 movies</p>
+                    <h1 id="playlistTitle" class="text-3xl lg:text-4xl font-medium text-[#F5F5F5] tracking-tight">
+                        Loading...
+                    </h1>
+
+                    <p id="playlistMovieCount" class="text-sm text-[#A3A3A3] tracking-wide">
+                        0 movies
+                    </p>
                 </div>
             </div>
             <div class="flex flex-wrap items-center gap-3">
@@ -73,26 +83,30 @@
         </div>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             <div
-                    th:replace="~{fragments/home-movie-card :: home-movie-card('Resident Evil','https://image.tmdb.org/t/p/w1280/i7UyjfPio0VFHB9rBUZSFyhOoM8.jpg',7.3,2026)}">
-                </div>
-                <div
-                    th:replace="~{fragments/home-movie-card :: home-movie-card('Deadpool & Wolverine','https://image.tmdb.org/t/p/w1280/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg',7.6,2024)}">
-                </div>
-                <div
-                    th:replace="~{fragments/home-movie-card :: home-movie-card('Oppenheimer','https://image.tmdb.org/t/p/w1280/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',8.0,2023)}">
-                </div>
-                <div
-                    th:replace="~{fragments/home-movie-card :: home-movie-card('Backrooms','https://image.tmdb.org/t/p/w1280/rhGx6E3qRNMgj3i5su2oukNHwIQ.jpg',7.0,2026)}">
-                </div>
-                <div
-                    th:replace="~{fragments/home-movie-card :: home-movie-card('Dune: Part Two','https://image.tmdb.org/t/p/w1280/6izwz7rsy95ARzTR3poZ8H6c5pp.jpg',8.1,2024)}">
-                </div>
+                th:replace="~{fragments/home-movie-card :: home-movie-card('Resident Evil','https://image.tmdb.org/t/p/w1280/i7UyjfPio0VFHB9rBUZSFyhOoM8.jpg',7.3,2026)}">
+            </div>
+            <div
+                th:replace="~{fragments/home-movie-card :: home-movie-card('Deadpool & Wolverine','https://image.tmdb.org/t/p/w1280/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg',7.6,2024)}">
+            </div>
+            <div
+                th:replace="~{fragments/home-movie-card :: home-movie-card('Oppenheimer','https://image.tmdb.org/t/p/w1280/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',8.0,2023)}">
+            </div>
+            <div
+                th:replace="~{fragments/home-movie-card :: home-movie-card('Backrooms','https://image.tmdb.org/t/p/w1280/rhGx6E3qRNMgj3i5su2oukNHwIQ.jpg',7.0,2026)}">
+            </div>
+            <div
+                th:replace="~{fragments/home-movie-card :: home-movie-card('Dune: Part Two','https://image.tmdb.org/t/p/w1280/6izwz7rsy95ARzTR3poZ8H6c5pp.jpg',8.1,2024)}">
+            </div>
         </div>
     </main>
     <div th:replace="~{fragments/edit-playlist-modal :: edit-playlist-modal}"></div>
     <div th:replace="~{fragments/delete-playlist-modal :: delete-playlist-modal}"></div>
     <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/api.js}"></script>
     <script th:src="@{/js/playlist.js}"></script>
+
+
+
 </body>
 
 </html>

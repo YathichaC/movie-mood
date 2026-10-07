@@ -1,5 +1,8 @@
 package com.example.movie_mood.controller;
 
+import com.example.movie_mood.service.PlaylistImageService;
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 import com.example.movie_mood.dto.MovielistRequest;
 import com.example.movie_mood.dto.MovielistResponse;
 import com.example.movie_mood.dto.PlaylistRequest;
@@ -18,11 +21,16 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/v1/playlists")
 @SecurityRequirement(name = "bearerAuth")
 public class PlaylistRestController {
+    private final PlaylistImageService playlistImageService;
 
     private final PlaylistService playlistService;
 
-    public PlaylistRestController(PlaylistService playlistService) {
+    public PlaylistRestController(
+            PlaylistService playlistService,
+            PlaylistImageService playlistImageService) {
+
         this.playlistService = playlistService;
+        this.playlistImageService = playlistImageService;
     }
 
     @GetMapping
@@ -42,7 +50,7 @@ public class PlaylistRestController {
     @PostMapping
     public ResponseEntity<?> createPlaylist(
             Authentication authentication,
-           @Valid @RequestBody PlaylistRequest request) {
+            @Valid @RequestBody PlaylistRequest request) {
 
         UUID userId = getCurrentUserId(authentication);
         PlaylistResponse created = playlistService.createPlaylist(userId, request);
@@ -51,7 +59,6 @@ public class PlaylistRestController {
                 .status(HttpStatus.CREATED)
                 .body(created);
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePlaylist(@PathVariable("id") UUID id, Authentication authentication) {
@@ -89,13 +96,28 @@ public class PlaylistRestController {
         return UUID.fromString(authentication.getName());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updatePlaylist(
             @PathVariable("id") UUID id,
             Authentication authentication,
-            @Valid @RequestBody PlaylistRequest request) {
+            @RequestParam String playlistName,
+            @RequestParam(required = false) String detail,
+            @RequestPart(required = false) MultipartFile coverImage) {
 
         UUID userId = getCurrentUserId(authentication);
+
+        PlaylistResponse current = playlistService.getPlaylistDetail(id, userId);
+
+        String coverImagePath = current.getCoverImagePath();
+
+        if (coverImage != null && !coverImage.isEmpty()) {
+            coverImagePath = playlistImageService.saveImage(coverImage);
+        }
+
+        PlaylistRequest request = new PlaylistRequest(
+                playlistName,
+                detail,
+                coverImagePath);
 
         PlaylistResponse updated = playlistService.updatePlaylist(
                 id,
