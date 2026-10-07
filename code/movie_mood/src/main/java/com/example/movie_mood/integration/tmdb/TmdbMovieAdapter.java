@@ -18,6 +18,7 @@ import java.util.List;
 public class TmdbMovieAdapter implements MovieProvider {
 
     private final TmdbRestClient tmdbRestClient;
+    private static final int TMDB_MAX_PAGE = 500;
 
     public TmdbMovieAdapter(TmdbRestClient tmdbRestClient) {
         this.tmdbRestClient = tmdbRestClient;
@@ -43,7 +44,9 @@ public class TmdbMovieAdapter implements MovieProvider {
         return new MoviePage(
                 movies,
                 response.getPage() != null ? response.getPage() : page,
-                response.getTotalPages() != null ? response.getTotalPages() : 0,
+                response.getTotalPages() != null
+                        ? Math.min(response.getTotalPages(), TMDB_MAX_PAGE)
+                        : 0,
                 response.getTotalResults() != null ? response.getTotalResults() : 0);
     }
 
@@ -66,7 +69,9 @@ public class TmdbMovieAdapter implements MovieProvider {
         return new MoviePage(
                 movies,
                 response.getPage() != null ? response.getPage() : page,
-                response.getTotalPages() != null ? response.getTotalPages() : 0,
+                response.getTotalPages() != null
+                        ? Math.min(response.getTotalPages(), TMDB_MAX_PAGE)
+                        : 0,
                 response.getTotalResults() != null ? response.getTotalResults() : 0);
     }
 
@@ -189,7 +194,9 @@ public class TmdbMovieAdapter implements MovieProvider {
         return new MoviePage(
                 movies,
                 response.getPage() != null ? response.getPage() : page,
-                response.getTotalPages() != null ? response.getTotalPages() : 0,
+                response.getTotalPages() != null
+                        ? Math.min(response.getTotalPages(), TMDB_MAX_PAGE)
+                        : 0,
                 response.getTotalResults() != null ? response.getTotalResults() : 0);
     }
 

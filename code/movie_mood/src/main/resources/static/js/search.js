@@ -254,7 +254,7 @@ async function discoverMovies(page = 1) {
         params.set('minRating', ratingSlider.value);
     }
 
-    if (sortSelector) {
+    if (sortSelector && sortSelector.value) {
         params.set('sortBy', sortSelector.value);
     }
 
@@ -869,10 +869,11 @@ function resetFilters() {
         document.getElementById('sortSelector');
 
     if (sortSelector) {
-        sortSelector.value = 'rating_desc';
+        sortSelector.value = '';
     }
 
-    loadPopularMovies(1);
+    discoverMode = true;
+    discoverMovies(1);
 }
 const resetFiltersButton =
     document.getElementById('resetFiltersButton');
@@ -887,5 +888,6 @@ if (resetFiltersButton) {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadPopularMovies(1);
+    discoverMode = true;
+    discoverMovies(1);
 });

@@ -94,13 +94,19 @@ public class TmdbRestClient {
                         String sortBy,
                         int page) {
 
-                String tmdbSortBy = switch (sortBy) {
-                        case "alphabet_asc" -> "original_title.asc";
-                        case "release_desc" -> "primary_release_date.desc";
-                        case "release_asc" -> "primary_release_date.asc";
-                        case "rating_desc" -> "vote_average.desc";
-                        default -> "popularity.desc";
-                };
+                String tmdbSortBy;
+
+                if (sortBy == null || sortBy.isBlank()) {
+                        tmdbSortBy = "popularity.desc";
+                } else {
+                        tmdbSortBy = switch (sortBy) {
+                                case "alphabet_asc" -> "original_title.asc";
+                                case "release_desc" -> "primary_release_date.desc";
+                                case "release_asc" -> "primary_release_date.asc";
+                                case "rating_desc" -> "vote_average.desc";
+                                default -> "popularity.desc";
+                        };
+                }
 
                 return restClient.get()
                                 .uri(uriBuilder -> {

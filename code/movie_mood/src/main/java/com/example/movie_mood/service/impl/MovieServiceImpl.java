@@ -109,7 +109,9 @@ public class MovieServiceImpl implements MovieService {
                     "startYear must not be greater than endYear");
         }
 
-        if (!ALLOWED_DISCOVER_SORT_VALUES.contains(sortBy)) {
+        if (sortBy != null
+                && !sortBy.isBlank()
+                && !ALLOWED_DISCOVER_SORT_VALUES.contains(sortBy)) {
             throw new IllegalArgumentException(
                     "Invalid sortBy value");
         }
