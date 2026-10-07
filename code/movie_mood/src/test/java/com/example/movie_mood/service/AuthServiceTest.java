@@ -23,7 +23,8 @@ class AuthServiceTest {
 
     @BeforeEach
     void setUp() {
-        userRepository = mock(UserRepository.class);tokenRepository = mock(PasswordResetTokenRepository.class); 
+        userRepository = mock(UserRepository.class);
+        tokenRepository = mock(PasswordResetTokenRepository.class);
         authService = new AuthService(userRepository, tokenRepository);
     }
 
