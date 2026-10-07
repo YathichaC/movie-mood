@@ -1,199 +1,159 @@
 package com.example.movie_mood.service;
 
-import com.example.movie_mood.domain.entity.Genre;
 import com.example.movie_mood.domain.entity.User;
-import com.example.movie_mood.domain.entity.UserDislikedGenre;
-import com.example.movie_mood.repository.GenreRepository;
+import com.example.movie_mood.dto.user.ChangePasswordRequest;
+import com.example.movie_mood.dto.user.DeleteAccountRequest;
+import com.example.movie_mood.dto.user.UpdateProfileRequest;
 import com.example.movie_mood.repository.UserDislikedGenreRepository;
 import com.example.movie_mood.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class UserPreferenceServiceTest {
+class UserServiceTest {
 
     private UserRepository userRepository;
-    private GenreRepository genreRepository;
     private UserDislikedGenreRepository userDislikedGenreRepository;
-    private UserPreferenceService userPreferenceService;
+    private PasswordEncoder passwordEncoder;
+    private UserService userService;
     private UUID userId;
+    private User existingUser;
 
     @BeforeEach
     void setUp() {
         userId = UUID.randomUUID();
         userRepository = mock(UserRepository.class);
-        genreRepository = mock(GenreRepository.class);
-        userDislikedGenreRepository =
-                mock(UserDislikedGenreRepository.class);
+        userDislikedGenreRepository = mock(UserDislikedGenreRepository.class);
+        passwordEncoder = mock(PasswordEncoder.class);
 
-        userPreferenceService = new UserPreferenceService(
+        userService = new UserService(
                 userRepository,
-                genreRepository,
-                userDislikedGenreRepository
+                userDislikedGenreRepository,
+                passwordEncoder
         );
+
+        existingUser = new User("old_username", "old@example.com", "encodedPassword123");
+        existingUser.setUserId(userId);
     }
 
     @Test
-    void getDislikedGenreIdsShouldReturnGenreIds() {
+    void updateProfileShouldUpdateOnlyUsernameWhenEmailIsNull() {
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(userRepository.existsByUsername("new_username")).thenReturn(false);
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        User user = new User(
-                "testuser",
-                "test@example.com",
-                "hashedPassword"
-        );
-        user.setUserId(userId);
+        UpdateProfileRequest request = new UpdateProfileRequest();
+        request.setUsername("new_username"); 
 
-        Genre action = new Genre("28", "Action");
-        Genre horror = new Genre("27", "Horror");
+        User result = userService.updateProfile(userId, request);
 
-        UserDislikedGenre first =
-                new UserDislikedGenre(user, action);
-
-        UserDislikedGenre second =
-                new UserDislikedGenre(user, horror);
-
-        when(userRepository.existsById(userId))
-                .thenReturn(true);
-
-        when(userDislikedGenreRepository.findByUserUserId(userId))
-                .thenReturn(List.of(first, second));
-
-        List<String> result =
-                userPreferenceService.getDislikedGenreIds(userId);
-
-        assertEquals(
-                List.of("28", "27"),
-                result
-        );
+        assertEquals("new_username", result.getUsername());
+        assertEquals("old@example.com", result.getEmail()); 
+        verify(userRepository).save(existingUser);
     }
 
     @Test
-    void getDislikedGenreIdsShouldRejectUnknownUser() {
+    void updateProfileShouldUpdateOnlyEmailWhenUsernameIsNull() {
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(userRepository.existsByEmail("new@example.com")).thenReturn(false);
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        UUID randomId = UUID.randomUUID();
-        when(userRepository.existsById(randomId))
-                .thenReturn(false);
+        UpdateProfileRequest request = new UpdateProfileRequest();
+        request.setEmail("new@example.com"); 
 
-        IllegalArgumentException exception =
-                assertThrows(
-                        IllegalArgumentException.class,
-                        () -> userPreferenceService
-                                .getDislikedGenreIds(randomId)
-                );
+        User result = userService.updateProfile(userId, request);
 
-        assertEquals(
-                "User not found",
-                exception.getMessage()
-        );
-
-        verify(userDislikedGenreRepository, never())
-                .findByUserUserId(any(UUID.class));
+        assertEquals("old_username", result.getUsername()); 
+        assertEquals("new@example.com", result.getEmail());
+        verify(userRepository).save(existingUser);
     }
 
     @Test
-    void updateDislikedGenresShouldSavePreferences() {
+    void updateProfileShouldRejectDuplicateUsername() {
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(userRepository.existsByUsername("taken_username")).thenReturn(true);
 
-        User user = new User(
-                "testuser",
-                "test@example.com",
-                "hashedPassword"
-        );
-        user.setUserId(userId);
+        UpdateProfileRequest request = new UpdateProfileRequest();
+        request.setUsername("taken_username");
 
-        Genre action = new Genre("28", "Action");
-        Genre horror = new Genre("27", "Horror");
-
-        when(userRepository.findById(userId))
-                .thenReturn(Optional.of(user));
-
-        when(genreRepository.findById("28"))
-                .thenReturn(Optional.of(action));
-
-        when(genreRepository.findById("27"))
-                .thenReturn(Optional.of(horror));
-
-        List<String> result =
-                userPreferenceService.updateDislikedGenres(
-                        userId,
-                        List.of("28", "27")
-                );
-
-        assertEquals(
-                List.of("28", "27"),
-                result
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> userService.updateProfile(userId, request)
         );
 
-        verify(userDislikedGenreRepository)
-                .deleteByUserUserId(userId);
-
-        verify(userDislikedGenreRepository, times(2))
-                .save(any(UserDislikedGenre.class));
+        assertEquals("Username is already taken", exception.getMessage());
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
-    void updateDislikedGenresShouldRejectUnknownUser() {
+    void updateProfileShouldRejectInvalidEmailFormat() {
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
 
-        UUID randomId = UUID.randomUUID();
-        when(userRepository.findById(randomId))
-                .thenReturn(Optional.empty());
+        UpdateProfileRequest request = new UpdateProfileRequest();
+        request.setEmail("invalid-email-format");
 
-        IllegalArgumentException exception =
-                assertThrows(
-                        IllegalArgumentException.class,
-                        () -> userPreferenceService
-                                .updateDislikedGenres(
-                                        randomId,
-                                        List.of("28")
-                                )
-                );
-
-        assertEquals(
-                "User not found",
-                exception.getMessage()
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> userService.updateProfile(userId, request)
         );
 
-        verify(userDislikedGenreRepository, never())
-                .deleteByUserUserId(any(UUID.class));
-
-        verify(userDislikedGenreRepository, never())
-                .save(any(UserDislikedGenre.class));
+        assertEquals("Invalid email format", exception.getMessage());
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
-    void updateDislikedGenresShouldRejectUnknownGenre() {
+    void changePasswordShouldSucceedWhenCurrentPasswordMatches() {
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(passwordEncoder.matches("CurrentPass123!", "encodedPassword123")).thenReturn(true);
+        when(passwordEncoder.matches("NewPass12345!", "encodedPassword123")).thenReturn(false);
+        when(passwordEncoder.encode("NewPass12345!")).thenReturn("newEncodedPassword123");
 
-        User user = new User(
-                "testuser",
-                "test@example.com",
-                "hashedPassword"
+        ChangePasswordRequest request = new ChangePasswordRequest();
+        request.setCurrentPassword("CurrentPass123!");
+        request.setNewPassword("NewPass12345!");
+
+        userService.changePassword(userId, request);
+
+        assertEquals("newEncodedPassword123", existingUser.getPassword());
+        verify(userRepository).save(existingUser);
+    }
+
+    @Test
+    void changePasswordShouldRejectWhenCurrentPasswordIsIncorrect() {
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(passwordEncoder.matches("WrongPass123!", "encodedPassword123")).thenReturn(false);
+
+        ChangePasswordRequest request = new ChangePasswordRequest();
+        request.setCurrentPassword("WrongPass123!");
+        request.setNewPassword("NewPass12345!");
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> userService.changePassword(userId, request)
         );
-        user.setUserId(userId);
 
-        when(userRepository.findById(userId))
-                .thenReturn(Optional.of(user));
+        assertEquals("Current password is incorrect", exception.getMessage());
+        verify(userRepository, never()).save(any(User.class));
+    }
 
-        when(genreRepository.findById("999"))
-                .thenReturn(Optional.empty());
+    @Test
+    void deleteAccountShouldSucceedAndRemovePreferences() {
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(passwordEncoder.matches("encodedPassword123", "encodedPassword123")).thenReturn(true);
 
-        IllegalArgumentException exception =
-                assertThrows(
-                        IllegalArgumentException.class,
-                        () -> userPreferenceService
-                                .updateDislikedGenres(
-                                        userId,
-                                        List.of("999")
-                                )
-                );
+        DeleteAccountRequest request = new DeleteAccountRequest();
+        request.setUsername("old_username");
+        request.setPassword("encodedPassword123");
 
-        assertEquals(
-                "Genre not found: 999",
-                exception.getMessage()
-        );
+        userService.deleteAccount(userId, request);
+
+        verify(userDislikedGenreRepository).deleteByUserUserId(userId);
+        verify(userRepository).delete(existingUser);
     }
 }
