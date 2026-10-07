@@ -22,7 +22,7 @@ public class RecommendationStrategyTest {
         MovieService mockMovieService = new MovieService() {
 
             @Override
-            public List<Movie> browseMovies() {
+            public MoviePage browseMovies(int page) {
                 Movie m1 = new Movie();
                 m1.setTitle("Inside Out 2");
                 m1.setRating(8.0);
@@ -33,11 +33,31 @@ public class RecommendationStrategyTest {
                 m2.setRating(7.0);
                 m2.setGenreIds(List.of(27, 53));
 
-                return List.of(m1, m2);
+                return new MoviePage(
+                        List.of(m1, m2),
+                        page,
+                        1,
+                        2);
             }
 
             @Override
             public MoviePage searchMovies(String keyword, int page) {
+                return new MoviePage(
+                        List.of(),
+                        page,
+                        0,
+                        0);
+            }
+
+            @Override
+            public MoviePage discoverMovies(
+                    Integer genreId,
+                    Integer startYear,
+                    Integer endYear,
+                    Double minRating,
+                    String sortBy,
+                    int page) {
+
                 return new MoviePage(
                         List.of(),
                         page,

@@ -25,9 +25,13 @@ public class TmdbRestClient {
                                 .build();
         }
 
-        public TmdbMovieListResponse getPopularMovies() {
+        public TmdbMovieListResponse getPopularMovies(int page) {
                 return restClient.get()
-                                .uri("/movie/popular?language=en-US&page=1")
+                                .uri(uriBuilder -> uriBuilder
+                                                .path("/movie/popular")
+                                                .queryParam("language", "en-US")
+                                                .queryParam("page", page)
+                                                .build())
                                 .retrieve()
                                 .body(TmdbMovieListResponse.class);
         }
@@ -81,4 +85,58 @@ public class TmdbRestClient {
                                 .retrieve()
                                 .body(TmdbMovieListResponse.class);
         }
+
+        public TmdbMovieListResponse discoverMovies(
+                        Integer genreId,
+                        Integer startYear,
+                        Integer endYear,
+                        Double minRating,
+                        String sortBy,
+                        int page) {
+
+                String tmdbSortBy = switch (sortBy) {
+                        case "alphabet_asc" -> "original_title.asc";
+                        case "release_desc" -> "primary_release_date.desc";
+                        case "release_asc" -> "primary_release_date.asc";
+                        case "rating_desc" -> "vote_average.desc";
+                        default -> "popularity.desc";
+                };
+
+                return restClient.get()
+                                .uri(uriBuilder -> {
+                                        uriBuilder
+                                                        .path("/discover/movie")
+                                                        .queryParam("include_adult", false)
+                                                        .queryParam("language", "en-US")
+                                                        .queryParam("page", page)
+                                                        .queryParam("sort_by", tmdbSortBy);
+
+                                        if (genreId != null) {
+                                                uriBuilder.queryParam("with_genres", genreId);
+                                        }
+
+                                        if (startYear != null) {
+                                                uriBuilder.queryParam(
+                                                                "primary_release_date.gte",
+                                                                startYear + "-01-01");
+                                        }
+
+                                        if (endYear != null) {
+                                                uriBuilder.queryParam(
+                                                                "primary_release_date.lte",
+                                                                endYear + "-12-31");
+                                        }
+
+                                        if (minRating != null) {
+                                                uriBuilder.queryParam(
+                                                                "vote_average.gte",
+                                                                minRating);
+                                        }
+
+                                        return uriBuilder.build();
+                                })
+                                .retrieve()
+                                .body(TmdbMovieListResponse.class);
+        }
+
 }

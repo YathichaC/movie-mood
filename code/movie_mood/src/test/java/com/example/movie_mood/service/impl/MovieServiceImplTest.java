@@ -8,7 +8,7 @@ import com.example.movie_mood.mapper.MoodGenreMapper;
 import com.example.movie_mood.repository.GenreRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.example.movie_mood.domain.model.MoviePage;
 import java.util.List;
 import java.util.Optional;
@@ -87,19 +87,26 @@ class MovieServiceImplTest {
 
         @Test
         void browseMovies_shouldReturnPopularMoviesFromProvider() {
+                int page = 1;
+
                 Movie movie = new Movie();
                 movie.setTmdbMovieId("10");
                 movie.setTitle("Popular Movie");
 
-                List<Movie> expectedMovies = List.of(movie);
+                MoviePage expectedPage = new MoviePage(
+                                List.of(movie),
+                                1,
+                                10,
+                                200);
 
-                when(movieProvider.getPopularMovies())
-                                .thenReturn(expectedMovies);
+                when(movieProvider.getPopularMovies(page))
+                                .thenReturn(expectedPage);
 
-                List<Movie> result = movieService.browseMovies();
+                MoviePage result = movieService.browseMovies(page);
 
-                assertEquals(expectedMovies, result);
-                verify(movieProvider).getPopularMovies();
+                assertEquals(expectedPage, result);
+
+                verify(movieProvider).getPopularMovies(page);
         }
 
         @Test
@@ -158,5 +165,92 @@ class MovieServiceImplTest {
                 verify(movieProvider).getMovie(tmdbMovieId);
                 verify(genreRepository).findById("18");
                 verify(genreRepository).findById("53");
+        }
+
+        @Test
+        void discoverMovies_shouldReturnMoviesFromProvider() {
+                Integer genreId = 28;
+                Integer startYear = 2020;
+                Integer endYear = 2026;
+                Double minRating = 7.0;
+                String sortBy = "rating_desc";
+                int page = 1;
+
+                Movie movie = new Movie();
+                movie.setTmdbMovieId("100");
+                movie.setTitle("Action Movie");
+                movie.setRating(8.5);
+                movie.setGenreIds(List.of(28));
+
+                MoviePage expectedPage = new MoviePage(
+                                List.of(movie),
+                                1,
+                                5,
+                                100);
+
+                when(movieProvider.discoverMovies(
+                                genreId,
+                                startYear,
+                                endYear,
+                                minRating,
+                                sortBy,
+                                page))
+                                .thenReturn(expectedPage);
+
+                MoviePage result = movieService.discoverMovies(
+                                genreId,
+                                startYear,
+                                endYear,
+                                minRating,
+                                sortBy,
+                                page);
+
+                assertEquals(expectedPage, result);
+
+                verify(movieProvider).discoverMovies(
+                                genreId,
+                                startYear,
+                                endYear,
+                                minRating,
+                                sortBy,
+                                page);
+        }
+
+        @Test
+        void discoverMovies_withInvalidYearRange_shouldThrowIllegalArgumentException() {
+                IllegalArgumentException exception = assertThrows(
+                                IllegalArgumentException.class,
+                                () -> movieService.discoverMovies(
+                                                28,
+                                                2026,
+                                                2020,
+                                                7.0,
+                                                "rating_desc",
+                                                1));
+
+                assertEquals(
+                                "startYear must not be greater than endYear",
+                                exception.getMessage());
+
+                verifyNoInteractions(movieProvider);
+        }
+
+        @Test
+        void discoverMovies_withInvalidSortBy_shouldThrowIllegalArgumentException() {
+                IllegalArgumentException exception = assertThrows(
+                                IllegalArgumentException.class,
+                                () -> movieService.discoverMovies(
+                                                28,
+                                                2020,
+                                                2026,
+                                                7.0,
+                                                "hello",
+                                                1));
+
+                assertEquals(
+                                "Invalid sortBy value",
+                                exception.getMessage());
+
+                verifyNoInteractions(movieProvider);
         }
 }
