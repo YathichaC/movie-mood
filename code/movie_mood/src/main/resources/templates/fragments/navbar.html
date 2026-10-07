@@ -22,49 +22,16 @@
                     class="flex-1 text-center font-manrope text-[11px] uppercase tracking-[0.12em] py-2 transition-colors whitespace-nowrap">Watch
                     History</a>
             </nav>
-
         </div>
         <div class="flex items-center gap-6 h-full">
             <a th:href="@{/profile}"
                 class="flex items-center justify-center h-10 min-w-[80px] font-manrope text-[11px] uppercase tracking-[0.12em] text-[#D4D4D4] hover:text-[#FFFFFF] transition-colors whitespace-nowrap">Account</a>
-            
-            <button id="nav-logout-btn"
-                class="flex items-center justify-center h-10 min-w-[80px] font-manrope text-[11px] uppercase tracking-[0.12em] text-[#D4D4D4] hover:text-[#FFFFFF] transition-colors cursor-pointer bg-transparent border-0 p-0 whitespace-nowrap"
-                type="button">Logout</button>
+            <button type="button" onclick="logout()"
+                class="flex items-center justify-center h-10 min-w-[80px] font-manrope text-[11px] uppercase tracking-[0.12em] text-[#D4D4D4] hover:text-[#FFFFFF] transition-colors cursor-pointer bg-transparent border-0 p-0 whitespace-nowrap">
+                Logout
+            </button>
         </div>
-
     </div>
-
-    
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const logoutBtn = document.getElementById("nav-logout-btn");
-        if (!logoutBtn) return;
-
-        logoutBtn.addEventListener("click", async (e) => {
-            e.preventDefault();
-
-            const token = localStorage.getItem("token");
-
-            try {
-                await fetch("/api/v1/auth/logout", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        ...(token ? { "Authorization": `Bearer ${token}` } : {})
-                    }
-                });
-            } catch (err) {
-                console.error("Logout error:", err);
-            } finally {
-                localStorage.removeItem("token");
-                localStorage.removeItem("userId");
-                localStorage.removeItem("username");
-                localStorage.removeItem("email");
-
-                window.location.href = "/auth/login";
-            }
-        });
-    });
-</script>
+    <script th:src="@{/js/api.js}"></script>
+    <script th:src="@{/js/logout.js}"></script>
 </nav>

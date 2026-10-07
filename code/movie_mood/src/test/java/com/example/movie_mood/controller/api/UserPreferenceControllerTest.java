@@ -49,7 +49,7 @@ class UserPreferenceControllerTest {
                                 .thenReturn(List.of("28", "27"));
 
                 mockMvc.perform(
-                                get("/api/users/" + userId
+                                get("/api/v1/" + userId
                                                 + "/preferences/disliked-genres")
                                                 .principal(authentication))
                                 .andExpect(status().isOk())
@@ -73,7 +73,7 @@ class UserPreferenceControllerTest {
                                 .thenReturn(List.of("28", "27"));
 
                 mockMvc.perform(
-                                put("/api/users/" + userId
+                                put("/api/v1/" + userId
                                                 + "/preferences/disliked-genres")
                                                 .principal(authentication)
                                                 .contentType("application/json")
@@ -109,7 +109,7 @@ class UserPreferenceControllerTest {
                                                                 "User not found"));
 
                 mockMvc.perform(
-                                get("/api/users/" + randomId
+                                get("/api/v1/" + randomId
                                                 + "/preferences/disliked-genres")
                                                 .principal(randomUserAuthentication))
                                 .andExpect(status().isBadRequest())

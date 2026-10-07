@@ -22,6 +22,8 @@ public interface MovielistRepository extends JpaRepository<Movielist, UUID> {
             String tmdbMovieId
     );
 
+    void deleteByPlaylist_PlaylistId(UUID playlistId);
+
     void deleteByPlaylist_PlaylistIdAndTmdbMovieId(
             UUID playlistId,
             String tmdbMovieId

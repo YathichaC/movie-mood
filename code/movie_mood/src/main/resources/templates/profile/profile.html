@@ -1,29 +1,31 @@
 <!DOCTYPE html>
-
 <html class="dark" lang="en">
-
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <link rel="icon" type="image/png" th:href="@{/img/moviemood_logo.png}">
     <title>MovieMood</title>
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script th:src="@{/js/tailwind-config.js}"></script>
     <style>
+        html,
+        body,
+        button,
+        input,
+        textarea,
+        select {
+            font-family: 'Outfit', sans-serif !important;
+        }
         #genre-container input[type="checkbox"] {
             -webkit-appearance: none !important;
             appearance: none !important;
             outline: none !important;
             box-shadow: none !important;
         }
-
         #genre-container input[type="checkbox"]:focus,
         #genre-container input[type="checkbox"]:focus-visible,
         #genre-container input[type="checkbox"]:active {
@@ -31,30 +33,22 @@
             box-shadow: none !important;
             border-color: #d8c4a7 !important;
         }
-
         #genre-container input[type="checkbox"]:checked {
             background-color: #d8c4a7 !important;
             border-color: #d8c4a7 !important;
         }
     </style>
 </head>
-
-<body
-    class="bg-[#000000] text-on-surface min-h-screen flex flex-col font-body-md selection:bg-primary selection:text-surface">
+<body class="bg-[#000000] text-on-surface min-h-screen flex flex-col font-outfit selection:bg-primary selection:text-surface">
     <header th:replace="~{fragments/navbar :: navbar('account')}"></header>
-    <div id="notification-toast"
-        class="fixed top-6 right-6 z-50 transform transition-all duration-300 flex items-center gap-3 bg-[#121212] border border-[#262626] text-[#F5F5F5] px-5 py-3.5 rounded-lg shadow-2xl translate-x-full opacity-0 pointer-events-none">
+    <div id="notification-toast" class="fixed top-6 right-6 z-50 transform transition-all duration-300 flex items-center gap-3 bg-[#121212] border border-[#262626] text-[#F5F5F5] px-5 py-3.5 rounded-lg shadow-2xl translate-x-full opacity-0 pointer-events-none">
         <span class="material-symbols-outlined text-green-400 text-xl">check_circle</span>
         <span class="text-sm font-medium tracking-wide">Save Successful</span>
     </div>
     <main class="flex-grow w-full max-w-4xl mx-auto px-6 py-12 md:py-16">
         <div class="mb-12 border-b border-outline-variant pb-8">
-            <h1
-                class="font-outfit text-5xl md:text-4xl lg:text-5xl font-light text-[#F5F5F5] tracking-tight mb-4 leading-[1.08]">
-                Profile</h1>
-            <p class="text-on-surface-variant text-base font-light">
-                Manage your account credentials and algorithmic curation parameters.
-            </p>
+            <h1 class="font-outfit text-5xl md:text-4xl lg:text-5xl font-light text-[#F5F5F5] tracking-tight mb-4 leading-[1.08]">Profile</h1>
+            <p class="text-on-surface-variant text-base font-light">Manage your account credentials and algorithmic curation parameters.</p>
         </div>
         <section class="border border-[#262626] bg-[#0A0A0A] p-6 md:p-8 mb-12">
             <div class="flex items-center justify-between mb-8 pb-4 border-b border-[#262626]">
@@ -65,27 +59,22 @@
             </div>
             <form class="space-y-8" id="account-info-form" onsubmit="event.preventDefault();">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div><label class="block text-xs uppercase tracking-widest font-medium text-[#A3A3A3] mb-2"
-                            for="username">Username</label>
-                        <div class="relative"><input
-                                class="w-full bg-[#121212] border border-[#262626] focus:border-[#FFFFFF] focus:ring-0 text-[#F5F5F5] text-sm px-4 py-3 outline-none transition-colors duration-150 font-normal"
-                                id="username" name="username" placeholder="Username" type="text"
-                                value="cineaste_alex" /></div>
-                        <div class="mt-1.5 flex items-center gap-1.5 text-xs text-[#737373]"
-                            id="username-validation-msg"><span
-                                class="material-symbols-outlined text-[14px] text-[#A3A3A3]"
-                                data-icon="check_circle">check_circle</span><span class="text-[#A3A3A3]">Unique archival
-                                handle verified (min 3 chars, letters, numbers, _)</span></div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest font-medium text-[#A3A3A3] mb-2" for="username">Username</label>
+                        <div class="relative">
+                            <input class="w-full bg-[#121212] border border-[#262626] focus:border-[#FFFFFF] focus:ring-0 text-[#F5F5F5] text-sm px-4 py-3 outline-none transition-colors duration-150 font-normal" id="username" name="username" placeholder="Username" type="text">
+                        </div>
+                        <div class="mt-1.5 flex items-center gap-1.5 text-xs text-[#737373]" id="username-validation-msg">
+                            <span class="material-symbols-outlined text-[14px] text-[#A3A3A3]" data-icon="check_circle">check_circle</span>
+                            <span class="text-[#A3A3A3]">Unique archival handle verified (min 3 chars, letters, numbers, _)</span>
+                        </div>
                     </div>
-                    <div><label class="block text-xs uppercase tracking-widest font-medium text-[#A3A3A3] mb-2"
-                            for="email">Email Address</label>
-                        <div class="relative"><input
-                                class="w-full bg-[#121212] border border-[#262626] focus:border-[#FFFFFF] focus:ring-0 text-[#F5F5F5] text-sm px-4 py-3 outline-none transition-colors duration-150 font-normal"
-                                id="email" name="email" placeholder="Email" type="email"
-                                value="alex.morgan@archive.moviemood.com" /></div>
-                        <div class="mt-1.5 flex items-center justify-between text-xs text-[#737373]"
-                            id="email-validation-msg"><span class="text-[#737373]">Primary dispatch recipient for
-                                curated reels.</span><span class="text-[#A3A3A3] font-medium">Verified</span></div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest font-medium text-[#A3A3A3] mb-2" for="email">Email Address</label>
+                        <div class="relative">
+                            <input class="w-full bg-[#121212] border border-[#262626] focus:border-[#FFFFFF] focus:ring-0 text-[#F5F5F5] text-sm px-4 py-3 outline-none transition-colors duration-150 font-normal" id="email" name="email" placeholder="Email" type="email">
+                        </div>
+                        <div class="mt-1.5 flex items-center justify-between text-xs text-[#737373]" id="email-validation-msg"></div>
                     </div>
                 </div>
                 <div class="pt-6 border-t border-[#262626]">
@@ -97,223 +86,109 @@
                     </div>
                     <div class="space-y-6 pt-2" id="password-change-container">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div><label class="block text-xs uppercase tracking-widest font-medium text-[#A3A3A3] mb-2"
-                                    for="new-password">New Password</label>
-                                <div class="relative"><input
-                                        class="w-full bg-[#121212] border border-[#262626] focus:border-[#FFFFFF] focus:ring-0 text-[#F5F5F5] text-sm px-4 py-3 pr-12 outline-none transition-colors duration-150 font-normal"
-                                        id="new-password" placeholder="Enter new password" type="password" /><button
-                                        aria-label="Toggle password visibility"
-                                        class="absolute inset-y-0 right-0 px-3.5 flex items-center text-[#737373] hover:text-[#FFFFFF] transition-colors"
-                                        id="toggle-new-pw-vis" type="button"><span
-                                            class="material-symbols-outlined text-[18px]" data-icon="visibility"
-                                            id="new-pw-icon">visibility</span></button></div>
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest font-medium text-[#A3A3A3] mb-2" for="new-password">New Password</label>
+                                <div class="relative">
+                                    <input class="w-full bg-[#121212] border border-[#262626] focus:border-[#FFFFFF] focus:ring-0 text-[#F5F5F5] text-sm px-4 py-3 pr-12 outline-none transition-colors duration-150 font-normal" id="new-password" placeholder="Enter new password" type="password">
+                                    <button aria-label="Toggle password visibility" class="absolute inset-y-0 right-0 px-3.5 flex items-center text-[#737373] hover:text-[#FFFFFF] transition-colors" id="toggle-new-pw-vis" type="button">
+                                        <span class="material-symbols-outlined text-[18px]" data-icon="visibility" id="new-pw-icon">visibility</span>
+                                    </button>
+                                </div>
                             </div>
-                            <div><label class="block text-xs uppercase tracking-widest font-medium text-[#A3A3A3] mb-2"
-                                    for="confirm-password">Confirm Password</label>
-                                <div class="relative"><input
-                                        class="w-full bg-[#121212] border border-[#262626] focus:border-[#FFFFFF] focus:ring-0 text-[#F5F5F5] text-sm px-4 py-3 pr-12 outline-none transition-colors duration-150 font-normal"
-                                        id="confirm-password" placeholder="Repeat new password"
-                                        type="password" /><button aria-label="Toggle password visibility"
-                                        class="absolute inset-y-0 right-0 px-3.5 flex items-center text-[#737373] hover:text-[#FFFFFF] transition-colors"
-                                        id="toggle-confirm-pw-vis" type="button"><span
-                                            class="material-symbols-outlined text-[18px]" data-icon="visibility"
-                                            id="confirm-pw-icon">visibility</span></button></div>
-                                <div class="mt-2 text-xs text-[#737373] flex items-center gap-1.5"
-                                    id="match-status-msg"><span
-                                        class="w-1.5 h-1.5 rounded-full bg-[#525252]"></span><span>Both entries must
-                                        correspond accurately</span></div>
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest font-medium text-[#A3A3A3] mb-2" for="confirm-password">Confirm Password</label>
+                                <div class="relative">
+                                    <input class="w-full bg-[#121212] border border-[#262626] focus:border-[#FFFFFF] focus:ring-0 text-[#F5F5F5] text-sm px-4 py-3 pr-12 outline-none transition-colors duration-150 font-normal" id="confirm-password" placeholder="Repeat new password" type="password">
+                                    <button aria-label="Toggle password visibility" class="absolute inset-y-0 right-0 px-3.5 flex items-center text-[#737373] hover:text-[#FFFFFF] transition-colors" id="toggle-confirm-pw-vis" type="button">
+                                        <span class="material-symbols-outlined text-[18px]" data-icon="visibility" id="confirm-pw-icon">visibility</span>
+                                    </button>
+                                </div>
+                                <div class="mt-2 text-xs text-[#737373] flex items-center gap-1.5" id="match-status-msg">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#525252]"></span>
+                                    <span>Both entries must correspond accurately</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="bg-[#121212] border border-[#262626] p-4 text-xs"><span
-                                class="text-[#A3A3A3] uppercase tracking-wider block font-medium mb-3">Validation
-                                Criteria</span>
+                        <div class="bg-[#121212] border border-[#262626] p-4 text-xs">
+                            <span class="text-[#A3A3A3] uppercase tracking-wider block font-medium mb-3">Validation Criteria</span>
                             <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-2.5 gap-x-4 text-[#737373]">
-                                <li class="flex items-center gap-2.5 transition-colors" id="req-length"><span
-                                        class="bullet w-3.5 h-3.5 border border-[#404040] flex items-center justify-center text-[10px]">○</span><span>Minimum
-                                        8 characters</span></li>
-                                <li class="flex items-center gap-2.5 transition-colors" id="req-upper"><span
-                                        class="bullet w-3.5 h-3.5 border border-[#404040] flex items-center justify-center text-[10px]">○</span><span>At
-                                        least 1 uppercase letter</span></li>
-                                <li class="flex items-center gap-2.5 transition-colors" id="req-lower"><span
-                                        class="bullet w-3.5 h-3.5 border border-[#404040] flex items-center justify-center text-[10px]">○</span><span>At
-                                        least 1 lowercase letter</span></li>
-                                <li class="flex items-center gap-2.5 transition-colors" id="req-number"><span
-                                        class="bullet w-3.5 h-3.5 border border-[#404040] flex items-center justify-center text-[10px]">○</span><span>At
-                                        least 1 number</span></li>
-                                <li class="flex items-center gap-2.5 transition-colors" id="req-special"><span
-                                        class="bullet w-3.5 h-3.5 border border-[#404040] flex items-center justify-center text-[10px]">○</span><span>At
-                                        least 1 special character</span></li>
+                                <li class="flex items-center gap-2.5 transition-colors" id="req-length">
+                                    <span class="bullet w-3.5 h-3.5 border border-[#404040] flex items-center justify-center text-[10px]">○</span>
+                                    <span>Minimum 8 characters</span>
+                                </li>
+                                <li class="flex items-center gap-2.5 transition-colors" id="req-upper">
+                                    <span class="bullet w-3.5 h-3.5 border border-[#404040] flex items-center justify-center text-[10px]">○</span>
+                                    <span>At least 1 uppercase letter</span>
+                                </li>
+                                <li class="flex items-center gap-2.5 transition-colors" id="req-lower">
+                                    <span class="bullet w-3.5 h-3.5 border border-[#404040] flex items-center justify-center text-[10px]">○</span>
+                                    <span>At least 1 lowercase letter</span>
+                                </li>
+                                <li class="flex items-center gap-2.5 transition-colors" id="req-number">
+                                    <span class="bullet w-3.5 h-3.5 border border-[#404040] flex items-center justify-center text-[10px]">○</span>
+                                    <span>At least 1 number</span>
+                                </li>
+                                <li class="flex items-center gap-2.5 transition-colors" id="req-special">
+                                    <span class="bullet w-3.5 h-3.5 border border-[#404040] flex items-center justify-center text-[10px]">○</span>
+                                    <span>At least 1 special character</span>
+                                </li>
                             </ul>
                         </div>
                     </div>
                 </div>
-                <div class="pt-6 border-t border-[#262626] flex flex-wrap items-center gap-4"><button
-                        class="bg-[#FFFFFF] text-[#000000] font-medium text-xs uppercase tracking-widest px-7 py-3 hover:bg-[#E5E5E5] transition-colors duration-150 cursor-pointer"
-                        id="save-account-btn" type="submit">Save Changes</button>
+                <div class="pt-6 border-t border-[#262626] flex flex-wrap items-center gap-4">
+                    <button class="bg-[#FFFFFF] text-[#000000] font-medium text-xs uppercase tracking-widest px-7 py-3 hover:bg-[#E5E5E5] transition-colors duration-150 cursor-pointer" id="save-account-btn" type="submit">Save Changes</button>
+                </div>
             </form>
         </section>
         <section class="border border-[#262626] bg-[#0A0A0A] p-6 md:p-8 mb-12">
             <div class="flex items-center justify-between mb-4 pb-4 border-b border-[#262626]">
                 <div>
                     <h2 class="text-xl font-semibold tracking-wide text-[#F5F5F5]">Disliked Genres</h2>
-                    <p class="text-xs text-[#737373] mt-0.5">Select genres you don’t want to see in your
-                        recommendations.</p>
+                    <p class="text-xs text-[#737373] mt-0.5">Select genres you don’t want to see in your recommendations.</p>
                 </div>
             </div>
-            <p class="text-sm text-[#A3A3A3] font-light mb-6">
-                Curator algorithms will permanently suppress these narrative categories from custom playlists and
-                archival spotlights.
-            </p>
+            <p class="text-sm text-[#A3A3A3] font-light mb-6">Curator algorithms will permanently suppress these narrative categories from custom playlists and archival spotlights.</p>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-8" id="genre-container">
-                <label
-                    class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input
-                        type="checkbox" name="dislikedGenres" value="Action"
-                        class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span
-                        class="text-xs font-medium text-[#F5F5F5]">Action</span></label>
-                <label
-                    class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input
-                        type="checkbox" name="dislikedGenres" value="Adventure"
-                        class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span
-                        class="text-xs font-medium text-[#F5F5F5]">Adventure</span></label>
-                <label
-                    class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input
-                        type="checkbox" name="dislikedGenres" value="Animation"
-                        class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span
-                        class="text-xs font-medium text-[#F5F5F5]">Animation</span></label>
-                <label
-                    class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input
-                        type="checkbox" name="dislikedGenres" value="Comedy"
-                        class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span
-                        class="text-xs font-medium text-[#F5F5F5]">Comedy</span></label>
-                <label
-                    class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input
-                        type="checkbox" name="dislikedGenres" value="Crime"
-                        class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span
-                        class="text-xs font-medium text-[#F5F5F5]">Crime</span></label>
-                <label
-                    class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input
-                        type="checkbox" name="dislikedGenres" value="Documentary"
-                        class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span
-                        class="text-xs font-medium text-[#F5F5F5]">Documentary</span></label>
-                <label
-                    class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input
-                        type="checkbox" name="dislikedGenres" value="Drama"
-                        class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span
-                        class="text-xs font-medium text-[#F5F5F5]">Drama</span></label>
-                <label
-                    class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input
-                        type="checkbox" name="dislikedGenres" value="Family"
-                        class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span
-                        class="text-xs font-medium text-[#F5F5F5]">Family</span></label>
-                <label
-                    class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input
-                        type="checkbox" name="dislikedGenres" value="Fantasy"
-                        class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span
-                        class="text-xs font-medium text-[#F5F5F5]">Fantasy</span></label>
-                <label
-                    class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#d8c4a7] bg-[#d8c4a7]/10 hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input
-                        type="checkbox" name="dislikedGenres" value="Horror" checked
-                        class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span
-                        class="text-xs font-medium text-[#d8c4a7]">Horror</span></label>
-                <label
-                    class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input
-                        type="checkbox" name="dislikedGenres" value="Mystery"
-                        class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span
-                        class="text-xs font-medium text-[#F5F5F5]">Mystery</span></label>
-                <label
-                    class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input
-                        type="checkbox" name="dislikedGenres" value="Romance"
-                        class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span
-                        class="text-xs font-medium text-[#F5F5F5]">Romance</span></label>
-                <label
-                    class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input
-                        type="checkbox" name="dislikedGenres" value="Science Fiction"
-                        class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span
-                        class="text-xs font-medium text-[#F5F5F5]">Science Fiction</span></label>
-                <label
-                    class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input
-                        type="checkbox" name="dislikedGenres" value="Thriller"
-                        class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span
-                        class="text-xs font-medium text-[#F5F5F5]">Thriller</span></label>
-                <label
-                    class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input
-                        type="checkbox" name="dislikedGenres" value="War"
-                        class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span
-                        class="text-xs font-medium text-[#F5F5F5]">War</span></label>
-                <label
-                    class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#d8c4a7] bg-[#d8c4a7]/10 hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input
-                        type="checkbox" name="dislikedGenres" value="Western" checked
-                        class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span
-                        class="text-xs font-medium text-[#d8c4a7]">Western</span></label>
+                <label class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input type="checkbox" name="dislikedGenres" value="28" class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span class="text-xs font-medium text-[#F5F5F5]">Action</span></label>
+                <label class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input type="checkbox" name="dislikedGenres" value="12" class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span class="text-xs font-medium text-[#F5F5F5]">Adventure</span></label>
+                <label class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input type="checkbox" name="dislikedGenres" value="16" class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span class="text-xs font-medium text-[#F5F5F5]">Animation</span></label>
+                <label class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input type="checkbox" name="dislikedGenres" value="35" class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span class="text-xs font-medium text-[#F5F5F5]">Comedy</span></label>
+                <label class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input type="checkbox" name="dislikedGenres" value="80" class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span class="text-xs font-medium text-[#F5F5F5]">Crime</span></label>
+                <label class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input type="checkbox" name="dislikedGenres" value="99" class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span class="text-xs font-medium text-[#F5F5F5]">Documentary</span></label>
+                <label class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input type="checkbox" name="dislikedGenres" value="18" class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] cursor-pointer transition-all"><span class="text-xs font-medium text-[#F5F5F5]">Drama</span></label>
+                <label class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input type="checkbox" name="dislikedGenres" value="10751" class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] cursor-pointer transition-all"><span class="text-xs font-medium text-[#F5F5F5]">Family</span></label>
+                <label class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input type="checkbox" name="dislikedGenres" value="14" class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] cursor-pointer transition-all"><span class="text-xs font-medium text-[#F5F5F5]">Fantasy</span></label>
+                <label class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input type="checkbox" name="dislikedGenres" value="27" class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] cursor-pointer transition-all"><span class="text-xs font-medium text-[#F5F5F5]">Horror</span></label>
+                <label class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input type="checkbox" name="dislikedGenres" value="9648" class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] cursor-pointer transition-all"><span class="text-xs font-medium text-[#F5F5F5]">Mystery</span></label>
+                <label class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input type="checkbox" name="dislikedGenres" value="10749" class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] cursor-pointer transition-all"><span class="text-xs font-medium text-[#F5F5F5]">Romance</span></label>
+                <label class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input type="checkbox" name="dislikedGenres" value="878" class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] cursor-pointer transition-all"><span class="text-xs font-medium text-[#F5F5F5]">Science Fiction</span></label>
+                <label class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#0A0A0A] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input type="checkbox" name="dislikedGenres" value="53" class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span class="text-xs font-medium text-[#F5F5F5]">Thriller</span></label>
+                <label class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input type="checkbox" name="dislikedGenres" value="10752" class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span class="text-xs font-medium text-[#F5F5F5]">War</span></label>
+                <label class="genre-box flex items-center gap-3 p-3 rounded-md border border-[#262626] bg-[#121212] hover:border-[#d8c4a7] cursor-pointer transition-all select-none"><input type="checkbox" name="dislikedGenres" value="37" class="appearance-none w-4 h-4 shrink-0 rounded border border-[#404040] bg-[#0A0A0A] checked:bg-[#d8c4a7] checked:border-[#d8c4a7] hover:border-[#d8c4a7] focus:outline-none focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"><span class="text-xs font-medium text-[#F5F5F5]">Western</span></label>
             </div>
             <div class="pt-6 border-t border-[#262626] flex items-center justify-between">
-                <button
-                    class="bg-[#FFFFFF] text-[#000000] font-medium text-xs uppercase tracking-widest px-7 py-3 hover:bg-[#E5E5E5] transition-colors duration-150 cursor-pointer"
-                    id="save-genres-btn" type="button">
-                    Save Preferences
-                </button>
-                <span class="text-xs text-[#737373]" id="genre-counter">2 categories excluded</span>
+                <button class="bg-[#FFFFFF] text-[#000000] font-medium text-xs uppercase tracking-widest px-7 py-3 hover:bg-[#E5E5E5] transition-colors duration-150 cursor-pointer" id="save-genres-btn" type="button">Save Preferences</button>
+                <span class="text-xs text-[#737373]" id="genre-counter">0 categories excluded</span>
             </div>
         </section>
         <section class="border border-red-900/60 bg-[#0D0D0D] p-6 md:p-8 mb-16">
-            <div class="flex items-center gap-2 mb-3"><span class="w-2 h-2 bg-red-600 inline-block"></span>
+            <div class="flex items-center gap-2 mb-3">
+                <span class="w-2 h-2 bg-red-600 inline-block"></span>
                 <h3 class="uppercase tracking-wider text-xs font-semibold text-red-500">Danger Zone</h3>
             </div>
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div class="max-w-xl">
                     <h4 class="text-base font-semibold text-[#F5F5F5] mb-1">Decommission Account</h4>
-                    <p class="text-xs text-[#A3A3A3] leading-relaxed">Deleting your account is permanent. All of your
-                        playlists, watch history, preferences, and account data will be permanently removed.</p>
-                </div><button
-                    class="shrink-0 bg-red-600 hover:bg-red-700 text-[#FFFFFF] text-xs uppercase tracking-widest font-semibold px-6 py-3 transition-colors duration-150 text-center border border-red-500"
-                    id="open-delete-modal-btn" type="button">Delete Account</button>
+                    <p class="text-xs text-[#A3A3A3] leading-relaxed">Deleting your account is permanent. All of your playlists, watch history, preferences, and account data will be permanently removed.</p>
+                </div>
+                <button class="shrink-0 bg-red-600 hover:bg-red-700 text-[#FFFFFF] text-xs uppercase tracking-widest font-semibold px-6 py-3 transition-colors duration-150 text-center border border-red-500" id="open-delete-modal-btn" type="button">Delete Account</button>
             </div>
         </section>
     </main>
-    <div aria-labelledby="modal-headline" aria-modal="true"
-        class="fixed inset-0 z-50 flex items-center justify-center px-4 bg-[#000000]/80 backdrop-blur-none transition-opacity duration-150 hidden opacity-0"
-        id="delete-modal" role="dialog">
-        <div class="max-w-md w-full bg-[#0E0E0E] border border-red-900/50 p-7 md:p-8 relative shadow-2xl"><button
-                aria-label="Close modal"
-                class="absolute top-6 right-6 text-[#737373] hover:text-[#FFFFFF] transition-colors"
-                id="modal-close-icon" type="button"><span class="material-symbols-outlined text-[20px]"
-                    data-icon="close">close</span></button><span
-                class="text-[10px] tracking-widest uppercase border border-red-900/80 px-2 py-0.5 text-red-400 mb-4 inline-block font-semibold">Final
-                Confirmation</span>
-            <h3 class="text-2xl font-bold tracking-tight text-[#F5F5F5] mb-2" id="modal-headline">Delete Account</h3>
-            <p class="text-xs text-[#A3A3A3] leading-relaxed mb-6">This action cannot be undone. To permanently delete
-                your account, confirm your account credentials below.</p>
-            <form class="space-y-4 mb-6" id="delete-confirm-form" onsubmit="event.preventDefault();">
-                <div><label class="block text-xs uppercase tracking-wider text-[#A3A3A3] mb-1.5 font-medium"
-                        for="modal-username">Username</label><input autocomplete="off"
-                        class="w-full bg-[#141414] border border-[#262626] focus:border-[#FFFFFF] focus:ring-0 text-[#F5F5F5] text-xs px-3.5 py-2.5 outline-none transition-colors"
-                        id="modal-username" placeholder="Type 'cineaste_alex'" type="text" />
-                    <p class="mt-1 text-[11px] text-[#737373]" id="modal-user-hint">Enter your username <span
-                            class="text-[#A3A3A3] font-mono">cineaste_alex</span> to confirm</p>
-                </div>
-                <div><label class="block text-xs uppercase tracking-wider text-[#A3A3A3] mb-1.5 font-medium"
-                        for="modal-password">Password</label>
-                    <div class="relative"><input
-                            class="w-full bg-[#141414] border border-[#262626] focus:border-[#FFFFFF] focus:ring-0 text-[#F5F5F5] text-xs px-3.5 py-2.5 pr-10 outline-none transition-colors"
-                            id="modal-password" placeholder="Confirm your password" type="password" /><button
-                            aria-label="Toggle password visibility"
-                            class="absolute inset-y-0 right-0 px-3 flex items-center text-[#737373] hover:text-[#FFFFFF]"
-                            id="modal-pw-vis-toggle" type="button"><span class="material-symbols-outlined text-[16px]"
-                                data-icon="visibility" id="modal-pw-icon">visibility</span></button></div>
-                    <p class="mt-1 text-[11px] text-[#737373]" id="modal-pw-hint">Enter your current password</p>
-                    <p class="mt-1 text-[11px] text-red-400 hidden" id="modal-error-msg">Please fill both verification
-                        fields accurately.</p>
-                </div>
-            </form>
-            <div class="flex items-center justify-end gap-3 pt-4 border-t border-[#262626]"><button
-                    class="border border-[#262626] text-[#A3A3A3] hover:text-[#FFFFFF] hover:border-[#525252] text-xs uppercase tracking-widest px-5 py-2.5 transition-colors"
-                    id="modal-cancel-btn" type="button">Cancel</button><button
-                    class="bg-red-600 border border-red-500 text-[#FFFFFF] text-xs uppercase tracking-widest font-semibold px-5 py-2.5 transition-all opacity-40 cursor-not-allowed hover:bg-red-700"
-                    disabled="" id="modal-delete-confirm-btn" type="button">Delete Account</button></div>
-        </div>
-    </div>
+    <div th:replace="~{fragments/delete-account-modal :: delete-account-modal}"></div>
     <footer th:replace="~{fragments/footer :: footer}"></footer>
     <script th:src="@{/js/profile.js}"></script>
+    <script th:src="@{/js/dislikegenre.js}"></script>
 </body>
-
 </html>

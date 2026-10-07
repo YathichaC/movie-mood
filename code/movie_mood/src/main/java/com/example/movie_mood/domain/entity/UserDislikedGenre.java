@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 public class UserDislikedGenre {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     private UUID id;
 
