@@ -110,29 +110,111 @@ document.addEventListener('DOMContentLoaded', () => {
         openModal('editModal');
     }
     window.openEditModal = openEditModal;
-    function removePlaylistCover() {
+    async function removePlaylistCover() {
         const input = document.getElementById('playlistCoverInput');
         const preview = document.getElementById('coverPreview');
         const placeholder = document.getElementById('coverPlaceholder');
         const fileName = document.getElementById('coverFileName');
         const removeButton = document.getElementById('removeCoverButton');
-        if (input) {
+
+        // If the user only selected a new file but has not saved it yet,
+        // remove the local selection without calling the backend.
+        if (input && input.files.length > 0) {
             input.value = '';
+
+            if (currentPlaylist && currentPlaylist.coverImagePath) {
+                preview.src = currentPlaylist.coverImagePath;
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+                removeButton.classList.remove('hidden');
+                fileName.textContent = 'Current cover image';
+            } else {
+                preview.src = '';
+                preview.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+                removeButton.classList.add('hidden');
+                fileName.textContent = 'No cover image';
+            }
+
+            return;
         }
-        if (preview) {
-            preview.src = '';
-            preview.classList.add('hidden');
+
+        // No saved cover image exists.
+        if (!currentPlaylist || !currentPlaylist.coverImagePath) {
+            return;
         }
-        if (placeholder) {
-            placeholder.classList.remove('hidden');
+
+        const playlistId =
+            new URLSearchParams(window.location.search).get('playlistId');
+
+        if (!playlistId) {
+            console.error('Playlist ID not found');
+            return;
         }
-        if (removeButton) {
-            removeButton.classList.add('hidden');
-        }
-        if (fileName) {
-            fileName.textContent = 'No cover image';
+
+        try {
+            const response = await apiFetch(
+                `/v1/playlists/${playlistId}/image`,
+                {
+                    method: 'DELETE'
+                }
+            );
+
+            if (!response || !response.ok) {
+                const data = response ? await response.json() : {};
+                throw new Error(
+                    data.message || 'Failed to delete playlist image'
+                );
+            }
+
+            const updatedPlaylist = await response.json();
+            currentPlaylist = updatedPlaylist;
+
+            if (input) {
+                input.value = '';
+            }
+
+            if (preview) {
+                preview.src = '';
+                preview.classList.add('hidden');
+            }
+
+            if (placeholder) {
+                placeholder.classList.remove('hidden');
+            }
+
+            if (removeButton) {
+                removeButton.classList.add('hidden');
+            }
+
+            if (fileName) {
+                fileName.textContent = 'No cover image';
+            }
+
+            const playlistCover =
+                document.getElementById('playlist-cover');
+
+            const playlistCoverIcon =
+                document.getElementById('playlist-cover-icon');
+
+            if (playlistCover) {
+                playlistCover.src = '';
+                playlistCover.classList.add('hidden');
+            }
+
+            if (playlistCoverIcon) {
+                playlistCoverIcon.classList.remove('hidden');
+            }
+
+        } catch (error) {
+            console.error(
+                'Failed to delete playlist image:',
+                error
+            );
         }
     }
+
+    window.removePlaylistCover = removePlaylistCover;
     window.removePlaylistCover = removePlaylistCover;
     async function deletePlaylist() {
         const playlistId = new URLSearchParams(window.location.search).get('playlistId');
@@ -195,7 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const fileName = document.getElementById('coverFileName');
         const removeButton = document.getElementById('removeCoverButton');
         if (!file) {
-            removePlaylistCover();
             return;
         }
         const reader = new FileReader();

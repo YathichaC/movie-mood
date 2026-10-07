@@ -42,8 +42,7 @@ public class PlaylistRestController {
 
         UUID userId = getCurrentUserId(authentication);
 
-        List<PlaylistResponse> playlists =
-                playlistService.getUserPlaylists(userId);
+        List<PlaylistResponse> playlists = playlistService.getUserPlaylists(userId);
 
         return ResponseEntity.ok(playlists);
     }
@@ -55,11 +54,9 @@ public class PlaylistRestController {
 
         UUID userId = getCurrentUserId(authentication);
 
-        PlaylistResponse playlist =
-                playlistService.getPlaylistDetail(
-                        id,
-                        userId
-                );
+        PlaylistResponse playlist = playlistService.getPlaylistDetail(
+                id,
+                userId);
 
         return ResponseEntity.ok(playlist);
     }
@@ -71,21 +68,16 @@ public class PlaylistRestController {
 
         UUID userId = getCurrentUserId(authentication);
 
-        PlaylistResponse created =
-                playlistService.createPlaylist(
-                        userId,
-                        request
-                );
+        PlaylistResponse created = playlistService.createPlaylist(
+                userId,
+                request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(created);
     }
 
-    @PutMapping(
-            value = "/{id}",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-    )
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updatePlaylist(
             @PathVariable("id") UUID id,
             Authentication authentication,
@@ -95,35 +87,67 @@ public class PlaylistRestController {
 
         UUID userId = getCurrentUserId(authentication);
 
-        PlaylistResponse current =
-                playlistService.getPlaylistDetail(
-                        id,
-                        userId
-                );
+        PlaylistResponse current = playlistService.getPlaylistDetail(
+                id,
+                userId);
 
-        String coverImagePath =
-                current.getCoverImagePath();
+        String oldImagePath = current.getCoverImagePath();
+        String newImagePath = null;
 
         if (coverImage != null && !coverImage.isEmpty()) {
-            coverImagePath =
-                    playlistImageService.saveImage(
-                            coverImage
-                    );
+            newImagePath = playlistImageService.saveImage(
+                    coverImage,
+                    userId,
+                    id);
         }
 
-        PlaylistRequest request =
-                new PlaylistRequest(
-                        playlistName,
-                        detail,
-                        coverImagePath
-                );
+        PlaylistRequest request = new PlaylistRequest(
+                playlistName,
+                detail,
+                newImagePath);
 
-        PlaylistResponse updated =
-                playlistService.updatePlaylist(
-                        id,
-                        userId,
-                        request
-                );
+        PlaylistResponse updated = playlistService.updatePlaylist(
+                id,
+                userId,
+                request);
+
+        if (newImagePath != null
+                && oldImagePath != null
+                && !oldImagePath.isBlank()
+                && !oldImagePath.equals(newImagePath)) {
+
+            playlistImageService.deleteImage(oldImagePath);
+        }
+
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}/image")
+    public ResponseEntity<?> deletePlaylistImage(
+            @PathVariable("id") UUID id,
+            Authentication authentication) {
+
+        UUID userId = getCurrentUserId(authentication);
+
+        // ตรวจ owner ก่อน และเอา path รูปเดิม
+        PlaylistResponse current = playlistService.getPlaylistDetail(
+                id,
+                userId);
+
+        String oldImagePath = current.getCoverImagePath();
+
+        // ล้าง path ใน database
+        PlaylistResponse updated = playlistService.deletePlaylistImage(
+                id,
+                userId);
+
+        // ลบไฟล์จริง
+        if (oldImagePath != null
+                && !oldImagePath.isBlank()) {
+
+            playlistImageService.deleteImage(
+                    oldImagePath);
+        }
 
         return ResponseEntity.ok(updated);
     }
@@ -133,13 +157,21 @@ public class PlaylistRestController {
             @PathVariable("id") UUID id,
             Authentication authentication) {
 
-        UUID userId =
-                getCurrentUserId(authentication);
+        UUID userId = getCurrentUserId(authentication);
+
+        PlaylistResponse current = playlistService.getPlaylistDetail(
+                id,
+                userId);
+
+        String oldImagePath = current.getCoverImagePath();
 
         playlistService.deletePlaylist(
                 id,
-                userId
-        );
+                userId);
+
+        if (oldImagePath != null && !oldImagePath.isBlank()) {
+            playlistImageService.deleteImage(oldImagePath);
+        }
 
         return ResponseEntity
                 .noContent()
@@ -152,15 +184,12 @@ public class PlaylistRestController {
             @RequestBody MovielistRequest request,
             Authentication authentication) {
 
-        UUID userId =
-                getCurrentUserId(authentication);
+        UUID userId = getCurrentUserId(authentication);
 
-        MovielistResponse item =
-                playlistService.addMovieToPlaylist(
-                        id,
-                        userId,
-                        request
-                );
+        MovielistResponse item = playlistService.addMovieToPlaylist(
+                id,
+                userId,
+                request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -173,14 +202,12 @@ public class PlaylistRestController {
             @PathVariable("tmdbMovieId") String tmdbMovieId,
             Authentication authentication) {
 
-        UUID userId =
-                getCurrentUserId(authentication);
+        UUID userId = getCurrentUserId(authentication);
 
         playlistService.removeMovieFromPlaylist(
                 id,
                 tmdbMovieId,
-                userId
-        );
+                userId);
 
         return ResponseEntity
                 .noContent()
@@ -191,7 +218,6 @@ public class PlaylistRestController {
             Authentication authentication) {
 
         return UUID.fromString(
-                authentication.getName()
-        );
+                authentication.getName());
     }
 }
