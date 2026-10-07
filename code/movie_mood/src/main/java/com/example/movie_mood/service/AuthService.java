@@ -26,11 +26,7 @@ public class AuthService {
     private final PasswordResetTokenRepository tokenRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository userRepository) {
-        this(userRepository, null);
-    }
-
-    @Autowired
+    
     public AuthService(UserRepository userRepository, PasswordResetTokenRepository tokenRepository) {
         this.userRepository = userRepository;
         this.tokenRepository = tokenRepository;
@@ -78,18 +74,25 @@ public class AuthService {
         Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
 
         if (userOptional.isEmpty()) {
-            return;
+            return; 
         }
 
         User user = userOptional.get();
         String token = UUID.randomUUID().toString();
-        Instant expiryDate = Instant.now().plus(1, ChronoUnit.HOURS); // token มีอายุ 1 ชั่วโมง
+        Instant expiryDate = Instant.now().plus(1, ChronoUnit.HOURS);
 
         PasswordResetToken resetToken = new PasswordResetToken(token, user, expiryDate);
         tokenRepository.save(resetToken);
 
         String resetLink = "http://localhost:8080/auth/reset-password?token=" + token;
-        System.out.println(">>> [EMAIL SERVICE MOCK] Send to " + user.getEmail() + " : " + resetLink);
+        String senderEmail = "moviemood8080@gmail.com";
+
+        System.out.println("==================================================");
+        System.out.println("FROM: " + senderEmail);
+        System.out.println("TO  : " + user.getEmail());
+        System.out.println("SUBJECT: Reset Your Password — MOVIEMOOD");
+        System.out.println("CLICK LINK TO TEST RESET: " + resetLink);
+        System.out.println("==================================================");
     }
 
     @Transactional

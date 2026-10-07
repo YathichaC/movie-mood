@@ -1,7 +1,10 @@
+const urlParams = new URLSearchParams(window.location.search);
+const resetToken = urlParams.get("token");
 
 function togglePasswordVisibility(inputId, iconId) {
     const input = document.getElementById(inputId);
     const icon = document.getElementById(iconId);
+    if (!input || !icon) return;
     if (input.type === 'password') {
         input.type = 'text';
         icon.textContent = 'visibility_off';
@@ -13,15 +16,20 @@ function togglePasswordVisibility(inputId, iconId) {
 
 function updateRequirement(elId, met) {
     const item = document.getElementById(elId);
+    if (!item) return;
     const icon = item.querySelector('.material-symbols-outlined');
     if (met) {
-        icon.textContent = 'check_circle';
-        icon.className = 'material-symbols-outlined text-[16px] text-secondary';
+        if (icon) {
+            icon.textContent = 'check_circle';
+            icon.className = 'material-symbols-outlined text-[16px] text-secondary';
+        }
         item.classList.add('text-on-surface');
         item.classList.remove('text-on-surface-variant');
     } else {
-        icon.textContent = 'radio_button_unchecked';
-        icon.className = 'material-symbols-outlined text-[16px] text-outline';
+        if (icon) {
+            icon.textContent = 'radio_button_unchecked';
+            icon.className = 'material-symbols-outlined text-[16px] text-outline';
+        }
         item.classList.remove('text-on-surface');
         item.classList.add('text-on-surface-variant');
     }
@@ -48,37 +56,46 @@ function validatePasswordStrength(pwd) {
     ];
     const label = document.getElementById('strength-label');
 
-    // Reset styles
     bars.forEach(b => {
-        b.className = 'h-full rounded-full bg-surface-container-high transition-colors duration-300';
+        if (b) b.className = 'h-full rounded-full bg-surface-container-high transition-colors duration-300';
     });
 
     if (!pwd) {
-        label.textContent = 'Empty';
-        label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
+        if (label) {
+            label.textContent = 'Empty';
+            label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
+        }
         return;
     }
 
     if (score === 1) {
-        label.textContent = 'Weak';
-                    label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
-        bars[0].className = 'h-full rounded-full bg-error transition-colors duration-300';
+        if (label) {
+            label.textContent = 'Weak';
+            label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
+        }
+        if (bars[0]) bars[0].className = 'h-full rounded-full bg-error transition-colors duration-300';
     } else if (score === 2) {
-        label.textContent = 'Fair';
-        label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
-        bars[0].className = 'h-full rounded-full bg-primary-container transition-colors duration-300';
-        bars[1].className = 'h-full rounded-full bg-primary-container transition-colors duration-300';
+        if (label) {
+            label.textContent = 'Fair';
+            label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
+        }
+        if (bars[0]) bars[0].className = 'h-full rounded-full bg-primary-container transition-colors duration-300';
+        if (bars[1]) bars[1].className = 'h-full rounded-full bg-primary-container transition-colors duration-300';
     } else if (score === 3) {
-        label.textContent = 'Good';
-        label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
-        bars[0].className = 'h-full rounded-full bg-secondary transition-colors duration-300';
-        bars[1].className = 'h-full rounded-full bg-secondary transition-colors duration-300';
-        bars[2].className = 'h-full rounded-full bg-secondary transition-colors duration-300';
+        if (label) {
+            label.textContent = 'Good';
+            label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
+        }
+        if (bars[0]) bars[0].className = 'h-full rounded-full bg-secondary transition-colors duration-300';
+        if (bars[1]) bars[1].className = 'h-full rounded-full bg-secondary transition-colors duration-300';
+        if (bars[2]) bars[2].className = 'h-full rounded-full bg-secondary transition-colors duration-300';
     } else if (score === 4) {
-        label.textContent = 'Strong';
-        label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
+        if (label) {
+            label.textContent = 'Strong';
+            label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
+        }
         bars.forEach(b => {
-            b.className = 'h-full rounded-full bg-secondary transition-colors duration-300';
+            if (b) b.className = 'h-full rounded-full bg-secondary transition-colors duration-300';
         });
     }
 
@@ -86,15 +103,60 @@ function validatePasswordStrength(pwd) {
 }
 
 function validateMatch() {
-    const newPwd = document.getElementById('new-password').value;
-    const confPwd = document.getElementById('confirm-password').value;
+    const newPwd = document.getElementById('new-password')?.value || "";
+    const confPwd = document.getElementById('confirm-password')?.value || "";
     const badge = document.getElementById('match-badge');
 
-    if (newPwd && confPwd && newPwd === confPwd) {
-        badge.classList.remove('hidden');
-        badge.classList.add('flex');
-    } else {
-        badge.classList.add('hidden');
-        badge.classList.remove('flex');
+    if (badge) {
+        if (newPwd && confPwd && newPwd === confPwd) {
+            badge.classList.remove('hidden');
+            badge.classList.add('flex');
+        } else {
+            badge.classList.add('hidden');
+            badge.classList.remove('flex');
+        }
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("password-form");
+    if (!form) return;
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const newPassword = document.getElementById("new-password")?.value || "";
+        const confirmPassword = document.getElementById("confirm-password")?.value || "";
+
+        if (newPassword !== confirmPassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+        if (!resetToken) {
+            alert("Invalid or missing reset token. Please request a new password reset link.");
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/v1/auth/reset-password", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    token: resetToken,
+                    newPassword: newPassword
+                })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                alert("Password has been reset successfully! Redirecting to login...");
+                window.location.href = "/auth/login";
+            } else {
+                alert(data.message || "Failed to reset password.");
+            }
+        } catch (error) {
+            console.error("Error resetting password:", error);
+            alert("Error connecting to server.");
+        }
+    });
+});
