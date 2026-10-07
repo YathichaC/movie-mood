@@ -1,6 +1,7 @@
 package com.example.movie_mood.integration.tmdb;
 
 import com.example.movie_mood.domain.model.Movie;
+import com.example.movie_mood.domain.model.MoviePage;
 import com.example.movie_mood.integration.tmdb.dto.TmdbGenreResponse;
 import com.example.movie_mood.integration.tmdb.dto.TmdbMovieListResponse;
 import com.example.movie_mood.integration.tmdb.dto.TmdbMovieResponse;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.example.movie_mood.domain.model.Video;
 import com.example.movie_mood.integration.tmdb.dto.TmdbVideoListResponse;
 import com.example.movie_mood.integration.tmdb.dto.TmdbVideoResponse;
+
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -37,17 +39,26 @@ public class TmdbMovieAdapter implements MovieProvider {
     }
 
     @Override
-    public List<Movie> searchMovies(String keyword) {
-        TmdbMovieListResponse response = tmdbRestClient.searchMovies(keyword);
+    public MoviePage searchMovies(String keyword, int page) {
+        TmdbMovieListResponse response = tmdbRestClient.searchMovies(keyword, page);
 
         if (response == null || response.getResults() == null) {
-            return Collections.emptyList();
+            return new MoviePage(
+                    Collections.emptyList(),
+                    page,
+                    0,
+                    0);
         }
 
-        return response.getResults()
-                .stream()
+        List<Movie> movies = response.getResults().stream()
                 .map(this::toMovie)
                 .toList();
+
+        return new MoviePage(
+                movies,
+                response.getPage() != null ? response.getPage() : page,
+                response.getTotalPages() != null ? response.getTotalPages() : 0,
+                response.getTotalResults() != null ? response.getTotalResults() : 0);
     }
 
     @Override

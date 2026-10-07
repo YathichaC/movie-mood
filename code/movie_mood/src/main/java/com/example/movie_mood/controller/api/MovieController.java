@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Map;
 import com.example.movie_mood.domain.enums.Mood;
 import com.example.movie_mood.dto.response.MovieResponse;
+import com.example.movie_mood.exception.MovieTrailerNotFoundException;
 import com.example.movie_mood.facade.MovieDetailFacade;
 import com.example.movie_mood.mapper.MovieMapper;
 import com.example.movie_mood.service.MovieService;
@@ -19,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import com.example.movie_mood.dto.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import com.example.movie_mood.dto.response.MoviePageResponse;
 import java.util.List;
 
 @RestController
@@ -55,12 +57,14 @@ public class MovieController {
                         @ApiResponse(responseCode = "200", description = "Movies retrieved successfully"),
                         @ApiResponse(responseCode = "400", description = "Search keyword is blank or invalid", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
         })
+        
         @GetMapping("/search")
-        public List<MovieResponse> searchMovies(
-                        @RequestParam @NotBlank String keyword) {
+        public MoviePageResponse searchMovies(
+                        @RequestParam @NotBlank String keyword,
+                        @RequestParam(defaultValue = "1") @Positive int page) {
 
-                return movieMapper.toResponseList(
-                                movieService.searchMovies(keyword));
+                return movieMapper.toPageResponse(
+                                movieService.searchMovies(keyword, page));
         }
 
         @Operation(summary = "Get movie details", description = "Returns details of a movie using its TMDB movie ID")
@@ -90,8 +94,7 @@ public class MovieController {
                 Video trailer = movieService.getMovieTrailer(tmdbMovieId);
 
                 if (trailer == null) {
-                        throw new IllegalArgumentException(
-                                        "Trailer not found for movie: " + tmdbMovieId);
+                        throw new MovieTrailerNotFoundException(tmdbMovieId);
                 }
 
                 return ResponseEntity.ok(

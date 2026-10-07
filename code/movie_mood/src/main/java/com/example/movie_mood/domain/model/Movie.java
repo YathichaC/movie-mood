@@ -11,6 +11,7 @@ public class Movie {
     private Double rating;
     private LocalDate releaseDate;
     private List<Integer> genreIds;
+    private List<String> genres;
     private String posterPath;
     private String backdropPath;
 
@@ -35,6 +36,14 @@ public class Movie {
 
     public String getTmdbMovieId() {
         return tmdbMovieId;
+    }
+
+    public List<String> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<String> genres) {
+        this.genres = genres;
     }
 
     public void setTmdbMovieId(String tmdbMovieId) {

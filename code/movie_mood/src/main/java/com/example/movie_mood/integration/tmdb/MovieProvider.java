@@ -1,13 +1,16 @@
 package com.example.movie_mood.integration.tmdb;
 
 import com.example.movie_mood.domain.model.Movie;
+import com.example.movie_mood.domain.model.MoviePage;
+import com.example.movie_mood.domain.model.Video;
+
 import java.util.List;
 
 public interface MovieProvider {
 
     List<Movie> getPopularMovies();
 
-    List<Movie> searchMovies(String keyword);
+    MoviePage searchMovies(String keyword, int page);
 
     Movie getMovie(String tmdbMovieId);
 

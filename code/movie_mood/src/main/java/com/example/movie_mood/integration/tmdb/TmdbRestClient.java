@@ -32,14 +32,14 @@ public class TmdbRestClient {
                                 .body(TmdbMovieListResponse.class);
         }
 
-        public TmdbMovieListResponse searchMovies(String keyword) {
+        public TmdbMovieListResponse searchMovies(String keyword, int page) {
                 return restClient.get()
                                 .uri(uriBuilder -> uriBuilder
                                                 .path("/search/movie")
                                                 .queryParam("query", keyword)
                                                 .queryParam("include_adult", false)
                                                 .queryParam("language", "en-US")
-                                                .queryParam("page", 1)
+                                                .queryParam("page", page)
                                                 .build())
                                 .retrieve()
                                 .body(TmdbMovieListResponse.class);
