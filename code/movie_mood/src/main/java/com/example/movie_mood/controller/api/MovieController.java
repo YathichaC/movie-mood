@@ -51,7 +51,7 @@ public class MovieController {
         @ApiResponse(responseCode = "200", description = "Popular movies retrieved successfully")
         @GetMapping
         public MoviePageResponse browseMovies(
-                        @RequestParam(defaultValue = "1") @Positive int page) {
+                        @RequestParam(defaultValue = "1") @Positive @Max(500) int page) {
 
                 return movieMapper.toPageResponse(
                                 movieService.browseMovies(page));
@@ -66,7 +66,7 @@ public class MovieController {
         @GetMapping("/search")
         public MoviePageResponse searchMovies(
                         @RequestParam @NotBlank String keyword,
-                        @RequestParam(defaultValue = "1") @Positive int page) {
+                        @RequestParam(defaultValue = "1") @Positive @Max(500) int page) {
 
                 return movieMapper.toPageResponse(
                                 movieService.searchMovies(keyword, page));
@@ -87,11 +87,10 @@ public class MovieController {
 
                         @RequestParam(required = false) @DecimalMin("0.0") @DecimalMax("10.0") Double minRating,
 
-                        @RequestParam(defaultValue = "rating_desc") String sortBy,
+                        @RequestParam(required = false) String sortBy,
 
-                        @RequestParam(defaultValue = "1") @Positive int page) {
+                        @RequestParam(defaultValue = "1") @Positive @Max(500) int page) {
 
-                
                 return movieMapper.toPageResponse(
                                 movieService.discoverMovies(
                                                 genreId,

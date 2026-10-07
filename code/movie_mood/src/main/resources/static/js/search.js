@@ -174,8 +174,10 @@ async function discoverMovies(page = 1) {
     if (ratingSlider) {
         params.set('minRating', ratingSlider.value);
     }
-    if (sortSelector) {
-        params.set('sortBy', sortSelector.value);
+
+
+    if (sortSelector && sortSelector.value) {
+    params.set('sortBy', sortSelector.value);
     }
     params.set('page', page);
     try {
@@ -514,16 +516,20 @@ function resetFilters() {
         yearEndSlider.value = '2026';
     }
     updateYearSlider('start');
+    
     const sortSelector = document.getElementById('sortSelector');
     if (sortSelector) {
-        sortSelector.value = 'rating_desc';
+        sortSelector.value = '';
     }
-    loadPopularMovies(1);
-}
+
+    discoverMode = true;
+    discoverMovies(1);
+    }
 const resetFiltersButton = document.getElementById('resetFiltersButton');
 if (resetFiltersButton) {
     resetFiltersButton.addEventListener('click', resetFilters);
 }
 document.addEventListener('DOMContentLoaded', () => {
-    loadPopularMovies(1);
+    discoverMode = true;
+    discoverMovies(1);
 });

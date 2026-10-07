@@ -120,11 +120,9 @@ public class PlaylistServiceImpl implements PlaylistService {
             }
         }
 
-        
+        Playlist saved = playlistRepository.save(playlist);
 
-    Playlist saved = playlistRepository.save(playlist);
-
-    return new PlaylistResponse(saved);
+        return new PlaylistResponse(saved);
     }
 
     @Override
@@ -192,5 +190,29 @@ public class PlaylistServiceImpl implements PlaylistService {
                 .deleteByPlaylist_PlaylistIdAndTmdbMovieId(
                         playlistId,
                         tmdbMovieId);
+
+    }
+
+    @Override
+    public PlaylistResponse deletePlaylistImage(
+            UUID playlistId,
+            UUID userId) {
+
+        Playlist playlist = playlistRepository
+                .findByPlaylistIdAndUserId(
+                        playlistId,
+                        userId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Playlist not found or access denied"));
+
+        PlaylistDetail detail = playlist.getDetail();
+
+        if (detail != null) {
+            detail.setCoverImagePath(null);
+        }
+
+        Playlist saved = playlistRepository.save(playlist);
+
+        return new PlaylistResponse(saved);
     }
 }

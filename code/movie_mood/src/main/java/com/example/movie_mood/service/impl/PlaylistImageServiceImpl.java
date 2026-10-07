@@ -1,75 +1,181 @@
 package com.example.movie_mood.service.impl;
 
 import com.example.movie_mood.service.PlaylistImageService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 public class PlaylistImageServiceImpl implements PlaylistImageService {
 
-    private static final Path UPLOAD_DIRECTORY =
-            Paths.get("uploads", "playlists");
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+    private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
+            "image/jpeg",
+            "image/png",
+            "image/webp");
+
+    private final RestClient restClient;
+    private final String supabaseUrl;
+    private final String bucket;
+
+    public PlaylistImageServiceImpl(
+            @Value("${supabase.url}") String supabaseUrl,
+            @Value("${supabase.secret-key}") String secretKey,
+            @Value("${supabase.storage.bucket}") String bucket) {
+
+        this.supabaseUrl = removeTrailingSlash(supabaseUrl);
+        this.bucket = bucket;
+
+        this.restClient = RestClient.builder()
+                .baseUrl(this.supabaseUrl)
+                .defaultHeader("apikey", secretKey)
+                .build();
+    }
 
     @Override
-    public String saveImage(MultipartFile file) {
+    public String saveImage(
+            MultipartFile file,
+            UUID userId,
+            UUID playlistId) {
 
         if (file == null || file.isEmpty()) {
             return null;
         }
 
-        String contentType = file.getContentType();
+        validateImage(file);
 
-        if (contentType == null
-                || !contentType.startsWith("image/")) {
-            throw new IllegalArgumentException(
-                    "Cover image must be an image file");
-        }
+        String extension = getExtension(
+                file.getOriginalFilename(),
+                file.getContentType());
+
+        String objectPath = userId
+                + "/"
+                + playlistId
+                + "/"
+                + UUID.randomUUID()
+                + extension;
 
         try {
-            Files.createDirectories(UPLOAD_DIRECTORY);
+            restClient.post()
+                    .uri("/storage/v1/object/{bucket}/{path}",
+                            bucket,
+                            objectPath)
+                    .contentType(MediaType.parseMediaType(
+                            file.getContentType()))
+                    .body(file.getBytes())
+                    .retrieve()
+                    .toBodilessEntity();
 
-            String originalFilename = file.getOriginalFilename();
-            String extension = getExtension(originalFilename);
-
-            String filename =
-                    UUID.randomUUID() + extension;
-
-            Path destination =
-                    UPLOAD_DIRECTORY.resolve(filename);
-
-            Files.copy(
-                    file.getInputStream(),
-                    destination,
-                    StandardCopyOption.REPLACE_EXISTING);
-
-            return "/uploads/playlists/" + filename;
+            return supabaseUrl
+                    + "/storage/v1/object/public/"
+                    + bucket
+                    + "/"
+                    + objectPath;
 
         } catch (IOException exception) {
             throw new IllegalStateException(
-                    "Failed to save playlist cover image",
+                    "Failed to read playlist cover image",
+                    exception);
+        } catch (Exception exception) {
+            throw new IllegalStateException(
+                    "Failed to upload playlist cover image: "
+                            + exception.getMessage(),
                     exception);
         }
     }
 
-    private String getExtension(String filename) {
+    @Override
+    public void deleteImage(String imageUrl) {
 
-        if (filename == null) {
-            return "";
+        if (imageUrl == null || imageUrl.isBlank()) {
+            return;
         }
 
-        int dotIndex = filename.lastIndexOf('.');
+        String publicPrefix = supabaseUrl
+                + "/storage/v1/object/public/"
+                + bucket
+                + "/";
 
-        if (dotIndex < 0) {
-            return "";
+        if (!imageUrl.startsWith(publicPrefix)) {
+            throw new IllegalArgumentException(
+                    "Invalid playlist image URL");
         }
 
-        return filename.substring(dotIndex);
+        String objectPath = imageUrl.substring(publicPrefix.length());
+
+        try {
+            restClient.delete()
+                    .uri("/storage/v1/object/{bucket}/{path}",
+                            bucket,
+                            objectPath)
+                    .retrieve()
+                    .toBodilessEntity();
+
+        } catch (Exception exception) {
+            throw new IllegalStateException(
+                    "Failed to delete playlist image",
+                    exception);
+        }
+    }
+
+    private void validateImage(MultipartFile file) {
+
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new IllegalArgumentException(
+                    "Cover image must not exceed 5 MB");
+        }
+
+        String contentType = file.getContentType();
+
+        if (contentType == null
+                || !ALLOWED_CONTENT_TYPES.contains(contentType)) {
+            throw new IllegalArgumentException(
+                    "Cover image must be JPEG, PNG, or WEBP");
+        }
+    }
+
+    private String getExtension(
+            String originalFilename,
+            String contentType) {
+
+        if (originalFilename != null) {
+            int dotIndex = originalFilename.lastIndexOf('.');
+
+            if (dotIndex >= 0) {
+                String extension = originalFilename
+                        .substring(dotIndex)
+                        .toLowerCase();
+
+                if (Set.of(
+                        ".jpg",
+                        ".jpeg",
+                        ".png",
+                        ".webp").contains(extension)) {
+                    return extension;
+                }
+            }
+        }
+
+        return switch (contentType) {
+            case "image/png" -> ".png";
+            case "image/webp" -> ".webp";
+            default -> ".jpg";
+        };
+    }
+
+    private static String removeTrailingSlash(String value) {
+
+        if (value.endsWith("/")) {
+            return value.substring(0, value.length() - 1);
+        }
+
+        return value;
     }
 }
