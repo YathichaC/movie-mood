@@ -9,6 +9,7 @@ import com.example.movie_mood.repository.GenreRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.example.movie_mood.domain.model.MoviePage;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,20 +105,26 @@ class MovieServiceImplTest {
         @Test
         void searchMovies_shouldReturnMoviesFromProvider() {
                 String keyword = "Batman";
+                int page = 1;
 
                 Movie movie = new Movie();
                 movie.setTmdbMovieId("11");
                 movie.setTitle("Batman");
 
-                List<Movie> expectedMovies = List.of(movie);
+                MoviePage expectedPage = new MoviePage(
+                                List.of(movie),
+                                1,
+                                1,
+                                1);
 
-                when(movieProvider.searchMovies(keyword))
-                                .thenReturn(expectedMovies);
+                when(movieProvider.searchMovies(keyword, page))
+                                .thenReturn(expectedPage);
 
-                List<Movie> result = movieService.searchMovies(keyword);
+                MoviePage result = movieService.searchMovies(keyword, page);
 
-                assertEquals(expectedMovies, result);
-                verify(movieProvider).searchMovies(keyword);
+                assertEquals(expectedPage, result);
+
+                verify(movieProvider).searchMovies(keyword, page);
         }
 
         @Test

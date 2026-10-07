@@ -1,5 +1,6 @@
 package com.example.movie_mood.service;
 
+import com.example.movie_mood.domain.model.MoviePage;
 import com.example.movie_mood.domain.enums.Mood;
 import com.example.movie_mood.domain.model.Movie;
 import com.example.movie_mood.mapper.MoodGenreMapper;
@@ -36,8 +37,12 @@ public class RecommendationStrategyTest {
             }
 
             @Override
-            public List<Movie> searchMovies(String keyword) {
-                return List.of();
+            public MoviePage searchMovies(String keyword, int page) {
+                return new MoviePage(
+                        List.of(),
+                        page,
+                        0,
+                        0);
             }
 
             @Override
