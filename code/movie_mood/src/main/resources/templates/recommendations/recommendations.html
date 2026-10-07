@@ -37,41 +37,13 @@
             <div class="mb-8 flex items-center justify-between">
                 <h2 class="text-2xl font-medium tracking-tight text-on-surface">Top 10 Movies</h2>
             </div>
-            <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-5">
-                <div
-                    th:replace="~{fragments/home-movie-card :: home-movie-card('The Odyssey','https://image.tmdb.org/t/p/w1280/5rhTDKUhPYvpdQIijFIs5VoWsON.jpg',8.0,2026)}">
-                </div>
-                <div
-                    th:replace="~{fragments/home-movie-card :: home-movie-card('Resident Evil','https://image.tmdb.org/t/p/w1280/i7UyjfPio0VFHB9rBUZSFyhOoM8.jpg',7.3,2026)}">
-                </div>
-                <div
-                    th:replace="~{fragments/home-movie-card :: home-movie-card('Deadpool & Wolverine','https://image.tmdb.org/t/p/w1280/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg',7.6,2024)}">
-                </div>
-                <div
-                    th:replace="~{fragments/home-movie-card :: home-movie-card('Oppenheimer','https://image.tmdb.org/t/p/w1280/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',8.0,2023)}">
-                </div>
-                <div
-                    th:replace="~{fragments/home-movie-card :: home-movie-card('Backrooms','https://image.tmdb.org/t/p/w1280/rhGx6E3qRNMgj3i5su2oukNHwIQ.jpg',7.0,2026)}">
-                </div>
-                <div
-                    th:replace="~{fragments/home-movie-card :: home-movie-card('Dune: Part Two','https://image.tmdb.org/t/p/w1280/6izwz7rsy95ARzTR3poZ8H6c5pp.jpg',8.1,2024)}">
-                </div>
-                <div
-                    th:replace="~{fragments/home-movie-card :: home-movie-card('Avengers: Endgame','https://image.tmdb.org/t/p/w1280/ulzhLuWrPK07P1YkdWQLZnQh1JL.jpg',8.2,2019)}">
-                </div>
-                <div
-                    th:replace="~{fragments/home-movie-card :: home-movie-card('Despicable Me','https://image.tmdb.org/t/p/w1280/b1BT309QWjtFUlJPLmXmrcHOWEL.jpg',7.2,2010)}">
-                </div>
-                <div
-                    th:replace="~{fragments/home-movie-card :: home-movie-card('F1','https://image.tmdb.org/t/p/w1280/9PXZIUsSDh4alB80jheWX4fhZmy.jpg',7.8,2025)}">
-                </div>
-                <div
-                    th:replace="~{fragments/home-movie-card :: home-movie-card('Titanic','https://image.tmdb.org/t/p/w1280/9xjZS2rlVxm8SFx8kPC3aIGCOYQ.jpg',7.9,1997)}">
-                </div>
+            <div id="recommendationsContainer"
+                class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-5">
             </div>
         </section>
     </main>
     <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/recommendation.js}"></script>
 </body>
 
 </html>

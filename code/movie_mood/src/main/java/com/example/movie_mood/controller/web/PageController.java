@@ -55,7 +55,7 @@ public class PageController {
 
     @GetMapping("/recommendations")
     public String recommendations(
-            @RequestParam(value = "id", required = false) String mood,
+            @RequestParam(value = "mood", required = false) String mood,
             Model model) {
         if (mood == null || mood.isBlank()) {
             return "recommendations/mood-selection";

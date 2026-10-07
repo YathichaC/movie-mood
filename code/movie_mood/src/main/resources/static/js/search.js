@@ -336,10 +336,7 @@ function renderMovies(movies) {
             : 'N/A';
 
         return `
-            <article
-                class="group cursor-pointer"
-                onclick="window.location.href='/movie/${movie.tmdbMovieId}'"
-            >
+            <article class="group cursor-pointer" onclick="openMovieDetail('${movie.tmdbMovieId}')">
                 <div class="relative aspect-[2/3] overflow-hidden rounded-xl bg-neutral-900">
                     <img
                         src="${poster}"
@@ -375,9 +372,70 @@ function renderMovies(movies) {
     }).join('');
 }
 
+async function openMovieDetail(movieId) {
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/${movieId}`
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                `Failed to load movie: ${response.status}`
+            );
+        }
+
+        const movie = await response.json();
+
+        // เก็บข้อมูลหนังไว้ใช้ในหน้า detail
+        sessionStorage.setItem(
+            'selectedMovie',
+            JSON.stringify(movie)
+        );
+
+        // ไปหน้า detail
+        window.location.href =
+            `/movie/${movieId}`;
+
+    } catch (error) {
+        console.error(
+            'Failed to load movie detail:',
+            error
+        );
+    }
+}
 /* =========================
    Pagination
 ========================= */
+
+async function openMovieDetail(movieId) {
+    try {
+        const response = await fetch(
+            `/api/v1/movies/${encodeURIComponent(movieId)}`
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                `Failed to load movie: ${response.status}`
+            );
+        }
+
+        const movie = await response.json();
+
+        sessionStorage.setItem(
+            'selectedMovie',
+            JSON.stringify(movie)
+        );
+
+        window.location.href =
+            `/movie/detail?id=${encodeURIComponent(movieId)}`;
+
+    } catch (error) {
+        console.error(
+            'Failed to load movie detail:',
+            error
+        );
+    }
+}
 
 function updatePagination(data) {
     const pagination =
