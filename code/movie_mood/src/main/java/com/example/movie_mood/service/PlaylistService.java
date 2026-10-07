@@ -9,32 +9,34 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PlaylistService {
-    List<PlaylistResponse> getUserPlaylists(UUID userId);
+
+    List<PlaylistResponse> getUserPlaylists(
+            UUID userId);
 
     PlaylistResponse getPlaylistDetail(
             UUID playlistId,
-            UUID userId
-    );
+            UUID userId);
 
     PlaylistResponse createPlaylist(
             UUID userId,
-            PlaylistRequest request
-    );
+            PlaylistRequest request);
+
+    PlaylistResponse updatePlaylist(
+            UUID playlistId,
+            UUID userId,
+            PlaylistRequest request);
 
     void deletePlaylist(
             UUID playlistId,
-            UUID userId
-    );
+            UUID userId);
 
     MovielistResponse addMovieToPlaylist(
             UUID playlistId,
             UUID userId,
-            MovielistRequest request
-    );
+            MovielistRequest request);
 
     void removeMovieFromPlaylist(
             UUID playlistId,
             String tmdbMovieId,
-            UUID userId
-    );
+            UUID userId);
 }

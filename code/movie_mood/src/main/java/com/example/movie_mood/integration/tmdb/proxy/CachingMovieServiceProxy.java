@@ -25,8 +25,8 @@ public class CachingMovieServiceProxy implements MovieProvider {
     }
 
     @Override
-    public List<Movie> getPopularMovies() {
-        return movieAdapter.getPopularMovies();
+    public MoviePage getPopularMovies(int page) {
+        return movieAdapter.getPopularMovies(page);
     }
 
     @Override
@@ -52,5 +52,23 @@ public class CachingMovieServiceProxy implements MovieProvider {
             List<Integer> genreIds) {
 
         return movieAdapter.discoverMoviesByGenres(genreIds);
+    }
+
+    @Override
+    public MoviePage discoverMovies(
+            Integer genreId,
+            Integer startYear,
+            Integer endYear,
+            Double minRating,
+            String sortBy,
+            int page) {
+
+        return movieAdapter.discoverMovies(
+                genreId,
+                startYear,
+                endYear,
+                minRating,
+                sortBy,
+                page);
     }
 }

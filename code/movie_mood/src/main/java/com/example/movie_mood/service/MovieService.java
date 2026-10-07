@@ -9,15 +9,23 @@ import java.util.List;
 
 public interface MovieService {
 
-    List<Movie> browseMovies();
+    MoviePage browseMovies(int page);
 
     MoviePage searchMovies(String keyword, int page);
 
     List<Movie> filterMoviesByMood(Mood mood);
-    
+
     Movie getMovieDetails(String tmdbMovieId);
 
     Video getMovieTrailer(String tmdbMovieId);
 
     List<Movie> filterMoviesByGenre(Integer genreId);
+
+    MoviePage discoverMovies(
+            Integer genreId,
+            Integer startYear,
+            Integer endYear,
+            Double minRating,
+            String sortBy,
+            int page);
 }

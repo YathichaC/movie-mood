@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class WatchHistoryServiceImpl implements WatchHistoryService {
@@ -56,6 +58,13 @@ public class WatchHistoryServiceImpl implements WatchHistoryService {
     @Transactional
     public void clearUserHistory(UUID userId) {
         watchHistoryRepository.deleteByUserId(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<WatchHistoryResponse> getUserWatchHistory(UUID userId, Pageable pageable) {
+        return watchHistoryRepository.findByUserId(userId, pageable)
+                .map(this::mapToResponse);
     }
 
     private WatchHistoryResponse mapToResponse(WatchHistory history) {
