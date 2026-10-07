@@ -29,37 +29,23 @@
                         Playlists
                     </h1>
                 </div>
-                <button type="button"
-                    onclick="document.getElementById('create-playlist-modal').classList.remove('hidden')"
+                <button type="button" onclick="openModal('create-playlist-modal')"
                     class="inline-flex items-center justify-center gap-2 rounded-full bg-white text-black px-5 py-3 text-sm font-medium hover:bg-white/90 transition">
                     <span class="material-symbols-outlined text-[20px]">add</span>
                     <span>Create Playlist</span>
                 </button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5" id="playlist-items-list">
-                <div
-                    th:replace="~{fragments/watchlist-item :: watchlist-item('Whispers of the Wild','https://i.pinimg.com/1200x/cf/c9/4a/cfc94ad7e5884ffae2d3a22b48ff1289.jpg','5 Movies')}">
-                </div>
-                <div
-                    th:replace="~{fragments/watchlist-item :: watchlist-item('Stories from the Sea','https://i.pinimg.com/1200x/9b/73/4e/9b734e8497efe0009a2fc6890d78ca4f.jpg','3 Movies')}">
-                </div>
-                <div
-                    th:replace="~{fragments/watchlist-item :: watchlist-item('Wong Kar-wai Essentials','https://i.pinimg.com/736x/a0/26/8a/a0268a8180c50b0c326e220a6c004280.jpg','5 Movies')}">
-                </div>
-                <div
-                    th:replace="~{fragments/watchlist-item :: watchlist-item('Stories in Sound','https://i.pinimg.com/736x/6c/9f/75/6c9f75fa42f9dc02353263a82b38c81f.jpg','4 Movies')}">
-                </div>
-                <div
-                    th:replace="~{fragments/watchlist-item :: watchlist-item('Lost in Tokyo','https://i.pinimg.com/1200x/18/00/e0/1800e066e2a4c2fdfe3a87aa33539086.jpg','6 Movies')}">
-                </div>
-                <div
-                    th:replace="~{fragments/watchlist-item :: watchlist-item('A Little Escape','https://i.pinimg.com/1200x/71/d8/c9/71d8c966f74fdb3721c5956f6e0456ae.jpg','7 Movies')}">
+                <div class="col-span-full py-20 text-center">
+                    <span class="material-symbols-outlined text-5xl text-white/20">playlist_play</span>
+                    <p class="text-white/40 mt-4">Loading playlists...</p>
                 </div>
             </div>
         </section>
     </main>
     <div th:replace="~{fragments/create-playlist-modal :: createPlaylistModal}"></div>
     <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/api.js}"></script>
     <script th:src="@{/js/playlist.js}"></script>
 </body>
 

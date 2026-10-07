@@ -1,13 +1,16 @@
 package com.example.movie_mood.service.impl;
 
+import com.example.movie_mood.domain.entity.Genre;
 import com.example.movie_mood.domain.enums.Mood;
 import com.example.movie_mood.domain.model.Movie;
 import com.example.movie_mood.integration.tmdb.MovieProvider;
 import com.example.movie_mood.mapper.MoodGenreMapper;
+import com.example.movie_mood.repository.GenreRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -16,16 +19,19 @@ class MovieServiceImplTest {
 
         private MovieProvider movieProvider;
         private MoodGenreMapper moodGenreMapper;
+        private GenreRepository genreRepository;
         private MovieServiceImpl movieService;
 
         @BeforeEach
         void setUp() {
                 movieProvider = mock(MovieProvider.class);
                 moodGenreMapper = mock(MoodGenreMapper.class);
+                genreRepository = mock(GenreRepository.class);
 
                 movieService = new MovieServiceImpl(
                                 movieProvider,
-                                moodGenreMapper);
+                                moodGenreMapper,
+                                genreRepository);
         }
 
         @Test
@@ -115,19 +121,35 @@ class MovieServiceImplTest {
         }
 
         @Test
-        void getMovieDetails_shouldReturnMovieFromProvider() {
+        void getMovieDetails_shouldMapGenreIdsToGenreNames() {
                 String tmdbMovieId = "550";
 
-                Movie expectedMovie = new Movie();
-                expectedMovie.setTmdbMovieId(tmdbMovieId);
-                expectedMovie.setTitle("Fight Club");
+                Movie movie = new Movie();
+                movie.setTmdbMovieId(tmdbMovieId);
+                movie.setTitle("Fight Club");
+                movie.setGenreIds(List.of(18, 53));
+
+                Genre drama = new Genre("18", "Drama");
+                Genre thriller = new Genre("53", "Thriller");
 
                 when(movieProvider.getMovie(tmdbMovieId))
-                                .thenReturn(expectedMovie);
+                                .thenReturn(movie);
+
+                when(genreRepository.findById("18"))
+                                .thenReturn(Optional.of(drama));
+
+                when(genreRepository.findById("53"))
+                                .thenReturn(Optional.of(thriller));
 
                 Movie result = movieService.getMovieDetails(tmdbMovieId);
 
-                assertEquals(expectedMovie, result);
+                assertEquals(movie, result);
+                assertEquals(
+                                List.of("Drama", "Thriller"),
+                                result.getGenres());
+
                 verify(movieProvider).getMovie(tmdbMovieId);
+                verify(genreRepository).findById("18");
+                verify(genreRepository).findById("53");
         }
 }

@@ -145,8 +145,19 @@
                 <div
                     class="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.035] px-4 py-3 lg:max-w-md">
                     <span class="material-symbols-outlined text-neutral-500">search</span>
-                    <input id="searchInput" type="search" placeholder="Search movies..."
-                        class="w-full bg-transparent text-sm text-white outline-none placeholder:text-neutral-600">
+                    <input id="searchInput" ...>
+
+                    <div id="resultsContainer"
+                        class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-5 lg:grid-cols-4 xl:gap-x-6">
+                    </div>
+
+                    <div id="emptyStateContainer" class="hidden">
+                        ...
+                    </div>
+
+                    <div id="paginationContainer"
+                        class="mt-10 flex items-center justify-between border-t border-white/10 pt-6">
+                    </div>
                     <kbd
                         class="hidden rounded border border-white/10 px-2 py-1 text-[10px] text-neutral-500 sm:block">SEARCH</kbd>
                 </div>
@@ -210,101 +221,7 @@
                     <section>
                         <h3 class="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">Genres</h3>
                         <div class="grid grid-cols-2 gap-y-3 gap-x-2">
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="Action"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">Action</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="Adventure"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">Adventure</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="Animation"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">Animation</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="Comedy"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">Comedy</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="Crime"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">Crime</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="Documentary"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">Documentary</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="Drama"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">Drama</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="Family"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">Family</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="Fantasy"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">Fantasy</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="History"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">History</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="Horror"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">Horror</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="Music"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">Music</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="Mystery"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">Mystery</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="Romance"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">Romance</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="Science Fiction"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate" title="Science Fiction">Sci-Fi</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="TV Movie"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">TV Movie</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="Thriller"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">Thriller</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="War"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">War</span></label>
-                            <label
-                                class="flex cursor-pointer items-center gap-2 text-xs text-neutral-400 transition hover:text-white"><input
-                                    type="checkbox" name="genre" value="Western"
-                                    class="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900"><span
-                                    class="truncate">Western</span></label>
+                            >
                         </div>
                     </section>
                 </div>
@@ -329,25 +246,6 @@
                 </div>
                 <div id="resultsContainer"
                     class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-5 lg:grid-cols-4 xl:gap-x-6">
-                    <article class="movie-card min-w-0">
-                        <a th:href="@{/movie/detail}" class="group block overflow-hidden rounded-xl bg-neutral-900">
-                            <div class="aspect-[2/3] overflow-hidden">
-                                <img src="https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg"
-                                    alt="Oppenheimer movie poster" loading="lazy" class="h-full w-full object-cover">
-                            </div>
-                        </a>
-                        <div class="pt-3">
-                            <div class="mb-1.5 flex items-center justify-between gap-2">
-                                <span class="text-[11px] text-neutral-500">2023</span>
-                                <span class="flex items-center gap-1 text-xs text-neutral-300"><span
-                                        class="material-symbols-outlined text-[15px] text-neutral-400">star</span>8.1</span>
-                            </div>
-                            <h3
-                                class="movie-title truncate font-display text-base font-medium text-neutral-200 transition">
-                                Oppenheimer</h3>
-                            <p class="mt-1 truncate text-xs text-neutral-500">Drama · History</p>
-                        </div>
-                    </article>
                     <article class="movie-card min-w-0">
                         <a th:href="@{/movie/detail}" class="group block overflow-hidden rounded-xl bg-neutral-900">
                             <div class="aspect-[2/3] overflow-hidden">
@@ -501,18 +399,19 @@
                     </button>
                 </div>
                 <div class="mt-10 flex items-center justify-between border-t border-white/10 pt-6">
-                    <p class="text-xs text-neutral-600">Showing a selection of movies</p>
-                    <div class="flex items-center gap-2">
-                        <button type="button" aria-label="Previous page" disabled
-                            class="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-neutral-700"><span
-                                class="material-symbols-outlined text-lg">chevron_left</span></button>
-                        <button type="button" aria-label="Current page"
-                            class="flex h-9 min-w-9 items-center justify-center rounded-lg border border-white/20 bg-white text-sm font-semibold text-black">1</button>
-                        <button type="button" aria-label="Next page"
-                            class="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-neutral-400 transition hover:border-white/30 hover:text-white"><span
-                                class="material-symbols-outlined text-lg">chevron_right</span></button>
+                    <div id="paginationContainer"
+                        class="mt-10 flex items-center justify-between border-t border-white/10 pt-6">
+                        <div class="flex items-center gap-2">
+                            <button type="button" aria-label="Previous page" disabled
+                                class="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-neutral-700"><span
+                                    class="material-symbols-outlined text-lg">chevron_left</span></button>
+                            <button type="button" aria-label="Current page"
+                                class="flex h-9 min-w-9 items-center justify-center rounded-lg border border-white/20 bg-white text-sm font-semibold text-black">1</button>
+                            <button type="button" aria-label="Next page"
+                                class="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-neutral-400 transition hover:border-white/30 hover:text-white"><span
+                                    class="material-symbols-outlined text-lg">chevron_right</span></button>
+                        </div>
                     </div>
-                </div>
             </section>
         </div>
     </main>

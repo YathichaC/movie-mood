@@ -156,12 +156,11 @@ void loginShouldReturnUserWhenCredentialsAreCorrect() {
         "test@example.com",
         encoder.encode("password123")
 );
-
-    when(userRepository.findByEmail("test@example.com"))
+    when(userRepository.findByUsername("testuser"))
             .thenReturn(Optional.of(user));
 
     LoginRequest request = new LoginRequest();
-    request.setEmail("test@example.com");
+    request.setUsername("testuser");
     request.setPassword("password123");
 
     User result = authService.login(request);
@@ -182,11 +181,11 @@ void loginShouldRejectIncorrectPassword() {
         encoder.encode("password123")
 );
 
-    when(userRepository.findByEmail("test@example.com"))
+    when(userRepository.findByUsername("testuser"))
             .thenReturn(Optional.of(user));
 
     LoginRequest request = new LoginRequest();
-    request.setEmail("test@example.com");
+    request.setUsername("testuser");
     request.setPassword("wrongPassword");
 
     IllegalArgumentException exception =
@@ -196,19 +195,19 @@ void loginShouldRejectIncorrectPassword() {
             );
 
     assertEquals(
-            "Invalid email or password",
+            "Invalid username or password",
             exception.getMessage()
     );
 }
 
     @Test
-void loginShouldRejectUnknownEmail() {
+void loginShouldRejectUnknownUsername() {
 
-    when(userRepository.findByEmail("unknown@example.com"))
+    when(userRepository.findByUsername("unknownuser"))
             .thenReturn(Optional.empty());
-
+        
     LoginRequest request = new LoginRequest();
-    request.setEmail("unknown@example.com");
+    request.setUsername("unknownuser");
     request.setPassword("password123");
 
     IllegalArgumentException exception =
@@ -218,7 +217,7 @@ void loginShouldRejectUnknownEmail() {
             );
 
     assertEquals(
-            "Invalid email or password",
+            "Invalid username or password",
             exception.getMessage()
     );
 }
