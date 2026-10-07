@@ -8,8 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,12 +27,17 @@ public class WatchHistoryRestController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getHistory(Authentication authentication) {
+    public ResponseEntity<Page<WatchHistoryResponse>> getHistory(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "15") int size,
+            Authentication authentication
+    ) {
         UUID userId = getCurrentUserId(authentication);
+        int pageIndex = Math.max(0, page - 1);
+        Pageable pageable = PageRequest.of(pageIndex, size);
 
-        List<WatchHistoryResponse> history = watchHistoryService.getUserWatchHistory(userId);
-
-        return ResponseEntity.ok(history);
+        Page<WatchHistoryResponse> response = watchHistoryService.getUserWatchHistory(userId, pageable);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
@@ -39,7 +46,6 @@ public class WatchHistoryRestController {
             Authentication authentication) {
 
         UUID userId = getCurrentUserId(authentication);
-
         WatchHistoryResponse response = watchHistoryService.recordWatchedMovie(userId, request);
 
         return ResponseEntity
@@ -53,7 +59,6 @@ public class WatchHistoryRestController {
             Authentication authentication) {
 
         UUID userId = getCurrentUserId(authentication);
-
         boolean watched = watchHistoryService.isMovieWatched(userId, tmdbMovieId);
 
         return ResponseEntity.ok(Map.of("watched", watched));
@@ -65,7 +70,6 @@ public class WatchHistoryRestController {
             Authentication authentication) {
 
         UUID userId = getCurrentUserId(authentication);
-
         watchHistoryService.removeWatchedMovie(userId, tmdbMovieId);
 
         return ResponseEntity.noContent().build();
@@ -74,7 +78,6 @@ public class WatchHistoryRestController {
     @DeleteMapping
     public ResponseEntity<?> clearHistory(Authentication authentication) {
         UUID userId = getCurrentUserId(authentication);
-
         watchHistoryService.clearUserHistory(userId);
 
         return ResponseEntity.noContent().build();
