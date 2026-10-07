@@ -109,16 +109,22 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         } else {
 
-            detail.setDetail(
-                    request.getDetail());
+            if (request.getDetail() != null) {
+                detail.setDetail(
+                        request.getDetail());
+            }
 
-            detail.setCoverImagePath(
-                    request.getCoverImagePath());
+            if (request.getCoverImagePath() != null) {
+                detail.setCoverImagePath(
+                        request.getCoverImagePath());
+            }
         }
 
-        Playlist saved = playlistRepository.save(playlist);
+        
 
-        return new PlaylistResponse(saved);
+    Playlist saved = playlistRepository.save(playlist);
+
+    return new PlaylistResponse(saved);
     }
 
     @Override
