@@ -13,16 +13,18 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import java.util.Optional;
+import com.example.movie_mood.repository.PasswordResetTokenRepository;
 
 class AuthServiceTest {
 
     private UserRepository userRepository;
+    private PasswordResetTokenRepository tokenRepository;
     private AuthService authService;
 
     @BeforeEach
     void setUp() {
-        userRepository = mock(UserRepository.class);
-        authService = new AuthService(userRepository);
+        userRepository = mock(UserRepository.class);tokenRepository = mock(PasswordResetTokenRepository.class); 
+        authService = new AuthService(userRepository, tokenRepository);
     }
 
     @Test

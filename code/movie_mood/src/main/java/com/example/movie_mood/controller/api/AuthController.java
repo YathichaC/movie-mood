@@ -2,8 +2,10 @@ package com.example.movie_mood.controller.api;
 
 import com.example.movie_mood.domain.entity.User;
 import com.example.movie_mood.dto.auth.RegisterRequest;
+import com.example.movie_mood.dto.auth.ResetPasswordRequest;
 import com.example.movie_mood.security.JwtService;
 import com.example.movie_mood.service.AuthService;
+import com.example.movie_mood.dto.auth.ForgotPasswordRequest;
 import com.example.movie_mood.dto.auth.LoginRequest;
 import org.springframework.security.core.Authentication;
 import jakarta.validation.Valid;
@@ -105,5 +107,25 @@ public class AuthController {
                         "userId", user.getUserId(),
                         "username", user.getUsername(),
                         "email", user.getEmail()));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        authService.processForgotPassword(request);
+        return ResponseEntity.ok(Map.of(
+                "message", "If the email exists, a password reset link has been sent."
+        ));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        try {
+            authService.resetPassword(request);
+            return ResponseEntity.ok(Map.of(
+                    "message", "Password has been reset successfully."
+            ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
     }
 }
