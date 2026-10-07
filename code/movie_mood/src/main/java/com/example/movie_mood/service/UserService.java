@@ -1,6 +1,7 @@
 package com.example.movie_mood.service;
 
 import com.example.movie_mood.domain.entity.User;
+import com.example.movie_mood.dto.user.ChangePasswordRequest;
 import com.example.movie_mood.dto.user.DeleteAccountRequest;
 import com.example.movie_mood.dto.user.UpdateProfileRequest;
 import com.example.movie_mood.repository.UserDislikedGenreRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Service
 public class UserService {
@@ -17,6 +19,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserDislikedGenreRepository userDislikedGenreRepository;
     private final PasswordEncoder passwordEncoder;
+
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
 
     public UserService(UserRepository userRepository,
                        UserDislikedGenreRepository userDislikedGenreRepository,
@@ -35,25 +39,55 @@ public class UserService {
     public User updateProfile(UUID userId, UpdateProfileRequest request) {
         User user = getUserById(userId);
 
-        if (!user.getUsername().equalsIgnoreCase(request.getUsername())) {
-            if (userRepository.existsByUsername(request.getUsername())) {
-                throw new IllegalArgumentException("Username is already taken");
+        if (request.getUsername() != null) {
+            String newUsername = request.getUsername().trim();
+            if (newUsername.isEmpty()) {
+                throw new IllegalArgumentException("Username cannot be empty");
             }
-            user.setUsername(request.getUsername());
+            if (newUsername.length() < 3 || newUsername.length() > 50) {
+                throw new IllegalArgumentException("Username must be between 3 and 50 characters");
+            }
+            if (!newUsername.equalsIgnoreCase(user.getUsername())) {
+                if (userRepository.existsByUsername(newUsername)) {
+                    throw new IllegalArgumentException("Username is already taken");
+                }
+                user.setUsername(newUsername);
+            }
         }
 
-        if (!user.getEmail().equalsIgnoreCase(request.getEmail())) {
-            if (userRepository.existsByEmail(request.getEmail())) {
-                throw new IllegalArgumentException("Email is already registered");
+        if (request.getEmail() != null) {
+            String newEmail = request.getEmail().trim();
+            if (newEmail.isEmpty()) {
+                throw new IllegalArgumentException("Email cannot be empty");
             }
-            user.setEmail(request.getEmail());
-        }
-
-        if (request.getNewPassword() != null && !request.getNewPassword().trim().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(request.getNewPassword().trim()));
+            if (!EMAIL_PATTERN.matcher(newEmail).matches()) {
+                throw new IllegalArgumentException("Invalid email format");
+            }
+            if (!newEmail.equalsIgnoreCase(user.getEmail())) {
+                if (userRepository.existsByEmail(newEmail)) {
+                    throw new IllegalArgumentException("Email is already registered");
+                }
+                user.setEmail(newEmail);
+            }
         }
 
         return userRepository.save(user);
+    }
+
+    @Transactional
+    public void changePassword(UUID userId, ChangePasswordRequest request) {
+        User user = getUserById(userId);
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Current password is incorrect");
+        }
+
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("New password cannot be the same as current password");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword().trim()));
+        userRepository.save(user);
     }
 
     @Transactional
@@ -69,7 +103,6 @@ public class UserService {
         }
 
         userDislikedGenreRepository.deleteByUserUserId(userId);
-
         userRepository.delete(user);
     }
 }
