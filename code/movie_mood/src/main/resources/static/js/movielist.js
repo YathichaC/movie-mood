@@ -346,6 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? playlistDetail.value.trim()
                 : ''
         );
+        
 
         if (
             playlistCoverInput &&
