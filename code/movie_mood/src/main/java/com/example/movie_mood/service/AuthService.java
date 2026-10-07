@@ -35,12 +35,13 @@ public class AuthService {
 
         String hashedPassword = passwordEncoder.encode(request.getPassword());
 
-        User user = new User(
-                request.getUsername(),
-                request.getEmail(),
-                hashedPassword);
+        User user = new User();
+        user.setUserId(UUID.randomUUID());
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(hashedPassword);
 
-        return userRepository.save(user);
+        return userRepository.save(user); 
     }
 
     public User login(LoginRequest request) {

@@ -1,7 +1,6 @@
 package com.example.movie_mood.domain.entity;
 
 import java.util.UUID;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -9,7 +8,7 @@ import jakarta.persistence.*;
 public class User {
 
     @Id
-    @Column(name = "user_id")
+    @Column(name = "user_id", updatable = false, nullable = false)
     private UUID userId;
 
     @Column(name = "username", nullable = false, unique = true)
@@ -18,13 +17,15 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-   @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
     public User() {
+        this.userId = UUID.randomUUID(); 
     }
 
     public User(String username, String email, String password) {
+        this.userId = UUID.randomUUID();
         this.username = username;
         this.email = email;
         this.password = password;
