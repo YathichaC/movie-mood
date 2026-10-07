@@ -3,6 +3,7 @@ let totalPages = 1;
 let currentKeyword = '';
 
 const API_BASE_URL = '/api/v1/movies';
+let discoverMode = false;
 
 function toggleEmptyState() {
     const results = document.getElementById('resultsContainer');
@@ -80,7 +81,63 @@ function updateYearSlider(type) {
 /* =========================
    Movie Search
 ========================= */
+async function loadPopularMovies(page = 1) {
+    const resultsContainer =
+        document.getElementById('resultsContainer');
 
+    if (!resultsContainer) return;
+
+    try {
+        resultsContainer.innerHTML = `
+            <div class="col-span-full flex justify-center py-20">
+                <span class="material-symbols-outlined animate-spin text-3xl text-neutral-500">
+                    progress_activity
+                </span>
+            </div>
+        `;
+
+        const response = await fetch(
+            `${API_BASE_URL}?page=${page}`
+        );
+
+        if (!response.ok) {
+            throw new Error(`Failed to load popular movies: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        currentPage = data.page || page;
+        totalPages = data.totalPages || 1;
+
+        const movies = data.content || [];
+
+        if (movies.length === 0) {
+            resultsContainer.innerHTML = '';
+            showEmptyState();
+            updatePagination(data);
+            return;
+        }
+
+        hideEmptyState();
+
+        renderMovies(movies);
+        updatePagination(data);
+
+    } catch (error) {
+        console.error('Failed to load popular movies:', error);
+
+        resultsContainer.innerHTML = `
+            <div class="col-span-full flex flex-col items-center justify-center py-20 text-center">
+                <span class="material-symbols-outlined mb-3 text-4xl text-neutral-600">
+                    error_outline
+                </span>
+                <p class="text-sm text-neutral-400">
+                    Something went wrong while loading movies.
+                </p>
+            </div>
+        `;
+    }
+}
 async function searchMovies(page = 1) {
     const resultsContainer =
         document.getElementById('resultsContainer');
@@ -93,8 +150,7 @@ async function searchMovies(page = 1) {
     const keyword = currentKeyword.trim();
 
     if (!keyword) {
-        resultsContainer.innerHTML = '';
-        hideEmptyState();
+        await loadPopularMovies(page);
         return;
     }
 
@@ -159,6 +215,106 @@ async function searchMovies(page = 1) {
 /* =========================
    Render Movies
 ========================= */
+async function discoverMovies(page = 1) {
+    const resultsContainer =
+        document.getElementById('resultsContainer');
+
+    if (!resultsContainer) return;
+
+    const selectedGenre =
+        document.querySelector('input[name="genre"]:checked');
+
+    const ratingSlider =
+        document.getElementById('ratingSlider');
+
+    const yearStartSlider =
+        document.getElementById('yearStartSlider');
+
+    const yearEndSlider =
+        document.getElementById('yearEndSlider');
+
+    const sortSelector =
+        document.getElementById('sortSelector');
+
+    const params = new URLSearchParams();
+
+    if (selectedGenre) {
+        params.set('genreId', selectedGenre.value);
+    }
+
+    if (yearStartSlider) {
+        params.set('startYear', yearStartSlider.value);
+    }
+
+    if (yearEndSlider) {
+        params.set('endYear', yearEndSlider.value);
+    }
+
+    if (ratingSlider) {
+        params.set('minRating', ratingSlider.value);
+    }
+
+    if (sortSelector) {
+        params.set('sortBy', sortSelector.value);
+    }
+
+    params.set('page', page);
+
+    try {
+        resultsContainer.innerHTML = `
+            <div class="col-span-full flex justify-center py-20">
+                <span class="material-symbols-outlined animate-spin text-3xl text-neutral-500">
+                    progress_activity
+                </span>
+            </div>
+        `;
+
+        const response = await fetch(
+            `${API_BASE_URL}/discover?${params.toString()}`
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                `Discover failed: ${response.status}`
+            );
+        }
+
+        const data = await response.json();
+
+        currentPage = data.page || page;
+        totalPages = data.totalPages || 1;
+
+        const movies = data.content || [];
+
+        if (movies.length === 0) {
+            resultsContainer.innerHTML = '';
+            showEmptyState();
+            updatePagination(data);
+            return;
+        }
+
+        hideEmptyState();
+        renderMovies(movies);
+        updatePagination(data);
+
+    } catch (error) {
+        console.error('Failed to discover movies:', error);
+
+        resultsContainer.innerHTML = `
+            <div class="col-span-full flex flex-col items-center justify-center py-20 text-center">
+                <span class="material-symbols-outlined mb-3 text-4xl text-neutral-600">
+                    error_outline
+                </span>
+                <p class="text-sm text-neutral-400">
+                    Something went wrong while filtering movies.
+                </p>
+            </div>
+        `;
+    }
+}
+
+
+
 
 function renderMovies(movies) {
     const container =
@@ -343,7 +499,13 @@ function goToPage(page) {
         return;
     }
 
-    searchMovies(page);
+    if (currentKeyword.trim()) {
+        searchMovies(page);
+    } else if (discoverMode) {
+        discoverMovies(page);
+    } else {
+        loadPopularMovies(page);
+    }
 
     const resultsContainer =
         document.getElementById('resultsContainer');
@@ -421,6 +583,7 @@ if (searchInput) {
         currentPage = 1;
 
         searchTimeout = setTimeout(() => {
+            discoverMode = false;
             searchMovies(1);
         }, 400);
     });
@@ -495,18 +658,176 @@ document
 
         input.addEventListener('change', () => {
 
-            const label = input.closest('label');
+            if (input.checked) {
+                document
+                    .querySelectorAll('input[name="genre"]')
+                    .forEach(other => {
+                        if (other !== input) {
+                            other.checked = false;
+                        }
+                    });
+            }
 
-            if (!label) return;
+            document
+                .querySelectorAll('input[name="genre"]')
+                .forEach(genreInput => {
 
-            label.classList.toggle(
-                'text-white',
-                input.checked
-            );
+                    const label =
+                        genreInput.closest('label');
 
-            label.classList.toggle(
-                'text-neutral-400',
-                !input.checked
-            );
+                    if (!label) return;
+
+                    label.classList.toggle(
+                        'text-white',
+                        genreInput.checked
+                    );
+
+                    label.classList.toggle(
+                        'text-neutral-400',
+                        !genreInput.checked
+                    );
+                });
+
+            currentKeyword = '';
+
+            const searchInput =
+                document.getElementById('searchInput');
+
+            if (searchInput) {
+                searchInput.value = '';
+            }
+
+            discoverMode = true;
+            currentPage = 1;
+
+            discoverMovies(1);
         });
     });
+
+let filterTimeout;
+
+function scheduleDiscover() {
+    clearTimeout(filterTimeout);
+
+    currentKeyword = '';
+
+    const searchInput =
+        document.getElementById('searchInput');
+
+    if (searchInput) {
+        searchInput.value = '';
+    }
+
+    discoverMode = true;
+    currentPage = 1;
+
+    filterTimeout = setTimeout(() => {
+        discoverMovies(1);
+    }, 300);
+}
+
+if (ratingSlider) {
+    ratingSlider.addEventListener(
+        'change',
+        scheduleDiscover
+    );
+}
+
+if (yearStartSlider) {
+    yearStartSlider.addEventListener(
+        'change',
+        scheduleDiscover
+    );
+}
+
+if (yearEndSlider) {
+    yearEndSlider.addEventListener(
+        'change',
+        scheduleDiscover
+    );
+}
+
+const sortSelector =
+    document.getElementById('sortSelector');
+
+if (sortSelector) {
+    sortSelector.addEventListener(
+        'change',
+        scheduleDiscover
+    );
+}
+
+
+function resetFilters() {
+    discoverMode = false;
+    currentKeyword = '';
+    currentPage = 1;
+
+    const searchInput =
+        document.getElementById('searchInput');
+
+    if (searchInput) {
+        searchInput.value = '';
+    }
+
+    document
+        .querySelectorAll('input[name="genre"]')
+        .forEach(input => {
+            input.checked = false;
+
+            const label = input.closest('label');
+
+            if (label) {
+                label.classList.remove('text-white');
+                label.classList.add('text-neutral-400');
+            }
+        });
+
+    const ratingSlider =
+        document.getElementById('ratingSlider');
+
+    if (ratingSlider) {
+        ratingSlider.value = '7';
+        updateRatingSlider();
+    }
+
+    const yearStartSlider =
+        document.getElementById('yearStartSlider');
+
+    const yearEndSlider =
+        document.getElementById('yearEndSlider');
+
+    if (yearStartSlider) {
+        yearStartSlider.value = '2000';
+    }
+
+    if (yearEndSlider) {
+        yearEndSlider.value = '2026';
+    }
+
+    updateYearSlider('start');
+
+    const sortSelector =
+        document.getElementById('sortSelector');
+
+    if (sortSelector) {
+        sortSelector.value = 'rating_desc';
+    }
+
+    loadPopularMovies(1);
+}
+const resetFiltersButton =
+    document.getElementById('resetFiltersButton');
+
+if (resetFiltersButton) {
+    resetFiltersButton.addEventListener(
+        'click',
+        resetFilters
+    );
+}
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadPopularMovies(1);
+});

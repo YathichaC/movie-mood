@@ -56,7 +56,7 @@ class GlobalExceptionHandlerTest {
 
         @Test
         void shouldReturn409WhenGenreAlreadyExists() throws Exception {
-                when(movieService.browseMovies())
+                when(movieService.browseMovies(1))
                                 .thenThrow(new GenreAlreadyExistsException("35"));
 
                 mockMvc.perform(get("/api/v1/movies"))
@@ -71,7 +71,7 @@ class GlobalExceptionHandlerTest {
 
         @Test
         void shouldReturn500WhenUnexpectedExceptionOccurs() throws Exception {
-                when(movieService.browseMovies())
+                when(movieService.browseMovies(1))
                                 .thenThrow(new RuntimeException("Database connection failed"));
 
                 mockMvc.perform(get("/api/v1/movies"))
@@ -83,5 +83,34 @@ class GlobalExceptionHandlerTest {
                                                 .value("An unexpected error occurred"))
                                 .andExpect(jsonPath("$.path")
                                                 .value("/api/v1/movies"));
+        }
+
+        @Test
+        void shouldReturn400WhenIllegalArgumentExceptionOccurs()
+                        throws Exception {
+
+                when(movieService.discoverMovies(
+                                null,
+                                null,
+                                null,
+                                null,
+                                "rating_desc",
+                                1))
+                                .thenThrow(
+                                                new IllegalArgumentException(
+                                                                "Invalid discover request"));
+
+                mockMvc.perform(
+                                get("/api/v1/movies/discover")
+                                                .param("sortBy", "rating_desc")
+                                                .param("page", "1"))
+                                .andExpect(status().isBadRequest())
+                                .andExpect(jsonPath("$.status").value(400))
+                                .andExpect(jsonPath("$.error")
+                                                .value("Bad Request"))
+                                .andExpect(jsonPath("$.message")
+                                                .value("Invalid discover request"))
+                                .andExpect(jsonPath("$.path")
+                                                .value("/api/v1/movies/discover"));
         }
 }

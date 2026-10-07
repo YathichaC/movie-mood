@@ -15,6 +15,11 @@ import java.util.List;
 
 @Service
 public class MovieServiceImpl implements MovieService {
+    private static final List<String> ALLOWED_DISCOVER_SORT_VALUES = List.of(
+            "rating_desc",
+            "alphabet_asc",
+            "release_desc",
+            "release_asc");
 
     private final MovieProvider movieProvider;
     private final MoodGenreMapper moodGenreMapper;
@@ -37,8 +42,8 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<Movie> browseMovies() {
-        return movieProvider.getPopularMovies();
+    public MoviePage browseMovies(int page) {
+        return movieProvider.getPopularMovies(page);
     }
 
     @Override
@@ -86,6 +91,36 @@ public class MovieServiceImpl implements MovieService {
                                 Video::isOfficial).reversed())
                 .findFirst()
                 .orElse(null);
+    }
+
+    @Override
+    public MoviePage discoverMovies(
+            Integer genreId,
+            Integer startYear,
+            Integer endYear,
+            Double minRating,
+            String sortBy,
+            int page) {
+
+        if (startYear != null
+                && endYear != null
+                && startYear > endYear) {
+            throw new IllegalArgumentException(
+                    "startYear must not be greater than endYear");
+        }
+
+        if (!ALLOWED_DISCOVER_SORT_VALUES.contains(sortBy)) {
+            throw new IllegalArgumentException(
+                    "Invalid sortBy value");
+        }
+
+        return movieProvider.discoverMovies(
+                genreId,
+                startYear,
+                endYear,
+                minRating,
+                sortBy,
+                page);
     }
 
 }

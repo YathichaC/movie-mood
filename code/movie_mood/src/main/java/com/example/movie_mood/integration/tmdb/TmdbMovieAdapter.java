@@ -10,7 +10,6 @@ import com.example.movie_mood.domain.model.Video;
 import com.example.movie_mood.integration.tmdb.dto.TmdbVideoListResponse;
 import com.example.movie_mood.integration.tmdb.dto.TmdbVideoResponse;
 
-
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -25,17 +24,27 @@ public class TmdbMovieAdapter implements MovieProvider {
     }
 
     @Override
-    public List<Movie> getPopularMovies() {
-        TmdbMovieListResponse response = tmdbRestClient.getPopularMovies();
+    public MoviePage getPopularMovies(int page) {
+        TmdbMovieListResponse response = tmdbRestClient.getPopularMovies(page);
 
         if (response == null || response.getResults() == null) {
-            return Collections.emptyList();
+            return new MoviePage(
+                    Collections.emptyList(),
+                    page,
+                    0,
+                    0);
         }
 
-        return response.getResults()
+        List<Movie> movies = response.getResults()
                 .stream()
                 .map(this::toMovie)
                 .toList();
+
+        return new MoviePage(
+                movies,
+                response.getPage() != null ? response.getPage() : page,
+                response.getTotalPages() != null ? response.getTotalPages() : 0,
+                response.getTotalResults() != null ? response.getTotalResults() : 0);
     }
 
     @Override
@@ -146,4 +155,42 @@ public class TmdbMovieAdapter implements MovieProvider {
                 .map(this::toMovie)
                 .toList();
     }
+
+    @Override
+    public MoviePage discoverMovies(
+            Integer genreId,
+            Integer startYear,
+            Integer endYear,
+            Double minRating,
+            String sortBy,
+            int page) {
+
+        TmdbMovieListResponse response = tmdbRestClient.discoverMovies(
+                genreId,
+                startYear,
+                endYear,
+                minRating,
+                sortBy,
+                page);
+
+        if (response == null || response.getResults() == null) {
+            return new MoviePage(
+                    Collections.emptyList(),
+                    page,
+                    0,
+                    0);
+        }
+
+        List<Movie> movies = response.getResults()
+                .stream()
+                .map(this::toMovie)
+                .toList();
+
+        return new MoviePage(
+                movies,
+                response.getPage() != null ? response.getPage() : page,
+                response.getTotalPages() != null ? response.getTotalPages() : 0,
+                response.getTotalResults() != null ? response.getTotalResults() : 0);
+    }
+
 }

@@ -7,7 +7,7 @@ async function loadMovies() {
     try {
 
         const response =
-            await fetch("/api/v1/movies");
+            await fetch("/api/v1/movies?page=1");
 
         if (!response.ok) {
             throw new Error(
@@ -15,9 +15,11 @@ async function loadMovies() {
             );
         }
 
-        const movies = await response.json();
+        const moviePage = await response.json();
 
-        if (!movies || movies.length === 0) {
+        const movies = moviePage.content || [];
+
+        if (movies.length === 0) {
             showMovieError();
             return;
         }

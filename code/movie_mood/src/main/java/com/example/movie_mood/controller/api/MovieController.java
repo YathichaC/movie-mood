@@ -22,6 +22,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.example.movie_mood.dto.response.MoviePageResponse;
 import java.util.List;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 
 @RestController
 @RequestMapping("/api/v1/movies")
@@ -46,10 +50,11 @@ public class MovieController {
         @Operation(summary = "Browse popular movies", description = "Returns a list of popular movies from TMDB")
         @ApiResponse(responseCode = "200", description = "Popular movies retrieved successfully")
         @GetMapping
-        public List<MovieResponse> browseMovies() {
+        public MoviePageResponse browseMovies(
+                        @RequestParam(defaultValue = "1") @Positive int page) {
 
-                return movieMapper.toResponseList(
-                                movieService.browseMovies());
+                return movieMapper.toPageResponse(
+                                movieService.browseMovies(page));
         }
 
         @Operation(summary = "Search movies", description = "Searches TMDB movies using the provided keyword")
@@ -57,7 +62,7 @@ public class MovieController {
                         @ApiResponse(responseCode = "200", description = "Movies retrieved successfully"),
                         @ApiResponse(responseCode = "400", description = "Search keyword is blank or invalid", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
         })
-        
+
         @GetMapping("/search")
         public MoviePageResponse searchMovies(
                         @RequestParam @NotBlank String keyword,
@@ -67,13 +72,42 @@ public class MovieController {
                                 movieService.searchMovies(keyword, page));
         }
 
+        @Operation(summary = "Discover movies", description = "Filters and sorts TMDB movies by genre, release year, minimum rating, and sort order")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Movies discovered successfully"),
+                        @ApiResponse(responseCode = "400", description = "Invalid filter parameters", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+        })
+        @GetMapping("/discover")
+        public MoviePageResponse discoverMovies(
+                        @RequestParam(required = false) @Positive Integer genreId,
+
+                        @RequestParam(required = false) @Min(1900) @Max(2100) Integer startYear,
+
+                        @RequestParam(required = false) @Min(1900) @Max(2100) Integer endYear,
+
+                        @RequestParam(required = false) @DecimalMin("0.0") @DecimalMax("10.0") Double minRating,
+
+                        @RequestParam(defaultValue = "rating_desc") String sortBy,
+
+                        @RequestParam(defaultValue = "1") @Positive int page) {
+
+                
+                return movieMapper.toPageResponse(
+                                movieService.discoverMovies(
+                                                genreId,
+                                                startYear,
+                                                endYear,
+                                                minRating,
+                                                sortBy,
+                                                page));
+        }
+
         @Operation(summary = "Get movie details", description = "Returns details of a movie using its TMDB movie ID")
         @ApiResponses({
                         @ApiResponse(responseCode = "200", description = "Movie retrieved successfully"),
-                        @ApiResponse(responseCode = "400", description = "TMDB movie ID must be positive", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                        @ApiResponse(responseCode = "400", description = "Invalid TMDB movie ID", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                         @ApiResponse(responseCode = "404", description = "Movie not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
         })
-
         @GetMapping("/{tmdbMovieId}")
         public MovieResponse getMovieDetails(
                         @PathVariable @NotBlank String tmdbMovieId) {
