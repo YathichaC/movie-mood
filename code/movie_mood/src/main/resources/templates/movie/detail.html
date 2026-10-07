@@ -19,14 +19,16 @@
 </head>
 
 <body class="bg-cinema-bg text-cinema-main min-h-screen w-full overflow-x-hidden font-sans antialiased relative">
-    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <img id="detail-backdrop" src="" alt="" class="w-full h-full object-cover object-center scale-[1.01]">
+    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-black">
+        <img id="detail-backdrop" src="" alt=""
+            class="absolute inset-0 w-full h-full object-cover object-center scale-[1.01]">
 
         <div class="absolute inset-0 bg-black/60"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-black/10 via-black/20 to-black/45"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/10"></div>
         <div class="absolute inset-0 film-grain opacity-40 mix-blend-overlay"></div>
     </div>
+
 
     <div class="relative z-10 min-h-screen flex flex-col">
         <header th:replace="~{fragments/navbar :: navbar('movie')}"></header>

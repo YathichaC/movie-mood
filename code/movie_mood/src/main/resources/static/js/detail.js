@@ -57,13 +57,35 @@ document.addEventListener('DOMContentLoaded', () => {
             synopsis.textContent =
                 movie.synopsis || 'No synopsis available.';
         }
-        if (poster && movie.posterPath) {
-            poster.src = `https://image.tmdb.org/t/p/w500${movie.posterPath}`;
+        if (poster) {
+            poster.src = movie.posterPath
+                ? `https://image.tmdb.org/t/p/w500${movie.posterPath}`
+                : '/img/movie-placeholder.png';
+
             poster.alt = movie.title || 'Movie poster';
+
+            poster.onerror = () => {
+                poster.onerror = null;
+                poster.src = '/img/movie-placeholder.png';
+            };
         }
-        if (backdrop && movie.backdropPath) {
-            backdrop.src = `https://image.tmdb.org/t/p/w1280${movie.backdropPath}`;
-            backdrop.alt = '';
+        if (backdrop) {
+            if (movie.backdropPath) {
+                backdrop.src =
+                    `https://image.tmdb.org/t/p/w1280${movie.backdropPath}`;
+
+                backdrop.alt = '';
+                backdrop.style.display = 'block';
+
+                backdrop.onerror = () => {
+                    backdrop.onerror = null;
+                    backdrop.removeAttribute('src');
+                    backdrop.style.display = 'none';
+                };
+            } else {
+                backdrop.removeAttribute('src');
+                backdrop.style.display = 'none';
+            }
         }
     }
 

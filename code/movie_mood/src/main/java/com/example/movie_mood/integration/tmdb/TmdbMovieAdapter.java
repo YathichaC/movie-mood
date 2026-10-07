@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import com.example.movie_mood.domain.model.Video;
 import com.example.movie_mood.integration.tmdb.dto.TmdbVideoListResponse;
 import com.example.movie_mood.integration.tmdb.dto.TmdbVideoResponse;
+import com.example.movie_mood.integration.tmdb.dto.TmdbImageResponse;
+import com.example.movie_mood.integration.tmdb.dto.TmdbMovieImagesResponse;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -77,7 +79,53 @@ public class TmdbMovieAdapter implements MovieProvider {
 
     @Override
     public Movie getMovie(String tmdbMovieId) {
-        return toMovie(tmdbRestClient.getMovie(tmdbMovieId));
+        Movie movie = toMovie(tmdbRestClient.getMovie(tmdbMovieId));
+
+        if (movie == null) {
+            return null;
+        }
+
+        boolean missingPoster = movie.getPosterPath() == null || movie.getPosterPath().isBlank();
+
+        boolean missingBackdrop = movie.getBackdropPath() == null || movie.getBackdropPath().isBlank();
+
+        if (!missingPoster && !missingBackdrop) {
+            return movie;
+        }
+
+        TmdbMovieImagesResponse images = tmdbRestClient.getMovieImages(tmdbMovieId);
+
+        if (images == null) {
+            return movie;
+        }
+
+        if (missingPoster
+                && images.getPosters() != null
+                && !images.getPosters().isEmpty()) {
+
+            String posterPath = images.getPosters().stream()
+                    .map(TmdbImageResponse::getFilePath)
+                    .filter(path -> path != null && !path.isBlank())
+                    .findFirst()
+                    .orElse(null);
+
+            movie.setPosterPath(posterPath);
+        }
+
+        if (missingBackdrop
+                && images.getBackdrops() != null
+                && !images.getBackdrops().isEmpty()) {
+
+            String backdropPath = images.getBackdrops().stream()
+                    .map(TmdbImageResponse::getFilePath)
+                    .filter(path -> path != null && !path.isBlank())
+                    .findFirst()
+                    .orElse(null);
+
+            movie.setBackdropPath(backdropPath);
+        }
+
+        return movie;
     }
 
     private Movie toMovie(TmdbMovieResponse response) {

@@ -1,5 +1,6 @@
 package com.example.movie_mood.integration.tmdb;
 
+import com.example.movie_mood.integration.tmdb.dto.TmdbMovieImagesResponse;
 import com.example.movie_mood.exception.MovieNotFoundException;
 import com.example.movie_mood.integration.tmdb.dto.TmdbMovieListResponse;
 import com.example.movie_mood.integration.tmdb.dto.TmdbMovieResponse;
@@ -66,6 +67,21 @@ public class TmdbRestClient {
                                 .uri("/movie/{id}/videos?language=en-US", tmdbMovieId)
                                 .retrieve()
                                 .body(TmdbVideoListResponse.class);
+        }
+
+        public TmdbMovieImagesResponse getMovieImages(String tmdbMovieId) {
+                return restClient.get()
+                                .uri(uriBuilder -> uriBuilder
+                                                .path("/movie/{id}/images")
+                                                .queryParam("include_image_language", "en,null")
+                                                .build(tmdbMovieId))
+                                .retrieve()
+                                .onStatus(
+                                                status -> status.value() == 404,
+                                                (request, response) -> {
+                                                        throw new MovieNotFoundException(tmdbMovieId);
+                                                })
+                                .body(TmdbMovieImagesResponse.class);
         }
 
         public TmdbMovieListResponse discoverMoviesByGenres(List<Integer> genreIds) {
