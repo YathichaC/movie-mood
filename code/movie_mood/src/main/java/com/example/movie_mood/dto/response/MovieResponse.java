@@ -11,7 +11,7 @@ public class MovieResponse {
     private Double rating;
     private LocalDate releaseDate;
     private List<String> genreIds;
-
+    private List<String> genres;
     private String posterPath;
     private String backdropPath;
 
@@ -56,6 +56,14 @@ public class MovieResponse {
 
     public void setSynopsis(String synopsis) {
         this.synopsis = synopsis;
+    }
+
+    public List<String> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<String> genres) {
+        this.genres = genres;
     }
 
     public Double getRating() {

@@ -1,7 +1,11 @@
 package com.example.movie_mood.controller.api;
 
+import com.example.movie_mood.domain.model.Video;
+import org.springframework.http.ResponseEntity;
+import java.util.Map;
 import com.example.movie_mood.domain.enums.Mood;
 import com.example.movie_mood.dto.response.MovieResponse;
+import com.example.movie_mood.exception.MovieTrailerNotFoundException;
 import com.example.movie_mood.facade.MovieDetailFacade;
 import com.example.movie_mood.mapper.MovieMapper;
 import com.example.movie_mood.service.MovieService;
@@ -16,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import com.example.movie_mood.dto.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import com.example.movie_mood.dto.response.MoviePageResponse;
 import java.util.List;
 
 @RestController
@@ -52,12 +57,14 @@ public class MovieController {
                         @ApiResponse(responseCode = "200", description = "Movies retrieved successfully"),
                         @ApiResponse(responseCode = "400", description = "Search keyword is blank or invalid", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
         })
+        
         @GetMapping("/search")
-        public List<MovieResponse> searchMovies(
-                        @RequestParam @NotBlank String keyword) {
+        public MoviePageResponse searchMovies(
+                        @RequestParam @NotBlank String keyword,
+                        @RequestParam(defaultValue = "1") @Positive int page) {
 
-                return movieMapper.toResponseList(
-                                movieService.searchMovies(keyword));
+                return movieMapper.toPageResponse(
+                                movieService.searchMovies(keyword, page));
         }
 
         @Operation(summary = "Get movie details", description = "Returns details of a movie using its TMDB movie ID")
@@ -73,6 +80,25 @@ public class MovieController {
 
                 return movieMapper.toResponse(
                                 movieDetailFacade.getMovieDetails(tmdbMovieId));
+        }
+
+        @Operation(summary = "Get movie trailer", description = "Returns the official YouTube trailer of a movie from TMDB")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Trailer retrieved successfully"),
+                        @ApiResponse(responseCode = "404", description = "Trailer not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+        })
+        @GetMapping("/{tmdbMovieId}/trailer")
+        public ResponseEntity<Map<String, String>> getMovieTrailer(
+                        @PathVariable @NotBlank String tmdbMovieId) {
+
+                Video trailer = movieService.getMovieTrailer(tmdbMovieId);
+
+                if (trailer == null) {
+                        throw new MovieTrailerNotFoundException(tmdbMovieId);
+                }
+
+                return ResponseEntity.ok(
+                                Map.of("key", trailer.getKey()));
         }
 
         @Operation(summary = "Filter movies by genre", description = "Returns movies from TMDB filtered by a genre ID")

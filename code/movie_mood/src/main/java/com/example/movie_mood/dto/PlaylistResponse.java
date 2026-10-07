@@ -10,16 +10,22 @@ public class PlaylistResponse {
     private UUID userId;
     private String playlistName;
     private String coverImagePath;
+    private String detail;
     private int itemCount;
     private List<MovielistResponse> items;
 
-    public PlaylistResponse() {}
+    public PlaylistResponse() {
+    }
 
     public PlaylistResponse(Playlist playlist) {
         this.playlistId = playlist.getPlaylistId();
         this.userId = playlist.getUserId();
         this.playlistName = playlist.getPlaylistName();
-        this.coverImagePath = playlist.getCoverImagePath();
+
+        if (playlist.getDetail() != null) {
+            this.detail = playlist.getDetail().getDetail();
+            this.coverImagePath = playlist.getDetail().getCoverImagePath();
+        }
 
         if (playlist.getItems() != null) {
             this.itemCount = playlist.getItems().size();
@@ -43,6 +49,10 @@ public class PlaylistResponse {
 
     public String getCoverImagePath() {
         return coverImagePath;
+    }
+
+    public String getDetail() {
+        return detail;
     }
 
     public int getItemCount() {

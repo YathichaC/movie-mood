@@ -3,6 +3,8 @@ package com.example.movie_mood.mapper;
 import com.example.movie_mood.domain.model.Movie;
 import com.example.movie_mood.dto.response.MovieResponse;
 import org.springframework.stereotype.Component;
+import com.example.movie_mood.domain.model.MoviePage;
+import com.example.movie_mood.dto.response.MoviePageResponse;
 
 import java.util.List;
 
@@ -27,11 +29,15 @@ public class MovieMapper {
                 movie.getSynopsis(),
                 movie.getRating(),
                 movie.getReleaseDate(),
-                genreIds
-        );
+                genreIds);
 
         response.setPosterPath(movie.getPosterPath());
         response.setBackdropPath(movie.getBackdropPath());
+
+        response.setGenres(
+                movie.getGenres() == null
+                        ? List.of()
+                        : movie.getGenres());
 
         return response;
     }
@@ -46,4 +52,22 @@ public class MovieMapper {
                 .map(this::toResponse)
                 .toList();
     }
+    
+    public MoviePageResponse toPageResponse(MoviePage moviePage) {
+    if (moviePage == null) {
+        return new MoviePageResponse(
+                List.of(),
+                0,
+                0,
+                0
+        );
+    }
+
+    return new MoviePageResponse(
+            toResponseList(moviePage.getMovies()),
+            moviePage.getPage(),
+            moviePage.getTotalPages(),
+            moviePage.getTotalResults()
+    );
+}
 }

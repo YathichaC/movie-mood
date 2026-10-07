@@ -9,7 +9,7 @@ import com.example.movie_mood.strategy.MoodStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
+import com.example.movie_mood.domain.model.Video;
 import java.util.List;
 
 public class RecommendationStrategyTest {
@@ -46,6 +46,11 @@ public class RecommendationStrategyTest {
             }
 
             @Override
+            public Video getMovieTrailer(String tmdbMovieId) {
+                return null;
+            }
+
+            @Override
             public List<Movie> filterMoviesByGenre(Integer genreId) {
                 return List.of();
             }
@@ -58,37 +63,29 @@ public class RecommendationStrategyTest {
 
         MoodGenreMapper moodGenreMapper = new MoodGenreMapper();
 
-        MatchScoreStrategy defaultStrategy =
-                new DefaultMatchScoreStrategy(moodGenreMapper);
+        MatchScoreStrategy defaultStrategy = new DefaultMatchScoreStrategy(moodGenreMapper);
 
-        MoodStrategy strategy =
-                new MoodStrategy(mockMovieService, defaultStrategy);
+        MoodStrategy strategy = new MoodStrategy(mockMovieService, defaultStrategy);
 
-        List<Movie> results =
-                strategy.recommend(Mood.HAPPY, List.of(27));
+        List<Movie> results = strategy.recommend(Mood.HAPPY, List.of(27));
 
         Assertions.assertEquals(
                 1,
                 results.size(),
-                "Disliked horror genre should be excluded"
-        );
+                "Disliked horror genre should be excluded");
 
         Assertions.assertEquals(
                 "Inside Out 2",
-                results.get(0).getTitle()
-        );
+                results.get(0).getTitle());
 
         Assertions.assertNotNull(
                 results.get(0).getMatchScore(),
-                "Match score should not be null"
-        );
+                "Match score should not be null");
 
         System.out.println("====== TEST PASSED ======");
         System.out.println(
-                "Recommended Movie: " + results.get(0).getTitle()
-        );
+                "Recommended Movie: " + results.get(0).getTitle());
         System.out.println(
-                "Match Score: " + results.get(0).getMatchScore() + "%"
-        );
+                "Match Score: " + results.get(0).getMatchScore() + "%");
     }
 }

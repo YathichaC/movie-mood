@@ -2,14 +2,15 @@ package com.example.movie_mood.controller.api;
 
 import com.example.movie_mood.domain.entity.User;
 import com.example.movie_mood.dto.auth.RegisterRequest;
+import com.example.movie_mood.security.JwtService;
 import com.example.movie_mood.service.AuthService;
 import com.example.movie_mood.dto.auth.LoginRequest;
-
-import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.Authentication;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.util.Map;
 import java.util.UUID;
@@ -19,9 +20,11 @@ import java.util.UUID;
 public class AuthController {
 
     private final AuthService authService;
+    private final JwtService jwtService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, JwtService jwtService) {
         this.authService = authService;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/register")
@@ -36,68 +39,71 @@ public class AuthController {
                             "message", "Registration successful",
                             "userId", user.getUserId(),
                             "username", user.getUsername(),
-                            "email", user.getEmail()
-                    )
-            );
+                            "email", user.getEmail()));
 
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(
-                    Map.of("message", e.getMessage())
-            );
-            
+                    Map.of("message", e.getMessage()));
+
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, HttpSession session) {
+    public ResponseEntity<?> login(
+            @Valid @RequestBody LoginRequest request) {
+
         try {
             User user = authService.login(request);
-            session.setAttribute("USER_ID", user.getUserId());
-            session.setAttribute("USERNAME", user.getUsername());
-            session.setAttribute("EMAIL", user.getEmail());
+
+            String token = jwtService.generateToken(user);
+
             return ResponseEntity.ok(
                     Map.of(
                             "message", "Login successful",
+                            "token", token,
                             "userId", user.getUserId(),
                             "username", user.getUsername(),
-                            "email", user.getEmail()
-                    )
-            );
+                            "email", user.getEmail()));
 
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                    Map.of("message", e.getMessage())
-            );
+                    Map.of("message", e.getMessage()));
         }
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpSession session) {
-
-        session.invalidate();
+    public ResponseEntity<?> logout() {
 
         return ResponseEntity.ok(
-                Map.of("message", "Logout successful")
-        );
+                Map.of("message", "Logout successful"));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/me")
-    public ResponseEntity<?> currentUser(HttpSession session) {
+    public ResponseEntity<?> currentUser(Authentication authentication) {
 
-        UUID userId = (UUID) session.getAttribute("USER_ID");
+        if (authentication == null
+                || !authentication.isAuthenticated()) {
 
-        if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                    Map.of("message", "Not authenticated")
-            );
+                    Map.of("message", "Not authenticated"));
         }
+
+        UUID userId;
+
+        try {
+            userId = UUID.fromString(authentication.getName());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    Map.of("message", "Invalid authentication"));
+        }
+
+        User user = authService.getUserById(userId);
 
         return ResponseEntity.ok(
                 Map.of(
-                        "userId", userId,
-                        "username", session.getAttribute("USERNAME"),
-                        "email", session.getAttribute("EMAIL")
-                )
-        );
+                        "userId", user.getUserId(),
+                        "username", user.getUsername(),
+                        "email", user.getEmail()));
     }
 }

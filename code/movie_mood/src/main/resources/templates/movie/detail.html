@@ -20,9 +20,9 @@
 
 <body class="bg-cinema-bg text-cinema-main min-h-screen w-full overflow-x-hidden font-sans antialiased relative">
     <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <img src="https://image.tmdb.org/t/p/w1280/qeQJx07rK2xm8SD2sJxFKhE7gs0.jpg" alt="Spiderman"
-            class="w-full h-full object-cover object-center scale-[1.01]">
-        <div class="absolute inset-0 bg-black/10"></div>
+        <img id="detail-backdrop" src="" alt="" class="w-full h-full object-cover object-center scale-[1.01]">
+
+        <div class="absolute inset-0 bg-black/60"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-black/10 via-black/20 to-black/45"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/10"></div>
         <div class="absolute inset-0 film-grain opacity-40 mix-blend-overlay"></div>
@@ -36,8 +36,7 @@
                 <div class="flex justify-center md:justify-start items-center">
                     <div
                         class="w-full max-w-[360px] sm:max-w-[440px] lg:max-w-[520px] aspect-[2/3] overflow-hidden shadow-2xl shadow-black/40 border border-white/10">
-                        <img src="https://image.tmdb.org/t/p/w500/bjiS5ipwxb9JFy3XRRN4OAilSeX.jpg"
-                            alt="Spider-Man: Brand New Day poster" class="w-full h-full object-cover object-center">
+                        <img id="detail-poster" src="" alt="" class="w-full h-full object-cover object-center">
                     </div>
                 </div>
 
@@ -51,46 +50,55 @@
                         </svg>
                         <span>Return to Home</span>
                     </a>
-                    <h1
+                    <h1 id="detail-title"
                         class="font-display font-medium text-4xl sm:text-[44px] lg:text-[46px] leading-[1.08] tracking-[0.04em] text-white uppercase mb-5">
-                        Spider-Man: Brand New Day
+                        Loading...
                     </h1>
                     <div
                         class="flex flex-wrap items-center gap-x-4 gap-y-2 mb-5 sm:mb-6 text-[13px] border-b border-white/20 pb-4 w-full">
                         <div class="flex items-baseline gap-1.5">
-                            <span class="font-sans italic text-[13px] text-white/60">Year</span>
-                            <span
-                                class="font-sans font-medium text-[13px] tracking-wider text-white uppercase">2026</span>
+                            <span class="font-sans italic text-[13px] text-white/60">
+                                Year
+                            </span>
+                            <span id="detail-year"
+                                class="font-sans font-medium text-[13px] tracking-wider text-white uppercase">
+                                —
+                            </span>
                         </div>
-                        <span class="text-white/40 text-[11px]">•</span>
                         <div class="flex items-baseline gap-1.5">
-                            <span class="font-sans italic text-[13px] text-white/60">Duration</span>
-                            <span class="font-sans font-medium text-[13px] tracking-wider text-white uppercase">122
-                                Min</span>
+                            <span class="font-sans italic text-[13px] text-white/60">
+                                Rating
+                            </span>
+                            <span id="detail-rating"
+                                class="font-sans font-medium text-[13px] tracking-wider text-white uppercase">
+                                —
+                            </span>
                         </div>
-                        <span class="text-white/40 text-[11px]">•</span>
                         <div class="flex items-baseline gap-1.5">
-                            <span class="font-sans italic text-[13px] text-white/60">Certification</span>
-                            <span
-                                class="font-sans font-medium text-[13px] tracking-wider text-white uppercase">PG-13</span>
+                            <span class="font-sans italic text-[13px] text-white/60">
+                                Genres
+                            </span>
+                            <span id="detail-genres"
+                                class="font-sans font-medium text-[13px] tracking-wider text-white uppercase">
+                                —
+                            </span>
                         </div>
                     </div>
-                    <p
+                    <p id="detail-synopsis"
                         class="font-sans text-[14px] sm:text-[14.5px] leading-[1.75] text-white/85 font-normal tracking-wide max-w-[500px] mb-7 sm:mb-8">
-                        Fighting crime full-time as Spider-Man in a world that doesn't remember him—and the pressure of
-                        seeing his old friends move on without him—sparks a change in Peter Parker he may not have the
-                        power to control. But that transformation might also be the only thing that can stop a shocking
-                        new threat to the city and those he loves - a powerful villain no one can even see.
+                        Loading movie information...
                     </p>
                     <div class="w-full flex flex-col sm:flex-row flex-wrap items-stretch gap-2.5 sm:gap-3">
-                        <button type="button" onclick="openTrailer('JikxH5uqt2I')"
+                        <button type="button" id="trailerActionBtn"
                             class="flex-1 min-w-[120px] h-[44px] md:h-[46px] px-3 flex items-center justify-center border border-white/50 text-white text-[11px] font-medium tracking-[0.1em] uppercase hover:bg-white hover:text-black hover:border-white transition-all duration-200 focus:outline-none whitespace-nowrap">
                             View Trailer
                         </button>
+
                         <button type="button" id="watchlistActionBtn"
                             class="flex-1 min-w-[120px] h-[44px] md:h-[46px] px-3 flex items-center justify-center border border-white/50 text-white text-[11px] font-medium tracking-[0.1em] uppercase hover:bg-white hover:text-black hover:border-white transition-all duration-200 focus:outline-none whitespace-nowrap">
                             Add to Playlist
                         </button>
+
                         <button type="button" id="watchedActionBtn"
                             class="flex-1 min-w-[120px] h-[44px] md:h-[46px] px-3 flex items-center justify-center border border-white/50 text-white text-[11px] font-medium tracking-[0.1em] uppercase hover:bg-white hover:text-black hover:border-white transition-all duration-200 focus:outline-none whitespace-nowrap">
                             Mark as Watched

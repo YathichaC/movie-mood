@@ -37,23 +37,11 @@ loginForm.addEventListener("submit", (event) => {
 
 async function handleLogin() {
 
-    const email =
-        document.getElementById("email").value.trim();
+    const username =
+    document.getElementById("username").value.trim();
 
     const password =
         document.getElementById("password").value;
-
-    submitBtn.disabled = true;
-
-    submitBtn.innerHTML = `
-        <span class="material-symbols-outlined animate-spin text-[20px]">
-            progress_activity
-        </span>
-
-        <span>
-            Authenticating...
-        </span>
-    `;
 
     showToast(
         "Connecting to MovieMood API",
@@ -63,13 +51,13 @@ async function handleLogin() {
 
     try {
 
-        const response = await fetch("/api/auth/login", {
+        const response = await fetch("/api/v1/auth/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                email: email,
+                username: username,
                 password: password
             })
         });
@@ -81,6 +69,14 @@ async function handleLogin() {
                 data.message || "Login failed"
             );
         }
+
+        // Store JWT token for authenticated API requests
+        localStorage.setItem("token", data.token);
+
+        // Store basic user information for frontend use
+        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("username", data.username);
+        localStorage.setItem("email", data.email);
 
         submitBtn.innerHTML = `
             <span class="material-symbols-outlined text-[20px]">
@@ -107,6 +103,11 @@ async function handleLogin() {
             "verified"
         );
 
+        // Redirect after successful login
+        setTimeout(() => {
+            window.location.href = "/home";
+        }, 800);
+
     } catch (error) {
 
         showToast(
@@ -128,7 +129,7 @@ async function handleLogin() {
         `;
     }
 }
-    
+
 
 function showToast(
     title,
@@ -142,15 +143,15 @@ function showToast(
     const toastTitle =
         document.getElementById("toastTitle");
 
-    const toastMessage =
-        document.getElementById("toastMessage");
-
     const toastIcon =
         document.getElementById("toastIcon");
 
-    toastTitle.textContent = title;
+    if (!toast || !toastTitle || !toastIcon) {
+        return;
+    }
 
-    toastMessage.textContent = message;
+    toastTitle.textContent =
+        `${title} — ${message}`;
 
     toastIcon.textContent = icon;
 
@@ -175,6 +176,5 @@ function showToast(
             "translate-y-24",
             "opacity-0"
         );
-
     }, 4000);
 }

@@ -32,6 +32,23 @@ public class GlobalExceptionHandler {
                                 .body(response);
         }
 
+        @ExceptionHandler(MovieTrailerNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleMovieTrailerNotFound(
+                        MovieTrailerNotFoundException exception,
+                        HttpServletRequest request) {
+
+                ErrorResponse response = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.NOT_FOUND.value(),
+                                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                                exception.getMessage(),
+                                request.getRequestURI());
+
+                return ResponseEntity
+                                .status(HttpStatus.NOT_FOUND)
+                                .body(response);
+        }
+
         @ExceptionHandler(MethodArgumentTypeMismatchException.class)
         public ResponseEntity<ErrorResponse> handleTypeMismatch(
                         MethodArgumentTypeMismatchException exception,
@@ -164,6 +181,23 @@ public class GlobalExceptionHandler {
                                 .body(response);
         }
 
+        @ExceptionHandler(IllegalStateException.class)
+        public ResponseEntity<ErrorResponse> handleIllegalState(
+                        IllegalStateException exception,
+                        HttpServletRequest request) {
+
+                ErrorResponse response = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.CONFLICT.value(),
+                                HttpStatus.CONFLICT.getReasonPhrase(),
+                                exception.getMessage(),
+                                request.getRequestURI());
+
+                return ResponseEntity
+                                .status(HttpStatus.CONFLICT)
+                                .body(response);
+        }
+
         @ExceptionHandler(Exception.class)
         public ResponseEntity<ErrorResponse> handleUnexpectedException(
                         Exception exception,
@@ -180,5 +214,4 @@ public class GlobalExceptionHandler {
                                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                                 .body(response);
         }
-
 }
