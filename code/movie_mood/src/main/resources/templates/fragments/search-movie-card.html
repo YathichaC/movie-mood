@@ -1,50 +1,61 @@
-<a th:fragment="search-movie-card(title, poster, rating, date, duration, overview)"
-   th:href="@{/movie/detail}"
-   class="block group">
+<a th:fragment="search-movie-card(tmdbMovieId, title, poster, rating, date, duration, overview)"
+    href="javascript:void(0)" th:attr="data-movie-id=${tmdbMovieId}" onclick="openMovieDetail(this.dataset.movieId)"
+    class="block group cursor-pointer">
+
     <article
         class="group relative bg-surface-container-low rounded-xl border border-outline-variant/20 hover:border-primary-container overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(0,0,0,0.7)]">
+
         <div class="relative w-full aspect-[2/3] overflow-hidden bg-surface-container-lowest">
-            <img
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                th:src="${poster}"
-                th:alt="${title}">
+
+            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                th:src="${poster}" th:alt="${title}">
+
             <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
             </div>
+
             <div
                 class="absolute top-3 right-3 z-10 flex items-center gap-1 bg-surface-container-lowest/90 border border-outline-variant/30 px-2.5 py-1 rounded-full backdrop-blur-sm">
-                <span
-                    class="material-symbols-outlined text-primary-container text-sm"
+
+                <span class="material-symbols-outlined text-primary-container text-sm"
                     style="font-variation-settings: 'FILL' 1;">
                     star
                 </span>
-                <span
-                    class="text-primary-container font-label-md text-label-md font-bold"
-                    th:text="${rating}">
+
+                <span class="text-primary-container font-label-md text-label-md font-bold" th:text="${rating}">
                 </span>
             </div>
+
             <div
                 class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90">
             </div>
+
         </div>
+
         <div class="p-5 flex flex-col flex-grow justify-between gap-3">
+
             <div>
-                <div
-                    class="flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant mb-1">
+
+                <div class="flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant mb-1">
+
                     <span>
                         <span th:text="${date}"></span>
                         •
                         <span th:text="${duration}"></span>
                     </span>
+
                 </div>
-                <h3
-                    class="font-headline-sm text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors leading-tight"
+
+                <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors leading-tight"
                     th:text="${title}">
                 </h3>
-                <p
-                    class="text-on-surface-variant text-body-sm font-body-sm line-clamp-2 mt-2 leading-relaxed"
+
+                <p class="text-on-surface-variant text-body-sm font-body-sm line-clamp-2 mt-2 leading-relaxed"
                     th:text="${overview}">
                 </p>
+
             </div>
+
         </div>
+
     </article>
 </a>
