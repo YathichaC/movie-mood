@@ -21,11 +21,42 @@ document.addEventListener('DOMContentLoaded', () => {
             recommendationAction?.classList.remove('hidden');
         });
     });
-    nextButton?.addEventListener('click', () => {
+    nextButton?.addEventListener('click', async () => {
         if (!selectedMood) {
             return;
         }
-        window.location.href =
-            `/recommendations?id=${encodeURIComponent(selectedMood)}`;
+
+        const mood = selectedMood.toUpperCase();
+
+        nextButton.disabled = true;
+        nextButton.textContent = 'Loading...';
+
+        try {
+            const response = await fetch(
+                `/api/v1/recommendations?mood=${encodeURIComponent(mood)}`
+            );
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch recommendations');
+            }
+
+            const recommendations = await response.json();
+
+            sessionStorage.setItem(
+                'recommendations',
+                JSON.stringify(recommendations)
+            );
+
+            sessionStorage.setItem('selectedMood', mood);
+
+            window.location.href =
+                `/recommendations?mood=${encodeURIComponent(mood)}`;
+
+        } catch (error) {
+            console.error('Recommendation API error:', error);
+
+            nextButton.disabled = false;
+            nextButton.textContent = 'Continue';
+        }
     });
 });
