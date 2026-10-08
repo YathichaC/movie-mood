@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -22,28 +24,29 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final PlaylistRepository playlistRepository;
     private final WatchHistoryRepository watchHistoryRepository;
+    private final PlaylistImageService playlistImageService;
 
-    private static final Pattern EMAIL_PATTERN =
-            Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
 
     public UserService(
             UserRepository userRepository,
             UserDislikedGenreRepository userDislikedGenreRepository,
             PlaylistRepository playlistRepository,
             WatchHistoryRepository watchHistoryRepository,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            PlaylistImageService playlistImageService) {
 
         this.userRepository = userRepository;
         this.userDislikedGenreRepository = userDislikedGenreRepository;
         this.playlistRepository = playlistRepository;
         this.watchHistoryRepository = watchHistoryRepository;
         this.passwordEncoder = passwordEncoder;
+        this.playlistImageService = playlistImageService;
     }
 
     public User getUserById(UUID userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
     @Transactional
@@ -137,13 +140,38 @@ public class UserService {
     public void deleteAccount(UUID userId) {
         User user = getUserById(userId);
 
+        var playlists = playlistRepository.findByUserId(userId);
+
+        var coverImagePaths = playlists.stream()
+                .map(playlist -> playlist.getDetail())
+                .filter(detail -> detail != null)
+                .map(detail -> detail.getCoverImagePath())
+                .filter(path -> path != null && !path.isBlank())
+                .distinct()
+                .toList();
+
         userDislikedGenreRepository.deleteByUserUserId(userId);
 
         watchHistoryRepository.deleteByUserId(userId);
 
-        var playlists = playlistRepository.findByUserId(userId);
         playlistRepository.deleteAll(playlists);
 
         userRepository.delete(user);
+
+        TransactionSynchronizationManager.registerSynchronization(
+                new TransactionSynchronization() {
+                    @Override
+                    public void afterCommit() {
+                        for (String imagePath : coverImagePaths) {
+                            try {
+                                playlistImageService.deleteImage(imagePath);
+                            } catch (Exception exception) {
+                                System.err.println(
+                                        "Failed to delete playlist cover: "
+                                                + exception.getMessage());
+                            }
+                        }
+                    }
+                });
     }
 }

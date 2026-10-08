@@ -19,7 +19,7 @@ public interface MovieProvider {
     List<Movie> discoverMoviesByGenres(List<Integer> genreIds);
 
     MoviePage discoverMovies(
-            Integer genreId,
+            List<Integer> genreIds,
             Integer startYear,
             Integer endYear,
             Double minRating,

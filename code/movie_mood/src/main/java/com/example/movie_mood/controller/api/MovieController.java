@@ -79,7 +79,7 @@ public class MovieController {
         })
         @GetMapping("/discover")
         public MoviePageResponse discoverMovies(
-                        @RequestParam(required = false) @Positive Integer genreId,
+                        @RequestParam(required = false) List<@Positive Integer> genreIds,
 
                         @RequestParam(required = false) @Min(1900) @Max(2100) Integer startYear,
 
@@ -92,13 +92,13 @@ public class MovieController {
                         @RequestParam(defaultValue = "1") @Positive @Max(500) int page) {
 
                 return movieMapper.toPageResponse(
-                                movieService.discoverMovies(
-                                                genreId,
-                                                startYear,
-                                                endYear,
-                                                minRating,
-                                                sortBy,
-                                                page));
+                                        movieService.discoverMovies(
+        genreIds,
+        startYear,
+        endYear,
+        minRating,
+        sortBy,
+        page));
         }
 
         @Operation(summary = "Get movie details", description = "Returns details of a movie using its TMDB movie ID")
