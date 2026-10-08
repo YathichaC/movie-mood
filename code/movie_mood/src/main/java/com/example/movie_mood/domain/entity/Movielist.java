@@ -1,13 +1,19 @@
 package com.example.movie_mood.domain.entity;
+
 import java.util.UUID;
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity
-@Table(name = "Movielist")
+@Table(name = "Movielist", uniqueConstraints = {
+        @UniqueConstraint(name = "movielist_playlist_movie_unique", columnNames = { "playlist_id", "tmdb_movie_id" })
+})
 public class Movielist {
 
     @Id
-    @Column(name = "id")
+    @GeneratedValue
+    @UuidGenerator
+    @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -20,7 +20,7 @@
 
 <body
     class="bg-[#000000] text-[#F5F5F5] min-h-screen flex flex-col selection:bg-[#B8A58A] selection:text-[#000000] antialiased overflow-x-hidden">
-    <header th:replace="fragments/header :: header"></header>
+    <footer th:replace="~{fragments/header :: header}"></footer>
     <main class="flex-1 w-full max-w-[1600px] mx-auto px-4 md:px-12 py-8 flex items-center justify-center">
         <div class="w-full flex items-center justify-center">
             <section class="w-full max-w-[380px] flex flex-col items-center">
@@ -42,7 +42,7 @@
                                 for="username">USERNAME</label>
                             <input autocomplete="username"
                                 class="w-full h-[46px] bg-[#0A0A0A] border border-[#262626] rounded text-[#F5F5F5] placeholder:text-[#737373] px-3.5 text-sm focus:outline-none focus:border-[#B8A58A] focus:ring-0 transition-colors"
-                                id="username" name="username" placeholder="director or username" required type="text">
+                                id="username" name="username" placeholder="Enter your username" required type="text">
                         </div>
                         <div>
                             <label
@@ -50,7 +50,7 @@
                                 for="email">EMAIL ADDRESS</label>
                             <input autocomplete="email"
                                 class="w-full h-[46px] bg-[#0A0A0A] border border-[#262626] rounded text-[#F5F5F5] placeholder:text-[#737373] px-3.5 text-sm focus:outline-none focus:border-[#B8A58A] focus:ring-0 transition-colors"
-                                id="email" name="email" placeholder="patron@archive.org" required type="email">
+                                id="email" name="email" placeholder="Enter your email" required type="email">
                         </div>
                         <div>
                             <label
@@ -108,7 +108,7 @@
         </div>
     </main>
 
-    <footer th:replace="fragments/footer :: footer"></footer>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
     <div class="fixed bottom-4 md:bottom-6 left-4 md:left-auto right-4 md:right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none"
         id="toast">
         <div

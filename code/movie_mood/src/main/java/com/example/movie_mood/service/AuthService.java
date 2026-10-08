@@ -34,9 +34,6 @@ public class AuthService {
     }
 
     public User register(RegisterRequest request) {
-        if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new IllegalArgumentException("Passwords do not match");
-        }
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email is already registered");
         }

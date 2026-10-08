@@ -78,7 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 backdrop.style.display = 'block';
 
                 backdrop.onerror = () => {
-                    backdrop.onerror = null;
                     backdrop.removeAttribute('src');
                     backdrop.style.display = 'none';
                 };
@@ -104,7 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 trailerBtn.disabled = false;
                 trailerBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                 trailerBtn.addEventListener('click', () => {
-                    openTrailer(trailerKey);
+                    if (typeof window.openTrailer === 'function') {
+                        window.openTrailer(trailerKey);
+                    }
                 });
             }
         } catch (error) {
@@ -128,13 +129,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    if (watchlistBtn && watchedBtn) {
-        let inWatchlist = true;
-        let isWatched = false;
-        const renderWatchlist = () => {
+    if (watchlistBtn) {
+        let inWatchlist = false;
+
+        function renderWatchlist() {
             watchlistBtn.innerHTML = inWatchlist
                 ? `<span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1">bookmark</span><span>In Playlist</span>`
                 : `<span class="material-symbols-outlined text-[20px]">bookmark_add</span><span>Add to Playlist</span>`;
+
             watchlistBtn.className = `
                 flex-1 min-w-[120px] h-[44px] md:h-[46px] px-3
                 flex items-center justify-center gap-2
@@ -142,14 +144,66 @@ document.addEventListener('DOMContentLoaded', () => {
                 transition-all duration-200 focus:outline-none whitespace-nowrap
                 ${inWatchlist
                     ? 'bg-amber-400 text-black border-amber-400 hover:bg-amber-300'
-                    : 'bg-white/5 text-white border-white/20 hover:bg-white/10 hover:border-white/40'
+                    : 'bg-transparent text-white border-white/50 hover:bg-white hover:text-black hover:border-white'
                 }
             `;
-        };
+        }
+
+
+
+        async function loadPlaylistStatus() {
+            try {
+                if (typeof window.apiFetch !== 'function') {
+                    console.error('apiFetch is not available');
+                    return;
+                }
+
+                const response = await window.apiFetch('/v1/playlists');
+
+                if (!response || !response.ok) {
+                    throw new Error(
+                        `Failed to load playlists: ${response?.status ?? 'No response'}`
+                    );
+                }
+
+                const playlists = await response.json();
+
+                inWatchlist = Array.isArray(playlists) && playlists.some(playlist =>
+                    Array.isArray(playlist.items) &&
+                    playlist.items.some(item =>
+                        String(item.tmdbMovieId) === String(tmdbMovieId)
+                    )
+                );
+
+                renderWatchlist();
+            } catch (error) {
+                console.error('Failed to load playlist status:', error);
+            }
+        }
+
+        watchlistBtn.addEventListener('click', () => {
+            const titleEl = document.getElementById('detail-title');
+            const modalMovieTitle = document.getElementById('playlistModalMovieTitle');
+
+            if (modalMovieTitle && titleEl) {
+                modalMovieTitle.textContent = titleEl.textContent;
+            }
+        });
+
+        renderWatchlist();
+        loadPlaylistStatus();
+
+        window.addEventListener('playlist-updated', loadPlaylistStatus);
+    }
+
+    if (watchedBtn) {
+        let isWatched = false;
+
         const renderWatched = () => {
             watchedBtn.innerHTML = isWatched
                 ? `<span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1">check_circle</span><span>Watched</span>`
                 : `<span class="material-symbols-outlined text-[20px]">visibility</span><span>Mark as Watched</span>`;
+
             watchedBtn.className = `
                 flex-1 min-w-[120px] h-[44px] md:h-[46px] px-3
                 flex items-center justify-center gap-2
@@ -162,17 +216,11 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         };
 
-        watchlistBtn.addEventListener('click', () => {
-            inWatchlist = !inWatchlist;
-            renderWatchlist();
-        });
-
         watchedBtn.addEventListener('click', () => {
             isWatched = !isWatched;
             renderWatched();
         });
 
-        renderWatchlist();
         renderWatched();
     }
 

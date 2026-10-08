@@ -12,8 +12,7 @@ const toggleIcon =
 const submitBtn =
     document.getElementById("submitBtn");
 
-togglePasswordBtn.addEventListener("click", () => {
-
+togglePasswordBtn?.addEventListener("click", () => {
     const type =
         passwordInput.getAttribute("type") === "password"
             ? "text"
@@ -28,29 +27,26 @@ togglePasswordBtn.addEventListener("click", () => {
 });
 
 loginForm.addEventListener("submit", (event) => {
-
     event.preventDefault();
-
     handleLogin();
-
 });
 
 async function handleLogin() {
-
     const username =
-    document.getElementById("username").value.trim();
+        document.getElementById("username").value.trim();
 
     const password =
         document.getElementById("password").value;
 
+    submitBtn.disabled = true;
+
     showToast(
         "Connecting to MovieMood API",
-        "Checking your email and password...",
+        "Checking your username and password...",
         "lock_open"
     );
 
     try {
-
         const response = await fetch("/api/v1/auth/login", {
             method: "POST",
             headers: {
@@ -65,32 +61,32 @@ async function handleLogin() {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(
-                data.message || "Login failed"
-            );
+            throw new Error(data.message || "Login failed");
         }
 
-        // Store JWT token for authenticated API requests
+        // Store JWT and user information
         localStorage.setItem("token", data.token);
 
-        // Store basic user information for frontend use
-        localStorage.setItem("userId", data.userId);
-        localStorage.setItem("username", data.username);
-        localStorage.setItem("email", data.email);
+        if (data.userId != null) {
+            localStorage.setItem("userId", data.userId);
+        }
+
+        if (data.username) {
+            localStorage.setItem("username", data.username);
+        }
+
+        if (data.email) {
+            localStorage.setItem("email", data.email);
+        }
 
         submitBtn.innerHTML = `
             <span class="material-symbols-outlined text-[20px]">
                 done
             </span>
-
-            <span>
-                Success! Redirecting...
-            </span>
+            <span>Success! Redirecting...</span>
         `;
 
-        submitBtn.classList.remove(
-            "bg-primary-container"
-        );
+        submitBtn.classList.remove("bg-primary-container");
 
         submitBtn.classList.add(
             "bg-secondary-container",
@@ -103,13 +99,11 @@ async function handleLogin() {
             "verified"
         );
 
-        // Redirect after successful login
         setTimeout(() => {
             window.location.href = "/home";
         }, 800);
 
     } catch (error) {
-
         showToast(
             "Login Failed",
             error.message,
@@ -119,10 +113,7 @@ async function handleLogin() {
         submitBtn.disabled = false;
 
         submitBtn.innerHTML = `
-            <span>
-                Sign In
-            </span>
-
+            <span>Sign In</span>
             <span class="material-symbols-outlined text-[20px]">
                 arrow_forward
             </span>
@@ -130,51 +121,27 @@ async function handleLogin() {
     }
 }
 
-
 function showToast(
     title,
     message,
     icon = "check_circle"
 ) {
-
-    const toast =
-        document.getElementById("toast");
-
-    const toastTitle =
-        document.getElementById("toastTitle");
-
-    const toastIcon =
-        document.getElementById("toastIcon");
+    const toast = document.getElementById("toast");
+    const toastTitle = document.getElementById("toastTitle");
+    const toastIcon = document.getElementById("toastIcon");
 
     if (!toast || !toastTitle || !toastIcon) {
         return;
     }
 
-    toastTitle.textContent =
-        `${title} — ${message}`;
-
+    toastTitle.textContent = `${title} — ${message}`;
     toastIcon.textContent = icon;
 
-    toast.classList.remove(
-        "translate-y-24",
-        "opacity-0"
-    );
-
-    toast.classList.add(
-        "translate-y-0",
-        "opacity-100"
-    );
+    toast.classList.remove("translate-y-24", "opacity-0");
+    toast.classList.add("translate-y-0", "opacity-100");
 
     setTimeout(() => {
-
-        toast.classList.remove(
-            "translate-y-0",
-            "opacity-100"
-        );
-
-        toast.classList.add(
-            "translate-y-24",
-            "opacity-0"
-        );
+        toast.classList.remove("translate-y-0", "opacity-100");
+        toast.classList.add("translate-y-24", "opacity-0");
     }, 4000);
 }

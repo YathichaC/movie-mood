@@ -127,7 +127,7 @@
 </style>
 
 <body
-    class="bg-[#000000] text-[#F5F5F5] font-manrope antialiased selection:bg-[#B8A58A] selection:text-[#000000] min-h-screen flex flex-col">
+    class="bg-[#000000] text-[#F5F5F5] antialiased selection:bg-[#B8A58A] selection:text-[#000000] min-h-screen w-100% w-full flex flex-col">
     <header th:replace="~{fragments/navbar :: navbar('movies')}"></header>
     <main class="mx-auto max-w-[1600px] px-5 py-10 sm:px-8 lg:px-12 lg:py-14">
         <section class="mb-10">
@@ -315,11 +315,6 @@
                     <h3 class="font-display text-2xl font-medium">Nothing on screen</h3>
                     <p class="mx-auto mt-3 max-w-sm text-sm leading-6 text-neutral-500">No movies match your current
                         selection. Try adjusting your filters or explore the full collection.</p>
-                    <button id="toggleText" type="button" onclick="toggleEmptyState()"
-                        class="mt-7 inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2.5 text-sm text-neutral-300 transition hover:border-white/40 hover:text-white">
-                        <span class="material-symbols-outlined text-lg">arrow_back</span>
-                        <span>Show Movie Grid</span>
-                    </button>
                 </div>
                 <div id="paginationContainer"
                     class="mt-10 flex items-center justify-between border-t border-white/10 pt-6">

@@ -3,17 +3,18 @@ package com.example.movie_mood.service;
 import com.example.movie_mood.domain.entity.User;
 import com.example.movie_mood.dto.auth.LoginRequest;
 import com.example.movie_mood.dto.auth.RegisterRequest;
+import com.example.movie_mood.repository.PasswordResetTokenRepository;
 import com.example.movie_mood.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import java.util.Optional;
-import com.example.movie_mood.repository.PasswordResetTokenRepository;
 
 class AuthServiceTest {
 
@@ -33,15 +34,13 @@ class AuthServiceTest {
         RegisterRequest request = createRequest(
                 "testuser",
                 "test@example.com",
-                "password123",
-                "password123"
+                "Password123!"
         );
 
         when(userRepository.existsByEmail("test@example.com"))
                 .thenReturn(false);
         when(userRepository.existsByUsername("testuser"))
                 .thenReturn(false);
-
         when(userRepository.save(any(User.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -56,39 +55,8 @@ class AuthServiceTest {
 
         assertEquals("testuser", savedUser.getUsername());
         assertEquals("test@example.com", savedUser.getEmail());
-
-        assertNotEquals(
-                "password123",
-                savedUser.getPassword()
-        );
-
-        assertTrue(
-                savedUser.getPassword().startsWith("$2")
-        );
-    }
-
-    @Test
-    void registerShouldRejectPasswordMismatch() {
-        RegisterRequest request = createRequest(
-                "testuser",
-                "test@example.com",
-                "password123",
-                "differentPassword"
-        );
-
-        IllegalArgumentException exception =
-                assertThrows(
-                        IllegalArgumentException.class,
-                        () -> authService.register(request)
-                );
-
-        assertEquals(
-                "Passwords do not match",
-                exception.getMessage()
-        );
-
-        verify(userRepository, never())
-                .save(any(User.class));
+        assertNotEquals("Password123!", savedUser.getPassword());
+        assertTrue(savedUser.getPassword().startsWith("$2"));
     }
 
     @Test
@@ -96,26 +64,23 @@ class AuthServiceTest {
         RegisterRequest request = createRequest(
                 "testuser",
                 "test@example.com",
-                "password123",
-                "password123"
+                "Password123!"
         );
 
         when(userRepository.existsByEmail("test@example.com"))
                 .thenReturn(true);
 
-        IllegalArgumentException exception =
-                assertThrows(
-                        IllegalArgumentException.class,
-                        () -> authService.register(request)
-                );
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> authService.register(request)
+        );
 
         assertEquals(
                 "Email is already registered",
                 exception.getMessage()
         );
 
-        verify(userRepository, never())
-                .save(any(User.class));
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
@@ -123,120 +88,107 @@ class AuthServiceTest {
         RegisterRequest request = createRequest(
                 "testuser",
                 "test@example.com",
-                "password123",
-                "password123"
+                "Password123!"
         );
 
         when(userRepository.existsByEmail("test@example.com"))
                 .thenReturn(false);
-
         when(userRepository.existsByUsername("testuser"))
                 .thenReturn(true);
 
-        IllegalArgumentException exception =
-                assertThrows(
-                        IllegalArgumentException.class,
-                        () -> authService.register(request)
-                );
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> authService.register(request)
+        );
 
         assertEquals(
                 "Username is already taken",
                 exception.getMessage()
         );
 
-        verify(userRepository, never())
-                .save(any(User.class));
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
-void loginShouldReturnUserWhenCredentialsAreCorrect() {
+    void loginShouldReturnUserWhenCredentialsAreCorrect() {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    BCryptPasswordEncoder encoder =
-        new BCryptPasswordEncoder();
+        User user = new User(
+                "testuser",
+                "test@example.com",
+                encoder.encode("Password123!")
+        );
 
-    User user = new User(
-        "testuser",
-        "test@example.com",
-        encoder.encode("password123")
-);
-    when(userRepository.findByUsername("testuser"))
-            .thenReturn(Optional.of(user));
+        when(userRepository.findByUsername("testuser"))
+                .thenReturn(Optional.of(user));
 
-    LoginRequest request = new LoginRequest();
-    request.setUsername("testuser");
-    request.setPassword("password123");
+        LoginRequest request = new LoginRequest();
+        request.setUsername("testuser");
+        request.setPassword("Password123!");
 
-    User result = authService.login(request);
+        User result = authService.login(request);
 
-    assertEquals("testuser", result.getUsername());
-    assertEquals("test@example.com", result.getEmail());
-}
-
-    @Test
-void loginShouldRejectIncorrectPassword() {
-
-    BCryptPasswordEncoder encoder =
-        new BCryptPasswordEncoder();
-
-    User user = new User(
-        "testuser",
-        "test@example.com",
-        encoder.encode("password123")
-);
-
-    when(userRepository.findByUsername("testuser"))
-            .thenReturn(Optional.of(user));
-
-    LoginRequest request = new LoginRequest();
-    request.setUsername("testuser");
-    request.setPassword("wrongPassword");
-
-    IllegalArgumentException exception =
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> authService.login(request)
-            );
-
-    assertEquals(
-            "Invalid username or password",
-            exception.getMessage()
-    );
-}
+        assertEquals("testuser", result.getUsername());
+        assertEquals("test@example.com", result.getEmail());
+    }
 
     @Test
-void loginShouldRejectUnknownUsername() {
+    void loginShouldRejectIncorrectPassword() {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    when(userRepository.findByUsername("unknownuser"))
-            .thenReturn(Optional.empty());
-        
-    LoginRequest request = new LoginRequest();
-    request.setUsername("unknownuser");
-    request.setPassword("password123");
+        User user = new User(
+                "testuser",
+                "test@example.com",
+                encoder.encode("Password123!")
+        );
 
-    IllegalArgumentException exception =
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> authService.login(request)
-            );
+        when(userRepository.findByUsername("testuser"))
+                .thenReturn(Optional.of(user));
 
-    assertEquals(
-            "Invalid username or password",
-            exception.getMessage()
-    );
-}
+        LoginRequest request = new LoginRequest();
+        request.setUsername("testuser");
+        request.setPassword("wrongPassword");
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> authService.login(request)
+        );
+
+        assertEquals(
+                "Invalid username or password",
+                exception.getMessage()
+        );
+    }
+
+    @Test
+    void loginShouldRejectUnknownUsername() {
+        when(userRepository.findByUsername("unknownuser"))
+                .thenReturn(Optional.empty());
+
+        LoginRequest request = new LoginRequest();
+        request.setUsername("unknownuser");
+        request.setPassword("Password123!");
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> authService.login(request)
+        );
+
+        assertEquals(
+                "Invalid username or password",
+                exception.getMessage()
+        );
+    }
 
     private RegisterRequest createRequest(
             String username,
             String email,
-            String password,
-            String confirmPassword) {
+            String password) {
 
         RegisterRequest request = new RegisterRequest();
-
         request.setUsername(username);
         request.setEmail(email);
         request.setPassword(password);
-        request.setConfirmPassword(confirmPassword);
 
         return request;
     }
