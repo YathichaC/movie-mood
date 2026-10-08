@@ -17,6 +17,7 @@ import java.util.List;
 public class MovieServiceImpl implements MovieService {
     private static final List<String> ALLOWED_DISCOVER_SORT_VALUES = List.of(
             "rating_desc",
+            "rating_asc",
             "alphabet_asc",
             "release_desc",
             "release_asc");

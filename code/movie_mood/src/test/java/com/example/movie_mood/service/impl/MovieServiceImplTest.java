@@ -217,6 +217,45 @@ class MovieServiceImplTest {
         }
 
         @Test
+        void discoverMovies_withLowestRating_shouldPassSortToProvider() {
+                String sortBy = "rating_asc";
+                int page = 1;
+
+                MoviePage expectedPage = new MoviePage(
+                                List.of(),
+                                1,
+                                1,
+                                0);
+
+                when(movieProvider.discoverMovies(
+                                null,
+                                null,
+                                null,
+                                null,
+                                sortBy,
+                                page))
+                                .thenReturn(expectedPage);
+
+                MoviePage result = movieService.discoverMovies(
+                                null,
+                                null,
+                                null,
+                                null,
+                                sortBy,
+                                page);
+
+                assertEquals(expectedPage, result);
+
+                verify(movieProvider).discoverMovies(
+                                null,
+                                null,
+                                null,
+                                null,
+                                "rating_asc",
+                                page);
+        }
+
+        @Test
         void discoverMovies_withInvalidYearRange_shouldThrowIllegalArgumentException() {
                 IllegalArgumentException exception = assertThrows(
                                 IllegalArgumentException.class,

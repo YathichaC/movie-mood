@@ -120,6 +120,7 @@ public class TmdbRestClient {
                                 case "release_desc" -> "primary_release_date.desc";
                                 case "release_asc" -> "primary_release_date.asc";
                                 case "rating_desc" -> "vote_average.desc";
+                                case "rating_asc" -> "vote_average.asc";
                                 default -> "popularity.desc";
                         };
                 }
