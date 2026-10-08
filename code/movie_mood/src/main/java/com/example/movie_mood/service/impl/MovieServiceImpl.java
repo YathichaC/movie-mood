@@ -96,7 +96,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public MoviePage discoverMovies(
-            Integer genreId,
+            List<Integer> genreIds,
             Integer startYear,
             Integer endYear,
             Double minRating,
@@ -118,7 +118,7 @@ public class MovieServiceImpl implements MovieService {
         }
 
         return movieProvider.discoverMovies(
-                genreId,
+                genreIds,
                 startYear,
                 endYear,
                 minRating,

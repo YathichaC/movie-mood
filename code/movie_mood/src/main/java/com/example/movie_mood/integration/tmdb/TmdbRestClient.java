@@ -103,7 +103,7 @@ public class TmdbRestClient {
         }
 
         public TmdbMovieListResponse discoverMovies(
-                        Integer genreId,
+                        List<Integer> genreIds,
                         Integer startYear,
                         Integer endYear,
                         Double minRating,
@@ -134,8 +134,12 @@ public class TmdbRestClient {
                                                         .queryParam("page", page)
                                                         .queryParam("sort_by", tmdbSortBy);
 
-                                        if (genreId != null) {
-                                                uriBuilder.queryParam("with_genres", genreId);
+                                        if (genreIds != null && !genreIds.isEmpty()) {
+                                                String genres = genreIds.stream()
+                                                                .map(String::valueOf)
+                                                                .collect(java.util.stream.Collectors.joining("|"));
+
+                                                uriBuilder.queryParam("with_genres", genres);
                                         }
 
                                         if (startYear != null) {

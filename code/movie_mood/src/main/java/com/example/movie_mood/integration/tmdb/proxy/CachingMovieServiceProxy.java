@@ -56,7 +56,7 @@ public class CachingMovieServiceProxy implements MovieProvider {
 
     @Override
     public MoviePage discoverMovies(
-            Integer genreId,
+            List<Integer> genreIds,
             Integer startYear,
             Integer endYear,
             Double minRating,
@@ -64,7 +64,7 @@ public class CachingMovieServiceProxy implements MovieProvider {
             int page) {
 
         return movieAdapter.discoverMovies(
-                genreId,
+                genreIds,
                 startYear,
                 endYear,
                 minRating,

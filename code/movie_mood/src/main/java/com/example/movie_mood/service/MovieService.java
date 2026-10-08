@@ -22,7 +22,7 @@ public interface MovieService {
     List<Movie> filterMoviesByGenre(Integer genreId);
 
     MoviePage discoverMovies(
-            Integer genreId,
+            List<Integer> genreIds,
             Integer startYear,
             Integer endYear,
             Double minRating,

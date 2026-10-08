@@ -211,7 +211,7 @@ public class TmdbMovieAdapter implements MovieProvider {
 
     @Override
     public MoviePage discoverMovies(
-            Integer genreId,
+            List<Integer> genreIds,
             Integer startYear,
             Integer endYear,
             Double minRating,
@@ -219,7 +219,7 @@ public class TmdbMovieAdapter implements MovieProvider {
             int page) {
 
         TmdbMovieListResponse response = tmdbRestClient.discoverMovies(
-                genreId,
+                genreIds,
                 startYear,
                 endYear,
                 minRating,
