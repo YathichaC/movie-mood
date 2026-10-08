@@ -8,21 +8,14 @@
     <title>MovieMood</title>
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script th:src="@{/js/tailwind-config.js}"></script>
     <style>
-        html,
-        body,
-        button,
-        input,
-        textarea,
-        select {
-            font-family: 'Outfit', sans-serif !important;
-        }
-
         #genre-container input[type="checkbox"] {
             -webkit-appearance: none !important;
             appearance: none !important;
@@ -46,7 +39,7 @@
 </head>
 
 <body
-    class="bg-[#000000] text-on-surface min-h-screen flex flex-col font-outfit selection:bg-primary selection:text-surface">
+    class="bg-[#000000] text-on-surface min-h-screen flex flex-col font-manrope selection:bg-primary selection:text-surface">
     <header th:replace="~{fragments/navbar :: navbar('account')}"></header>
     <div id="notification-toast"
         class="fixed top-6 right-6 z-50 transform transition-all duration-300 flex items-center gap-3 bg-[#121212] border border-[#262626] text-[#F5F5F5] px-5 py-3.5 rounded-lg shadow-2xl translate-x-full opacity-0 pointer-events-none">

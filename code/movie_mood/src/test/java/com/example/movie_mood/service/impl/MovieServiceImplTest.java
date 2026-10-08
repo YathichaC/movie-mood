@@ -169,7 +169,7 @@ class MovieServiceImplTest {
 
         @Test
         void discoverMovies_shouldReturnMoviesFromProvider() {
-                Integer genreId = 28;
+                List<Integer> genreIds = List.of(28, 35);
                 Integer startYear = 2020;
                 Integer endYear = 2026;
                 Double minRating = 7.0;
@@ -189,7 +189,7 @@ class MovieServiceImplTest {
                                 100);
 
                 when(movieProvider.discoverMovies(
-                                genreId,
+                                genreIds,
                                 startYear,
                                 endYear,
                                 minRating,
@@ -198,7 +198,7 @@ class MovieServiceImplTest {
                                 .thenReturn(expectedPage);
 
                 MoviePage result = movieService.discoverMovies(
-                                genreId,
+                                genreIds,
                                 startYear,
                                 endYear,
                                 minRating,
@@ -208,7 +208,7 @@ class MovieServiceImplTest {
                 assertEquals(expectedPage, result);
 
                 verify(movieProvider).discoverMovies(
-                                genreId,
+                                genreIds,
                                 startYear,
                                 endYear,
                                 minRating,
@@ -217,11 +217,50 @@ class MovieServiceImplTest {
         }
 
         @Test
+        void discoverMovies_withLowestRating_shouldPassSortToProvider() {
+                String sortBy = "rating_asc";
+                int page = 1;
+
+                MoviePage expectedPage = new MoviePage(
+                                List.of(),
+                                1,
+                                1,
+                                0);
+
+                when(movieProvider.discoverMovies(
+                                null,
+                                null,
+                                null,
+                                null,
+                                sortBy,
+                                page))
+                                .thenReturn(expectedPage);
+
+                MoviePage result = movieService.discoverMovies(
+                                null,
+                                null,
+                                null,
+                                null,
+                                sortBy,
+                                page);
+
+                assertEquals(expectedPage, result);
+
+                verify(movieProvider).discoverMovies(
+                                null,
+                                null,
+                                null,
+                                null,
+                                "rating_asc",
+                                page);
+        }
+
+        @Test
         void discoverMovies_withInvalidYearRange_shouldThrowIllegalArgumentException() {
                 IllegalArgumentException exception = assertThrows(
                                 IllegalArgumentException.class,
                                 () -> movieService.discoverMovies(
-                                                28,
+                                                List.of(28),
                                                 2026,
                                                 2020,
                                                 7.0,
@@ -240,7 +279,7 @@ class MovieServiceImplTest {
                 IllegalArgumentException exception = assertThrows(
                                 IllegalArgumentException.class,
                                 () -> movieService.discoverMovies(
-                                                28,
+                                                List.of(28),
                                                 2020,
                                                 2026,
                                                 7.0,

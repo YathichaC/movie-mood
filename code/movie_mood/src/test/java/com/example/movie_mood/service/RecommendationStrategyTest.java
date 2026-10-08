@@ -51,7 +51,7 @@ public class RecommendationStrategyTest {
 
             @Override
             public MoviePage discoverMovies(
-                    Integer genreId,
+                    List<Integer> genreIds,
                     Integer startYear,
                     Integer endYear,
                     Double minRating,

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en" class="h-full">
+<html class="dark" lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -10,15 +10,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:ital,wght@1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500&family=Outfit:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script th:src="@{/js/tailwind-config.js}"></script>
 </head>
 
-<body class="bg-cinema-bg text-cinema-main min-h-screen w-full overflow-x-hidden font-sans antialiased relative">
+<body class="bg-cinema-bg text-cinema-main min-h-screen w-full overflow-x-hidden font-outfit antialiased relative">
     <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-black">
         <img id="detail-backdrop" src="" alt=""
             class="absolute inset-0 w-full h-full object-cover object-center scale-[1.01]">
@@ -31,7 +31,7 @@
 
 
     <div class="relative z-10 min-h-screen flex flex-col">
-        <header th:replace="~{fragments/navbar :: navbar('movie')}"></header>
+        <header th:replace="~{fragments/navbar :: navbar('movies')}"></header>
         <main class="w-full flex-1 flex items-center px-6 md:px-12 lg:px-16 py-10 md:py-12">
             <div
                 class="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-10 lg:gap-16 items-center">
@@ -106,10 +106,8 @@
     </div>
     <div th:replace="~{fragments/playlist-modal :: playlist-modal}"></div>
     <div th:replace="~{fragments/trailer-modal :: trailer-modal}"></div>
-    <script th:src="@{/js/playlist.js}"></script>
+    <script type="module" th:src="@{/js/playlist.js}"></script>
     <script th:src="@{/js/trailer.js}"></script>
     <script th:src="@{/js/detail.js}"></script>
 </body>
-
-
 </html>

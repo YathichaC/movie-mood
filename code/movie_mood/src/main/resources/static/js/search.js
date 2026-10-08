@@ -156,14 +156,16 @@ async function searchMovies(page = 1) {
 async function discoverMovies(page = 1) {
     const resultsContainer = document.getElementById('resultsContainer');
     if (!resultsContainer) return;
-    const selectedGenre = document.querySelector('input[name="genre"]:checked');
+    const selectedGenres = Array.from(
+        document.querySelectorAll('input[name="genre"]:checked')
+    ).map(input => input.value);
     const ratingSlider = document.getElementById('ratingSlider');
     const yearStartSlider = document.getElementById('yearStartSlider');
     const yearEndSlider = document.getElementById('yearEndSlider');
     const sortSelector = document.getElementById('sortSelector');
     const params = new URLSearchParams();
-    if (selectedGenre) {
-        params.set('genreId', selectedGenre.value);
+    if (selectedGenres.length > 0) {
+        params.set('genreIds', selectedGenres.join(','));
     }
     if (yearStartSlider) {
         params.set('startYear', yearStartSlider.value);
@@ -177,7 +179,7 @@ async function discoverMovies(page = 1) {
 
 
     if (sortSelector && sortSelector.value) {
-    params.set('sortBy', sortSelector.value);
+        params.set('sortBy', sortSelector.value);
     }
     params.set('page', page);
     try {
@@ -436,13 +438,6 @@ if (mobileFilterToggle && filterSidebar) {
 }
 document.querySelectorAll('input[name="genre"]').forEach(input => {
     input.addEventListener('change', () => {
-        if (input.checked) {
-            document.querySelectorAll('input[name="genre"]').forEach(other => {
-                if (other !== input) {
-                    other.checked = false;
-                }
-            });
-        }
         document.querySelectorAll('input[name="genre"]').forEach(genreInput => {
             const label = genreInput.closest('label');
             if (!label) return;
@@ -516,7 +511,7 @@ function resetFilters() {
         yearEndSlider.value = '2026';
     }
     updateYearSlider('start');
-    
+
     const sortSelector = document.getElementById('sortSelector');
     if (sortSelector) {
         sortSelector.value = '';
@@ -524,7 +519,7 @@ function resetFilters() {
 
     discoverMode = true;
     discoverMovies(1);
-    }
+}
 const resetFiltersButton = document.getElementById('resetFiltersButton');
 if (resetFiltersButton) {
     resetFiltersButton.addEventListener('click', resetFilters);

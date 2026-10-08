@@ -180,7 +180,7 @@ class MovieControllerTest {
                                 100);
 
                 when(movieService.discoverMovies(
-                                28,
+                                List.of(28, 35),
                                 2020,
                                 2026,
                                 7.0,
@@ -190,7 +190,7 @@ class MovieControllerTest {
 
                 mockMvc.perform(
                                 get("/api/v1/movies/discover")
-                                                .param("genreId", "28")
+                                                .param("genreIds", "28,35")
                                                 .param("startYear", "2020")
                                                 .param("endYear", "2026")
                                                 .param("minRating", "7.0")
@@ -210,18 +210,13 @@ class MovieControllerTest {
                                 .andExpect(jsonPath("$.totalElements").value(100));
 
                 verify(movieService).discoverMovies(
-                                28,
+                                List.of(28, 35),
                                 2020,
                                 2026,
                                 7.0,
                                 "rating_desc",
                                 1);
         }
-
-        
-
-
-        
 
         @Test
         void getMovieDetails_shouldReturnMovie() throws Exception {

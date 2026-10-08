@@ -94,48 +94,113 @@ function updatePasswordMatch() {
 }
 passwordInput.addEventListener("input", updatePasswordRequirements);
 confirmPasswordInput.addEventListener("input", updatePasswordMatch);
+
 registerForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+
     const username = usernameInput.value.trim();
     const email = emailInput.value.trim();
     const password = passwordInput.value;
     const confirmPassword = confirmPasswordInput.value;
+
     const rules = validatePassword(password);
+
     if (!Object.values(rules).every(Boolean)) {
         updatePasswordRequirements();
-        showToast("Invalid Password", "Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.", "error");
+        showToast(
+            "Invalid Password",
+            "Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.",
+            "error"
+        );
         passwordInput.focus();
         return;
     }
+
     if (password !== confirmPassword) {
         updatePasswordMatch();
-        showToast("Password Mismatch", "Passwords do not match.", "error");
+        showToast(
+            "Password Mismatch",
+            "Passwords do not match.",
+            "error"
+        );
         confirmPasswordInput.focus();
         return;
     }
+
     if (username.length < 3) {
-        showToast("Invalid Username", "Username must be at least 3 characters.", "error");
+        showToast(
+            "Invalid Username",
+            "Username must be at least 3 characters.",
+            "error"
+        );
         usernameInput.focus();
         return;
     }
+
     submitBtn.disabled = true;
-    submitBtn.innerHTML = `<span class="material-symbols-outlined animate-spin text-[20px]">progress_activity</span><span>Creating account...</span>`;
+    submitBtn.innerHTML = `
+        <span class="material-symbols-outlined animate-spin text-[20px]">
+            progress_activity
+        </span>
+        <span>Creating account...</span>
+    `;
+
     try {
-        const response = await fetch("/api/auth/register", {
+        const response = await fetch("/api/v1/auth/register", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, password, confirmPassword })
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username,
+                email,
+                password
+            })
         });
+
+        // อ่าน response เพียงครั้งเดียว
         const data = await response.json();
-        if (!response.ok) throw new Error(data.message || "Registration failed");
-        submitBtn.innerHTML = `<span class="material-symbols-outlined text-[20px]">done</span><span>Account Created!</span>`;
-        showToast("Registration Successful", "Your MovieMood account has been created.", "verified");
+
+        if (!response.ok) {
+            throw new Error(
+                data.message || "Unable to create your account."
+            );
+        }
+
+        showToast(
+            "Registration Successful",
+            "Your account has been created. Please log in.",
+            "check_circle"
+        );
+
+        submitBtn.innerHTML = `
+            <span class="material-symbols-outlined text-[20px]">
+                done
+            </span>
+            <span>Account Created!</span>
+        `;
+
+        setTimeout(() => {
+            window.location.href = "/auth/login";
+        }, 1000);
+
     } catch (error) {
-        showToast("Registration Failed", error.message, "error");
+        showToast(
+            "Registration Failed",
+            error.message || "Unable to create your account.",
+            "error"
+        );
+
         submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span>Create Account</span><span class="material-symbols-outlined text-[20px]">arrow_forward</span>`;
+        submitBtn.innerHTML = `
+            <span>Create Account</span>
+            <span class="material-symbols-outlined text-[20px]">
+                arrow_forward
+            </span>
+        `;
     }
 });
+
 function showToast(title, message, icon = "check_circle") {
     const toast = document.getElementById("toast");
     const toastTitle = document.getElementById("toastTitle");

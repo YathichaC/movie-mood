@@ -24,14 +24,17 @@
             </nav>
         </div>
         <div class="flex items-center gap-6 h-full">
-            <a th:href="@{/profile}"
-                class="flex items-center justify-center h-10 min-w-[80px] font-manrope text-[11px] uppercase tracking-[0.12em] text-[#D4D4D4] hover:text-[#FFFFFF] transition-colors whitespace-nowrap">Account</a>
+            <a th:href="@{/profile}" id="navbarUsername"
+                class="flex items-center justify-center h-10 min-w-[80px] font-manrope text-[11px] uppercase tracking-[0.12em] text-[#D4D4D4] hover:text-[#FFFFFF] transition-colors whitespace-nowrap">
+
+            </a>
             <button type="button" onclick="logout()"
                 class="flex items-center justify-center h-10 min-w-[80px] font-manrope text-[11px] uppercase tracking-[0.12em] text-[#D4D4D4] hover:text-[#FFFFFF] transition-colors cursor-pointer bg-transparent border-0 p-0 whitespace-nowrap">
                 Logout
             </button>
         </div>
     </div>
+    <script th:src="@{/js/navbar.js}"></script>
     <script th:src="@{/js/api.js}"></script>
     <script th:src="@{/js/logout.js}"></script>
 </nav>
