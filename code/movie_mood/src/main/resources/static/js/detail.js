@@ -12,6 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const tmdbMovieId = params.get('id');
 
+    function getAuthHeaders() {
+        const token = localStorage.getItem('token');
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    }
+
     if (!tmdbMovieId) {
         showError('Movie ID is missing.');
         return;
@@ -211,17 +216,59 @@ document.addEventListener('DOMContentLoaded', () => {
                 transition-all duration-200 focus:outline-none whitespace-nowrap
                 ${isWatched
                     ? 'bg-emerald-400/10 text-emerald-300 border-emerald-400/50 hover:bg-emerald-400/15'
-                    : 'bg-white/5 text-white/85 border-white/20 hover:bg-white/10 hover:border-white/40'
+                    : 'bg-transparent text-white border-white/50 hover:bg-white hover:text-black hover:border-white'
                 }
             `;
         };
 
-        watchedBtn.addEventListener('click', () => {
-            isWatched = !isWatched;
-            renderWatched();
+        async function loadWatchHistoryStatus() {
+            try {
+                const response = await fetch(
+                    `/api/v1/history/check/${encodeURIComponent(tmdbMovieId)}`,
+                    {
+                        headers: getAuthHeaders()
+                    }
+                );
+
+                if (!response.ok) {
+                    return;
+                }
+
+                const data = await response.json();
+                isWatched = Boolean(data?.watched);
+                renderWatched();
+            } catch (error) {
+                console.warn('Unable to check watch history status:', error);
+            }
+        }
+
+        watchedBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch(
+                    `/api/v1/history/toggle/${encodeURIComponent(tmdbMovieId)}`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            ...getAuthHeaders(),
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error(`Failed to toggle watch history: ${response.status}`);
+                }
+
+                const data = await response.json();
+                isWatched = Boolean(data?.watched);
+                renderWatched();
+            } catch (error) {
+                console.warn('Unable to update watch history:', error);
+            }
         });
 
         renderWatched();
+        loadWatchHistoryStatus();
     }
 
     loadMovieDetails();
