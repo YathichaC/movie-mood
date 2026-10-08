@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/users/{userId}/preferences")
+@RequestMapping("/api/v1/{userId}/preferences")
 @SecurityRequirement(name = "bearerAuth")
 public class UserPreferenceController {
 
