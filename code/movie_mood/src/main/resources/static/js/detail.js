@@ -135,54 +135,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (watchlistBtn) {
-        let inWatchlist = false;
-
-        function renderWatchlist() {
-            watchlistBtn.innerHTML = inWatchlist
-                ? `<span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1">bookmark</span><span>In Playlist</span>`
-                : `<span class="material-symbols-outlined text-[20px]">bookmark_add</span><span>Add to Playlist</span>`;
-
-            watchlistBtn.className = `
-                flex-1 min-w-[120px] h-[44px] md:h-[46px] px-3
-                flex items-center justify-center gap-2
-                border text-[11px] font-medium tracking-[0.1em] uppercase
-                transition-all duration-200 focus:outline-none whitespace-nowrap
-                ${inWatchlist
-                    ? 'bg-amber-400 text-black border-amber-400 hover:bg-amber-300'
-                    : 'bg-transparent text-white border-white/50 hover:bg-white hover:text-black hover:border-white'
-                }
-            `;
-        }
-
-
-
-        async function loadPlaylistStatus() {
+        async function syncWatchlistButton(playlists = null) {
             try {
-                if (typeof window.apiFetch !== 'function') {
-                    console.error('apiFetch is not available');
-                    return;
-                }
+                const playlistState = Array.isArray(playlists)
+                    ? playlists
+                    : await (async () => {
+                        const response = await fetch(
+                            `/api/v1/playlists/picker?tmdbMovieId=${encodeURIComponent(tmdbMovieId)}`,
+                            { headers: getAuthHeaders() }
+                        );
 
-                const response = await window.apiFetch('/v1/playlists');
+                        if (!response.ok) {
+                            return [];
+                        }
 
-                if (!response || !response.ok) {
-                    throw new Error(
-                        `Failed to load playlists: ${response?.status ?? 'No response'}`
-                    );
-                }
+                        return await response.json();
+                    })();
 
-                const playlists = await response.json();
+                const isInPlaylist = Array.isArray(playlistState)
+                    && playlistState.some(item => Boolean(
+                        item.containsCurrentMovie ?? item.containsMovie ?? item.inPlaylist ?? false
+                    ));
 
-                inWatchlist = Array.isArray(playlists) && playlists.some(playlist =>
-                    Array.isArray(playlist.items) &&
-                    playlist.items.some(item =>
-                        String(item.tmdbMovieId) === String(tmdbMovieId)
-                    )
-                );
+                watchlistBtn.innerHTML = isInPlaylist
+                    ? `<span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1">playlist_add_check</span><span>In Playlist</span>`
+                    : `<span class="material-symbols-outlined text-[20px]">bookmark_add</span><span>Add to Playlist</span>`;
 
-                renderWatchlist();
+                watchlistBtn.className = `
+                    flex-1 min-w-[120px] h-[44px] md:h-[46px] px-3
+                    flex items-center justify-center gap-2
+                    border text-[11px] font-medium tracking-[0.1em] uppercase
+                    transition-all duration-200 focus:outline-none whitespace-nowrap
+                    ${isInPlaylist
+                        ? 'bg-amber-400 text-black border-amber-400 hover:bg-amber-300'
+                        : 'bg-transparent text-white border-white/50 hover:bg-white hover:text-black hover:border-white'}
+                `;
             } catch (error) {
-                console.error('Failed to load playlist status:', error);
+                console.warn('Unable to load playlist state:', error);
             }
         }
 
@@ -195,10 +184,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        renderWatchlist();
-        loadPlaylistStatus();
+        window.addEventListener('playlist-updated', event => {
+            const updatedMovieId = event?.detail?.tmdbMovieId;
+            const playlists = event?.detail?.playlists;
 
-        window.addEventListener('playlist-updated', loadPlaylistStatus);
+            if (updatedMovieId && String(updatedMovieId) === String(tmdbMovieId)) {
+                syncWatchlistButton(Array.isArray(playlists) ? playlists : null);
+            }
+        });
+
+        syncWatchlistButton();
     }
 
     if (watchedBtn) {

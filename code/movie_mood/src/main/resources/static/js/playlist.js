@@ -1,5 +1,8 @@
 
-import { loadPlaylists } from './playlist/playlist-api.js';
+import {
+    loadPlaylistPicker,
+    loadPlaylists
+} from './playlist/playlist-api.js';
 import { setupModal } from './playlist/playlist-modal.js';
 import {
     renderPlaylistCards,
@@ -15,40 +18,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const pageList = document.getElementById('playlist-items-list');
     const detailButton = document.getElementById('watchlistActionBtn');
 
-    async function reload() {
-        const playlists = await loadPlaylists(Boolean(modalList));
-
+    function renderLoadingState() {
         if (modalList) {
-            renderPlaylistCheckboxes(
-                playlists,
-                modalList,
-                getCurrentMovieId()
-            );
-        }
-
-        if (pageList) {
-            renderPlaylistCards(playlists, pageList);
+            modalList.innerHTML = '<p class="py-6 text-center text-[12px] text-[#737373]">Loading playlists...</p>';
         }
     }
 
-    async function openPlaylistModal() {
-        const modal = document.getElementById('playlistModal');
-        if (!modal) return;
+    async function reload(forceRefresh = false) {
+        if (modalList) {
+            renderLoadingState();
+        }
 
         try {
-            const playlists = await loadPlaylists(true);
+            const currentMovieId = getCurrentMovieId();
+
+            const [pickerPlaylists, pagePlaylists] = await Promise.all([
+                modalList ? loadPlaylistPicker(forceRefresh, currentMovieId) : Promise.resolve([]),
+                pageList ? loadPlaylists(forceRefresh) : Promise.resolve([])
+            ]);
 
             if (modalList) {
                 renderPlaylistCheckboxes(
-                    playlists,
+                    pickerPlaylists,
                     modalList,
-                    getCurrentMovieId()
+                    currentMovieId
                 );
             }
 
-            window.openModal?.('playlistModal');
+            if (pageList) {
+                renderPlaylistCards(pagePlaylists, pageList);
+            }
+
+            return { pickerPlaylists, pagePlaylists, currentMovieId };
         } catch (error) {
             console.error('Failed to load playlists:', error);
+
+            if (modalList) {
+                modalList.innerHTML = '<p class="py-6 text-center text-[12px] text-[#fca5a5]">Unable to load playlists. Please try again.</p>';
+            }
+
+            if (pageList) {
+                pageList.innerHTML = '<div class="col-span-full py-20 text-center"><p class="text-white/40">Unable to load playlists.</p></div>';
+            }
+
+            return { pickerPlaylists: [], pagePlaylists: [], currentMovieId: getCurrentMovieId() };
         }
     }
 

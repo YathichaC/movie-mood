@@ -74,6 +74,22 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public Movie getMovieSummaryForHistory(String tmdbMovieId) {
+        Movie movie = movieProvider.getMovie(tmdbMovieId);
+        if (movie == null) {
+            return null;
+        }
+
+        Movie summary = new Movie();
+        summary.setTmdbMovieId(movie.getTmdbMovieId());
+        summary.setTitle(movie.getTitle());
+        summary.setPosterPath(movie.getPosterPath());
+        summary.setReleaseDate(movie.getReleaseDate());
+        summary.setRating(movie.getRating());
+        return summary;
+    }
+
+    @Override
     public List<Movie> filterMoviesByGenre(Integer genreId) {
         return movieProvider.discoverMoviesByGenres(
                 List.of(genreId));

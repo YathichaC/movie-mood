@@ -4,41 +4,56 @@ import com.example.movie_mood.integration.tmdb.dto.TmdbMovieImagesResponse;
 import com.example.movie_mood.exception.MovieNotFoundException;
 import com.example.movie_mood.integration.tmdb.dto.TmdbMovieListResponse;
 import com.example.movie_mood.integration.tmdb.dto.TmdbMovieResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import com.example.movie_mood.integration.tmdb.dto.TmdbVideoListResponse;
+
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 @Component
 public class TmdbRestClient {
+
+        private static final Logger log = LoggerFactory.getLogger(TmdbRestClient.class);
 
         private final RestClient restClient;
 
         public TmdbRestClient(
                         @Value("${tmdb.api.base-url}") String baseUrl,
-                        @Value("${tmdb.api.token}") String token) {
+                        @Value("${tmdb.api.token}") String token,
+                        @Value("${tmdb.http.connect-timeout-ms:5000}") int connectTimeoutMs,
+                        @Value("${tmdb.http.read-timeout-ms:8000}") int readTimeoutMs) {
+
+                SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+                requestFactory.setConnectTimeout(connectTimeoutMs);
+                requestFactory.setReadTimeout(readTimeoutMs);
 
                 this.restClient = RestClient.builder()
                                 .baseUrl(baseUrl)
+                                .requestFactory(requestFactory)
                                 .defaultHeader("Authorization", "Bearer " + token)
                                 .defaultHeader("Accept", "application/json")
                                 .build();
         }
 
         public TmdbMovieListResponse getPopularMovies(int page) {
-                return restClient.get()
+                return executeTimedRequest("getPopularMovies", () -> restClient.get()
                                 .uri(uriBuilder -> uriBuilder
                                                 .path("/movie/popular")
                                                 .queryParam("language", "en-US")
                                                 .queryParam("page", page)
                                                 .build())
                                 .retrieve()
-                                .body(TmdbMovieListResponse.class);
+                                .body(TmdbMovieListResponse.class));
         }
 
         public TmdbMovieListResponse searchMovies(String keyword, int page) {
-                return restClient.get()
+                return executeTimedRequest("searchMovies", () -> restClient.get()
                                 .uri(uriBuilder -> uriBuilder
                                                 .path("/search/movie")
                                                 .queryParam("query", keyword)
@@ -47,11 +62,11 @@ public class TmdbRestClient {
                                                 .queryParam("page", page)
                                                 .build())
                                 .retrieve()
-                                .body(TmdbMovieListResponse.class);
+                                .body(TmdbMovieListResponse.class));
         }
 
         public TmdbMovieResponse getMovie(String tmdbMovieId) {
-                return restClient.get()
+                return executeTimedRequest("getMovie", () -> restClient.get()
                                 .uri("/movie/{id}", tmdbMovieId)
                                 .retrieve()
                                 .onStatus(
@@ -59,18 +74,18 @@ public class TmdbRestClient {
                                                 (request, response) -> {
                                                         throw new MovieNotFoundException(tmdbMovieId);
                                                 })
-                                .body(TmdbMovieResponse.class);
+                                .body(TmdbMovieResponse.class));
         }
 
         public TmdbVideoListResponse getMovieVideos(String tmdbMovieId) {
-                return restClient.get()
+                return executeTimedRequest("getMovieVideos", () -> restClient.get()
                                 .uri("/movie/{id}/videos?language=en-US", tmdbMovieId)
                                 .retrieve()
-                                .body(TmdbVideoListResponse.class);
+                                .body(TmdbVideoListResponse.class));
         }
 
         public TmdbMovieImagesResponse getMovieImages(String tmdbMovieId) {
-                return restClient.get()
+                return executeTimedRequest("getMovieImages", () -> restClient.get()
                                 .uri(uriBuilder -> uriBuilder
                                                 .path("/movie/{id}/images")
                                                 .queryParam("include_image_language", "en,null")
@@ -81,7 +96,17 @@ public class TmdbRestClient {
                                                 (request, response) -> {
                                                         throw new MovieNotFoundException(tmdbMovieId);
                                                 })
-                                .body(TmdbMovieImagesResponse.class);
+                                .body(TmdbMovieImagesResponse.class));
+        }
+
+        private <T> T executeTimedRequest(String operation, Supplier<T> requestSupplier) {
+                long startNanos = System.nanoTime();
+                try {
+                        return requestSupplier.get();
+                } finally {
+                        long durationMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
+                        log.info("TMDB HTTP request operation={} durationMs={}", operation, durationMs);
+                }
         }
 
         public TmdbMovieListResponse discoverMoviesByGenres(List<Integer> genreIds) {

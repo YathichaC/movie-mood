@@ -13,6 +13,7 @@ public interface WatchHistoryService {
     WatchHistoryResponse toggleWatchedMovie(UUID userId, String tmdbMovieId);
     List<WatchHistoryResponse> getUserWatchHistory(UUID userId);
     List<WatchHistoryMovieResponse> getUserMovieHistory(UUID userId, Pageable pageable);
+    long getUserMovieHistoryCount(UUID userId);
 
     boolean isMovieWatched(UUID userId, String tmdbMovieId);
     void removeWatchedMovie(UUID userId, String tmdbMovieId);

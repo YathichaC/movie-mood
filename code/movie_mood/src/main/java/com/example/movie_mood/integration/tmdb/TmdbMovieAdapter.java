@@ -5,6 +5,8 @@ import com.example.movie_mood.domain.model.MoviePage;
 import com.example.movie_mood.integration.tmdb.dto.TmdbGenreResponse;
 import com.example.movie_mood.integration.tmdb.dto.TmdbMovieListResponse;
 import com.example.movie_mood.integration.tmdb.dto.TmdbMovieResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import com.example.movie_mood.domain.model.Video;
 import com.example.movie_mood.integration.tmdb.dto.TmdbVideoListResponse;
@@ -15,9 +17,12 @@ import com.example.movie_mood.integration.tmdb.dto.TmdbMovieImagesResponse;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class TmdbMovieAdapter implements MovieProvider {
+
+    private static final Logger log = LoggerFactory.getLogger(TmdbMovieAdapter.class);
 
     private final TmdbRestClient tmdbRestClient;
     private static final int TMDB_MAX_PAGE = 500;
@@ -93,7 +98,14 @@ public class TmdbMovieAdapter implements MovieProvider {
             return movie;
         }
 
+        long secondaryImageRequestStartNanos = System.nanoTime();
         TmdbMovieImagesResponse images = tmdbRestClient.getMovieImages(tmdbMovieId);
+        long secondaryImageRequestMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - secondaryImageRequestStartNanos);
+        log.info("TMDB secondary image lookup durationMs={} movieIdPresent={} missingPoster={} missingBackdrop={}",
+                secondaryImageRequestMs,
+                tmdbMovieId != null && !tmdbMovieId.isBlank(),
+                missingPoster,
+                missingBackdrop);
 
         if (images == null) {
             return movie;

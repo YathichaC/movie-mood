@@ -32,8 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
         nextButton.textContent = 'Loading...';
 
         try {
-            const response = await fetch(
-                `/api/v1/recommendations?mood=${encodeURIComponent(mood)}`
+            const response = await apiFetch(
+                `/v1/recommendations?mood=${encodeURIComponent(mood)}`
             );
 
             if (!response.ok) {

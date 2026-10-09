@@ -69,11 +69,26 @@ async function fetchHistory(page = 1) {
         }
 
         const historyItems = await response.json();
-        totalPages = Math.max(1, Math.ceil(historyItems.length / pageSize));
-        const hasPreviousPage = page > 1;
-        const hasNextPage = historyItems.length >= pageSize;
+        const totalItemsHeader = response.headers.get('X-Total-Count');
+        const totalPagesHeader = response.headers.get('X-Total-Pages');
+        const currentPageHeader = response.headers.get('X-Current-Page');
 
-        if (historyItems.length === 0) {
+        const totalItems = Number.parseInt(totalItemsHeader || '', 10);
+        const totalItemsFromApi = Number.isFinite(totalItems) && totalItems >= 0
+            ? totalItems
+            : historyItems.length;
+
+        currentPage = Number.parseInt(currentPageHeader || `${page}`, 10);
+        if (!Number.isFinite(currentPage) || currentPage < 1) {
+            currentPage = page;
+        }
+
+        const totalPagesHeaderValue = Number.parseInt(totalPagesHeader || '', 10);
+        totalPages = Number.isFinite(totalPagesHeaderValue) && totalPagesHeaderValue > 0
+            ? totalPagesHeaderValue
+            : Math.max(1, Math.ceil(totalItemsFromApi / pageSize));
+
+        if (historyItems.length === 0 || totalItemsFromApi === 0) {
             container.innerHTML = '';
             container.classList.add('hidden');
 
@@ -118,7 +133,11 @@ async function fetchHistory(page = 1) {
         emptyState.classList.remove('flex');
 
         container.classList.remove('hidden');
-        paginationWrapper.classList.remove('hidden');
+        if (totalItemsFromApi > pageSize) {
+            paginationWrapper.classList.remove('hidden');
+        } else {
+            paginationWrapper.classList.add('hidden');
+        }
 
         if (clearBtn) {
             clearBtn.classList.remove('hidden');
@@ -126,9 +145,9 @@ async function fetchHistory(page = 1) {
 
         renderMovieCards(historyItems);
         updatePagination({
-            page,
+            page: currentPage,
             totalPages,
-            totalElements: historyItems.length
+            totalElements: totalItemsFromApi
         });
 
         window.scrollTo({
@@ -304,7 +323,7 @@ function updatePagination(data) {
     const pages = data.totalPages || totalPages || 1;
     const total = data.totalElements || 0;
 
-    if (total === 0) {
+    if (total <= pageSize) {
         pagination.classList.add('hidden');
         info.textContent = 'Page 1 of 1';
         pagination.innerHTML = '';

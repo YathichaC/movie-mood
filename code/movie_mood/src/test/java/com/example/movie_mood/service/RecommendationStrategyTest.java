@@ -71,6 +71,11 @@ public class RecommendationStrategyTest {
             }
 
             @Override
+            public Movie getMovieSummaryForHistory(String tmdbMovieId) {
+                return null;
+            }
+
+            @Override
             public Video getMovieTrailer(String tmdbMovieId) {
                 return null;
             }

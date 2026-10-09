@@ -14,6 +14,8 @@ import java.util.UUID;
 public interface WatchHistoryRepository extends JpaRepository<WatchHistory, UUID> {
     List<WatchHistory> findByUserId(UUID userId);
 
+    long countByUserId(UUID userId);
+
     Page<WatchHistory> findByUserId(UUID userId, Pageable pageable);
 
     Optional<WatchHistory> findByUserIdAndTmdbMovieId(UUID userId, String tmdbMovieId);

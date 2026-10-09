@@ -12,62 +12,65 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+        private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
+        public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+                this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http
-                .csrf(csrf -> csrf.disable())
+                http
+                                .csrf(csrf -> csrf.disable())
 
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/movies/**").permitAll()
-                        .requestMatchers("/api/v1/recommendations/**").permitAll()
-                        .requestMatchers(
-                                "/swagger",
-                                "/swagger/**",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**")
-                        .permitAll()
-                        .requestMatchers(
-                                "/css/**",
-                                "/js/**",
-                                "/img/**",
-                                "/uploads/**",
-                                "/favicon.ico")
-                        .permitAll()
-                        .requestMatchers(
-                                "/",
-                                "/home",
-                                "/auth/**",
-                                "/movie/**",
-                                "/recommendations",
-                                "/playlist/**",
-                                "/history",
-                                "/profile",
-                                "/privacy-policy",
-                                "/terms-of-service")
-                        .permitAll()
-                        .requestMatchers("/api/**").authenticated()
-                        .anyRequest().permitAll())
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers("/api/v1/auth/**").permitAll()
+                                                .requestMatchers("/api/v1/movies/**").permitAll()
+                                                .requestMatchers(
+                                                                "/api/v1/recommendations",
+                                                                "/api/v1/recommendations/**")
+                                                .authenticated()
+                                                .requestMatchers(
+                                                                "/swagger",
+                                                                "/swagger/**",
+                                                                "/swagger-ui/**",
+                                                                "/v3/api-docs/**")
+                                                .permitAll()
+                                                .requestMatchers(
+                                                                "/css/**",
+                                                                "/js/**",
+                                                                "/img/**",
+                                                                "/uploads/**",
+                                                                "/favicon.ico")
+                                                .permitAll()
+                                                .requestMatchers(
+                                                                "/",
+                                                                "/home",
+                                                                "/auth/**",
+                                                                "/movie/**",
+                                                                "/recommendations",
+                                                                "/playlist/**",
+                                                                "/history",
+                                                                "/profile",
+                                                                "/privacy-policy",
+                                                                "/terms-of-service")
+                                                .permitAll()
+                                                .requestMatchers("/api/**").authenticated()
+                                                .anyRequest().permitAll())
 
-                .addFilterBefore(
-                        jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                                .addFilterBefore(
+                                                jwtAuthenticationFilter,
+                                                UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 }

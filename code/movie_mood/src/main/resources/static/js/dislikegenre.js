@@ -129,19 +129,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function loadDislikedGenres() {
         try {
-            const userResponse = await apiFetch('/v1/auth/me');
+            const userId = localStorage.getItem("userId");
 
-            if (!userResponse || !userResponse.ok) {
+            if (!userId) {
+                showToast("Please log in again.", "error");
                 return;
             }
 
-            const user = await userResponse.json();
-
             const preferenceResponse = await apiFetch(
-                `/v1/${user.userId}/preferences/disliked-genres`
+                `/v1/${userId}/preferences/disliked-genres`
             );
 
             if (!preferenceResponse || !preferenceResponse.ok) {
+                showToast("Failed to load preferences.", "error");
                 return;
             }
 
@@ -183,22 +183,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-            const userResponse = await apiFetch('/v1/auth/me');
+            const userId = localStorage.getItem("userId");
 
-            if (!userResponse || !userResponse.ok) {
-                showToast(
-                    'Failed to identify current user.',
-                    'error'
-                );
+            if (!userId) {
+                showToast("Please log in again.", "error");
                 return;
             }
-
-            const user = await userResponse.json();
 
             const dislikedGenreIds = getCurrentGenres();
 
             const response = await apiFetch(
-                `/v1/${user.userId}/preferences/disliked-genres`,
+                `/v1/${userId}/preferences/disliked-genres`,
                 {
                     method: 'PUT',
                     body: JSON.stringify(dislikedGenreIds)

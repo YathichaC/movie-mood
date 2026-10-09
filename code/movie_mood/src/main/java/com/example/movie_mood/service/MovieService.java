@@ -17,6 +17,8 @@ public interface MovieService {
 
     Movie getMovieDetails(String tmdbMovieId);
 
+    Movie getMovieSummaryForHistory(String tmdbMovieId);
+
     Video getMovieTrailer(String tmdbMovieId);
 
     List<Movie> filterMoviesByGenre(Integer genreId);

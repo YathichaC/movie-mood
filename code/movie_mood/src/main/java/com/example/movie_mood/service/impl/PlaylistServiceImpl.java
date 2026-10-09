@@ -4,6 +4,8 @@ import com.example.movie_mood.domain.entity.Playlist;
 import com.example.movie_mood.domain.entity.Movielist;
 import com.example.movie_mood.dto.MovielistRequest;
 import com.example.movie_mood.dto.MovielistResponse;
+import com.example.movie_mood.dto.PlaylistMovieBatchRequest;
+import com.example.movie_mood.dto.PlaylistPickerResponse;
 import com.example.movie_mood.dto.PlaylistRequest;
 import com.example.movie_mood.dto.PlaylistResponse;
 import com.example.movie_mood.repository.MovielistRepository;
@@ -14,7 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.movie_mood.domain.entity.PlaylistDetail;
 
 import java.util.UUID;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +46,32 @@ public class PlaylistServiceImpl implements PlaylistService {
                 .findByUserId(userId)
                 .stream()
                 .map(PlaylistResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PlaylistPickerResponse> getUserPlaylistsForPicker(UUID userId, String tmdbMovieId) {
+        Set<UUID> playlistsContainingMovie = new HashSet<>();
+        if (tmdbMovieId != null && !tmdbMovieId.isBlank()) {
+            String normalizedMovieId = tmdbMovieId.trim();
+            playlistsContainingMovie.addAll(
+                    movielistRepository.findPlaylistIdsByTmdbMovieIdAndUserId(normalizedMovieId, userId)
+            );
+        }
+
+        return playlistRepository.findPickerDataByUserId(userId).stream()
+                .map(row -> {
+                    UUID playlistId = (UUID) row[0];
+                    String playlistName = (String) row[1];
+                    long itemCount = row[2] == null ? 0L : ((Number) row[2]).longValue();
+
+                    return new PlaylistPickerResponse(
+                            playlistId,
+                            playlistName,
+                            Math.toIntExact(itemCount),
+                            playlistsContainingMovie.contains(playlistId));
+                })
                 .collect(Collectors.toList());
     }
 
@@ -171,6 +203,62 @@ public class PlaylistServiceImpl implements PlaylistService {
         Movielist savedItem = movielistRepository.save(item);
 
         return new MovielistResponse(savedItem);
+    }
+
+    @Override
+    public void updateMoviePlaylists(
+            UUID userId,
+            PlaylistMovieBatchRequest request) {
+
+        if (request == null || request.getTmdbMovieId() == null || request.getTmdbMovieId().isBlank()) {
+            throw new IllegalArgumentException("tmdbMovieId is required");
+        }
+
+        String tmdbMovieId = request.getTmdbMovieId().trim();
+
+        Set<UUID> addToPlaylistIds = new HashSet<>(
+                request.getAddToPlaylistIds() == null
+                        ? List.of()
+                        : request.getAddToPlaylistIds());
+        Set<UUID> removeFromPlaylistIds = new HashSet<>(
+                request.getRemoveFromPlaylistIds() == null
+                        ? List.of()
+                        : request.getRemoveFromPlaylistIds());
+
+        addToPlaylistIds.removeAll(removeFromPlaylistIds);
+
+        Set<UUID> allPlaylistIds = new HashSet<>();
+        allPlaylistIds.addAll(addToPlaylistIds);
+        allPlaylistIds.addAll(removeFromPlaylistIds);
+
+        Map<UUID, Playlist> authorizedPlaylists = new HashMap<>();
+        for (UUID playlistId : allPlaylistIds) {
+            Playlist playlist = playlistRepository
+                    .findByPlaylistIdAndUserId(playlistId, userId)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Playlist not found or access denied"));
+
+            authorizedPlaylists.put(playlistId, playlist);
+        }
+
+        for (UUID playlistId : removeFromPlaylistIds) {
+            movielistRepository.deleteByPlaylist_PlaylistIdAndTmdbMovieId(
+                    playlistId,
+                    tmdbMovieId);
+        }
+
+        for (UUID playlistId : addToPlaylistIds) {
+            if (!movielistRepository.existsByPlaylist_PlaylistIdAndTmdbMovieId(
+                    playlistId,
+                    tmdbMovieId)) {
+
+                Movielist item = new Movielist(
+                        authorizedPlaylists.get(playlistId),
+                        tmdbMovieId);
+
+                movielistRepository.save(item);
+            }
+        }
     }
 
     @Override
