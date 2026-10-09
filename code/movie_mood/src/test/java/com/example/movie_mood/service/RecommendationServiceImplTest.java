@@ -13,17 +13,26 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import com.example.movie_mood.service.WatchHistoryService;
+import com.example.movie_mood.dto.WatchHistoryResponse;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-
+import com.example.movie_mood.strategy.MatchScoreStrategy;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class RecommendationServiceImplTest {
+    @Mock
+    private MatchScoreStrategy defaultStrategy;
 
+    @Mock
+    private MatchScoreStrategy moodStrategy;
+
+    @Mock
+    private MatchScoreStrategy ratingStrategy;
     @Mock
     private MovieProvider movieProvider;
 
@@ -32,7 +41,8 @@ public class RecommendationServiceImplTest {
 
     @Mock
     private UserPreferenceService userPreferenceService;
-
+    @Mock
+    private WatchHistoryService watchHistoryService;
     private RecommendationServiceImpl recommendationService;
 
     private final UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
@@ -42,7 +52,25 @@ public class RecommendationServiceImplTest {
         recommendationService = new RecommendationServiceImpl(
                 movieProvider,
                 moodGenreMapper,
-                userPreferenceService);
+                userPreferenceService,
+                watchHistoryService,
+                defaultStrategy,
+                moodStrategy,
+                ratingStrategy);
+
+        lenient().when(watchHistoryService.getUserWatchHistory(userId))
+                .thenReturn(List.of());
+
+        // ให้คะแนน Mock สอดคล้องกับ Rating
+        // เพื่อรักษาพฤติกรรมการเรียงลำดับใน Test เดิม
+        lenient().when(defaultStrategy.calculateScore(
+                any(Movie.class), any(Mood.class)))
+                .thenAnswer(invocation -> {
+                    Movie movie = invocation.getArgument(0);
+                    return movie.getRating() == null
+                            ? 0.0
+                            : movie.getRating();
+                });
     }
 
     @Test
@@ -217,6 +245,105 @@ public class RecommendationServiceImplTest {
 
         verify(movieProvider).discoverMovies(
                 List.of(35), null, null, null, null, 1);
+
+        verify(movieProvider).discoverMovies(
+                List.of(35), null, null, null, null, 2);
+    }
+
+    @Test
+    @DisplayName("Should exclude watched movies from recommendations")
+    void shouldExcludeWatchedMovies() {
+
+        Mood mood = Mood.HAPPY;
+
+        Movie watchedMovie = createMovie(
+                "1", "Watched Movie", 9.0,
+                LocalDate.of(2025, 1, 1), List.of(35));
+
+        Movie unwatchedMovie = createMovie(
+                "2", "Unwatched Movie", 8.0,
+                LocalDate.of(2025, 2, 1), List.of(35));
+
+        when(moodGenreMapper.getGenreIds(mood))
+                .thenReturn(List.of(35));
+
+        when(userPreferenceService.getDislikedGenreIds(userId))
+                .thenReturn(List.of());
+
+        when(movieProvider.discoverMovies(
+                List.of(35), null, null, null, null, 1))
+                .thenReturn(new MoviePage(
+                        List.of(watchedMovie, unwatchedMovie),
+                        1, 1, 2));
+
+        // กำหนดให้หนัง ID 1 เป็นหนังที่ดูแล้ว
+        when(watchHistoryService.getUserWatchHistory(userId))
+                .thenReturn(List.of(
+                        new WatchHistoryResponse(
+                                UUID.randomUUID(), "1", true)));
+
+        List<Movie> results = recommendationService.getRecommendations(mood, userId);
+
+        assertEquals(1, results.size());
+        assertEquals("2", results.get(0).getTmdbMovieId());
+
+        assertTrue(results.stream()
+                .noneMatch(movie -> movie.getTmdbMovieId().equals("1")));
+    }
+
+    @Test
+    @DisplayName("Should fetch next page when watched movies are excluded")
+    void shouldFetchNextPageAfterExcludingWatchedMovies() {
+
+        Mood mood = Mood.HAPPY;
+
+        List<Movie> firstPage = java.util.stream.IntStream
+                .rangeClosed(1, 10)
+                .mapToObj(i -> createMovie(
+                        String.valueOf(i),
+                        "Movie " + i,
+                        8.0,
+                        LocalDate.of(2025, 1, 1),
+                        List.of(35)))
+                .toList();
+
+        List<Movie> secondPage = java.util.stream.IntStream
+                .rangeClosed(11, 20)
+                .mapToObj(i -> createMovie(
+                        String.valueOf(i),
+                        "Movie " + i,
+                        8.0,
+                        LocalDate.of(2025, 1, 1),
+                        List.of(35)))
+                .toList();
+
+        when(moodGenreMapper.getGenreIds(mood))
+                .thenReturn(List.of(35));
+
+        when(userPreferenceService.getDislikedGenreIds(userId))
+                .thenReturn(List.of());
+
+        when(watchHistoryService.getUserWatchHistory(userId))
+                .thenReturn(List.of(
+                        new WatchHistoryResponse(
+                                UUID.randomUUID(), "1", true),
+                        new WatchHistoryResponse(
+                                UUID.randomUUID(), "2", true)));
+
+        when(movieProvider.discoverMovies(
+                List.of(35), null, null, null, null, 1))
+                .thenReturn(new MoviePage(firstPage, 1, 2, 20));
+
+        when(movieProvider.discoverMovies(
+                List.of(35), null, null, null, null, 2))
+                .thenReturn(new MoviePage(secondPage, 2, 2, 20));
+
+        List<Movie> results = recommendationService.getRecommendations(mood, userId);
+
+        assertEquals(10, results.size());
+
+        assertTrue(results.stream()
+                .noneMatch(movie -> List.of("1", "2").contains(movie.getTmdbMovieId())));
 
         verify(movieProvider).discoverMovies(
                 List.of(35), null, null, null, null, 2);

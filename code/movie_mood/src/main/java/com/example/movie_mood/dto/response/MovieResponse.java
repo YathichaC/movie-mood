@@ -9,6 +9,7 @@ public class MovieResponse {
     private String title;
     private String synopsis;
     private Double rating;
+    private Double matchScore;
     private LocalDate releaseDate;
     private List<String> genreIds;
     private List<String> genres;
@@ -104,5 +105,13 @@ public class MovieResponse {
 
     public void setBackdropPath(String backdropPath) {
         this.backdropPath = backdropPath;
+    }
+
+    public Double getMatchScore() {
+        return matchScore;
+    }
+
+    public void setMatchScore(Double matchScore) {
+        this.matchScore = matchScore;
     }
 }

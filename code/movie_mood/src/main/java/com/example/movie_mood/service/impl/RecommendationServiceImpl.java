@@ -1,109 +1,172 @@
-
 package com.example.movie_mood.service.impl;
 
 import com.example.movie_mood.domain.enums.Mood;
 import com.example.movie_mood.domain.model.Movie;
+import com.example.movie_mood.domain.model.MoviePage;
+import com.example.movie_mood.dto.WatchHistoryResponse;
 import com.example.movie_mood.integration.tmdb.MovieProvider;
 import com.example.movie_mood.mapper.MoodGenreMapper;
 import com.example.movie_mood.service.RecommendationService;
 import com.example.movie_mood.service.UserPreferenceService;
-import org.springframework.stereotype.Service;
-import com.example.movie_mood.domain.model.MoviePage;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import com.example.movie_mood.service.WatchHistoryService;
+import com.example.movie_mood.strategy.MatchScoreStrategy;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
 
-        private final MovieProvider movieProvider;
-        private final MoodGenreMapper moodGenreMapper;
-        private final UserPreferenceService userPreferenceService;
-        private static final int RECOMMENDATION_COUNT = 10;
-        private static final int MAX_PAGES = 10;
+    private static final int RECOMMENDATION_COUNT = 10;
+    private static final int MAX_PAGES = 10;
 
-        public RecommendationServiceImpl(
-                        MovieProvider movieProvider,
-                        MoodGenreMapper moodGenreMapper,
-                        UserPreferenceService userPreferenceService) {
+    private final MovieProvider movieProvider;
+    private final MoodGenreMapper moodGenreMapper;
+    private final UserPreferenceService userPreferenceService;
+    private final WatchHistoryService watchHistoryService;
 
-                this.movieProvider = movieProvider;
-                this.moodGenreMapper = moodGenreMapper;
-                this.userPreferenceService = userPreferenceService;
-        }
+    private final MatchScoreStrategy defaultStrategy;
+    private final MatchScoreStrategy moodStrategy;
+    private final MatchScoreStrategy ratingStrategy;
 
-        @Override
-        public List<Movie> getRecommendations(Mood mood, UUID userId) {
+    public RecommendationServiceImpl(
+            MovieProvider movieProvider,
+            MoodGenreMapper moodGenreMapper,
+            UserPreferenceService userPreferenceService,
+            WatchHistoryService watchHistoryService,
+            @Qualifier("defaultMatchScoreStrategy")
+            MatchScoreStrategy defaultStrategy,
+            @Qualifier("moodFocusedStrategy")
+            MatchScoreStrategy moodStrategy,
+            @Qualifier("topRatedStrategy")
+            MatchScoreStrategy ratingStrategy) {
 
-                List<Integer> moodGenreIds = moodGenreMapper.getGenreIds(mood);
+        this.movieProvider = movieProvider;
+        this.moodGenreMapper = moodGenreMapper;
+        this.userPreferenceService = userPreferenceService;
+        this.watchHistoryService = watchHistoryService;
 
-                Set<Integer> dislikedGenreIds = userPreferenceService.getDislikedGenreIds(userId)
-                                .stream()
-                                .map(Integer::parseInt)
-                                .collect(java.util.stream.Collectors.toSet());
+        this.defaultStrategy = defaultStrategy;
+        this.moodStrategy = moodStrategy;
+        this.ratingStrategy = ratingStrategy;
+    }
 
-                List<Movie> recommendations = new ArrayList<>();
-                Set<String> seenMovieIds = new HashSet<>();
+    // รองรับ Method เดิม
+    @Override
+    public List<Movie> getRecommendations(Mood mood, UUID userId) {
+        return getRecommendations(mood, userId, "default");
+    }
 
-                for (int page = 1; page <= MAX_PAGES; page++) {
+    // Method ใหม่ รองรับการเลือก Strategy
+    @Override
+    public List<Movie> getRecommendations(
+            Mood mood,
+            UUID userId,
+            String strategy) {
 
-                        MoviePage moviePage = movieProvider.discoverMovies(
-                                        moodGenreIds,
-                                        null,
-                                        null,
-                                        null,
-                                        null,
-                                        page);
+        MatchScoreStrategy selectedStrategy = switch (strategy) {
+            case "mood" -> moodStrategy;
+            case "rating" -> ratingStrategy;
+            case "default" -> defaultStrategy;
+            default -> throw new IllegalArgumentException(
+                    "Unknown recommendation strategy: " + strategy);
+        };
 
-                        if (moviePage == null
-                                        || moviePage.getMovies() == null
-                                        || moviePage.getMovies().isEmpty()) {
-                                break;
-                        }
+        List<Integer> moodGenreIds = moodGenreMapper.getGenreIds(mood);
 
-                        for (Movie movie : moviePage.getMovies()) {
+        Set<Integer> dislikedGenreIds =
+                userPreferenceService.getDislikedGenreIds(userId)
+                        .stream()
+                        .map(Integer::parseInt)
+                        .collect(Collectors.toSet());
 
-                                if (movie == null) {
-                                        continue;
-                                }
+        Set<String> watchedMovieIds =
+                watchHistoryService.getUserWatchHistory(userId)
+                        .stream()
+                        .map(WatchHistoryResponse::getTmdbMovieId)
+                        .collect(Collectors.toSet());
 
-                                boolean hasDislikedGenre = movie.getGenreIds() != null
-                                                && movie.getGenreIds().stream()
-                                                                .anyMatch(dislikedGenreIds::contains);
+        List<Movie> recommendations = new ArrayList<>();
+        Set<String> seenMovieIds = new HashSet<>();
 
-                                if (hasDislikedGenre) {
-                                        continue;
-                                }
+        // รวบรวมหนังจากหลายหน้าก่อนนำไปจัดอันดับ
+        for (int page = 1; page <= MAX_PAGES; page++) {
 
-                                if (seenMovieIds.add(movie.getTmdbMovieId())) {
-                                        recommendations.add(movie);
-                                }
-                        }
+            MoviePage moviePage = movieProvider.discoverMovies(
+                    moodGenreIds,
+                    null,
+                    null,
+                    null,
+                    null,
+                    page);
 
-                        if (recommendations.size() >= RECOMMENDATION_COUNT) {
-                                break;
-                        }
+            if (moviePage == null
+                    || moviePage.getMovies() == null
+                    || moviePage.getMovies().isEmpty()) {
+                break;
+            }
 
-                        if (page >= moviePage.getTotalPages()) {
-                                break;
-                        }
+            for (Movie movie : moviePage.getMovies()) {
+
+                if (movie == null) {
+                    continue;
                 }
 
-                return recommendations.stream()
-                                .sorted(
-                                                Comparator.comparing(
-                                                                Movie::getRating,
-                                                                Comparator.nullsLast(
-                                                                                Comparator.reverseOrder()))
-                                                                .thenComparing(
-                                                                                Movie::getReleaseDate,
-                                                                                Comparator.nullsLast(
-                                                                                                Comparator.reverseOrder())))
-                                .limit(RECOMMENDATION_COUNT)
-                                .toList();
+                boolean hasDislikedGenre =
+                        movie.getGenreIds() != null
+                                && movie.getGenreIds().stream()
+                                        .anyMatch(dislikedGenreIds::contains);
+
+                if (hasDislikedGenre) {
+                    continue;
+                }
+
+                if (watchedMovieIds.contains(movie.getTmdbMovieId())) {
+                    continue;
+                }
+
+                if (seenMovieIds.add(movie.getTmdbMovieId())) {
+                    recommendations.add(movie);
+                }
+            }
+
+            // ไม่หยุดทันทีเมื่อครบ 10 เรื่อง
+            // เพื่อให้ Strategy จัดอันดับจากหนังหลายหน้าได้
+            if (page >= moviePage.getTotalPages()) {
+                break;
+            }
         }
+
+        // คำนวณ Match Score ตาม Strategy ที่เลือก
+        for (Movie movie : recommendations) {
+            double score = selectedStrategy.calculateScore(movie, mood);
+            movie.setMatchScore(score);
+        }
+
+        // เรียงตาม Match Score แล้วใช้ Rating และวันที่เป็นตัวตัดสิน
+        return recommendations.stream()
+                .sorted(
+                        Comparator.comparing(
+                                Movie::getMatchScore,
+                                Comparator.nullsLast(
+                                        Comparator.reverseOrder()))
+                                .thenComparing(
+                                        Movie::getRating,
+                                        Comparator.nullsLast(
+                                                Comparator.reverseOrder()))
+                                .thenComparing(
+                                        Movie::getReleaseDate,
+                                        Comparator.nullsLast(
+                                                Comparator.reverseOrder())))
+                .limit(RECOMMENDATION_COUNT)
+                .toList();
+    }
 }

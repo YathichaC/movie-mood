@@ -43,11 +43,13 @@ public class RecommendationController {
         @GetMapping
         public List<MovieResponse> getRecommendations(
                         @RequestParam Mood mood,
+                        @RequestParam(defaultValue = "default") String strategy,
                         Authentication authentication) {
 
                 UUID userId = UUID.fromString(authentication.getName());
 
                 return movieMapper.toResponseList(
-                                recommendationService.getRecommendations(mood, userId));
+                                recommendationService.getRecommendations(
+                                                mood, userId, strategy));
         }
 }
