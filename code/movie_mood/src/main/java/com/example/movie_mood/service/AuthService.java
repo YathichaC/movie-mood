@@ -9,29 +9,44 @@ import com.example.movie_mood.dto.auth.ResetPasswordRequest;
 import com.example.movie_mood.repository.PasswordResetTokenRepository;
 import com.example.movie_mood.repository.UserRepository;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+
 @Service
 public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordResetTokenRepository tokenRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final JavaMailSender mailSender;
+    private final TemplateEngine templateEngine;
 
-    public AuthService(
-            UserRepository userRepository,
-            PasswordResetTokenRepository tokenRepository,
-            PasswordEncoder passwordEncoder) {
+    @Value("${app.base-url:http://localhost:8080}")
+    private String baseUrl;
+
+    public AuthService(UserRepository userRepository, 
+                       PasswordResetTokenRepository tokenRepository,
+                       JavaMailSender mailSender,
+                       TemplateEngine templateEngine) {
         this.userRepository = userRepository;
         this.tokenRepository = tokenRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.passwordEncoder = new BCryptPasswordEncoder();
+        this.mailSender = mailSender;
+        this.templateEngine = templateEngine;
     }
 
     public User register(RegisterRequest request) {
@@ -72,25 +87,42 @@ public class AuthService {
         Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
 
         if (userOptional.isEmpty()) {
-            return; 
+            return;
         }
 
         User user = userOptional.get();
         String token = UUID.randomUUID().toString();
-        Instant expiryDate = Instant.now().plus(1, ChronoUnit.HOURS);
+        Instant expiryDate = Instant.now().plus(10, ChronoUnit.MINUTES);
 
-        PasswordResetToken resetToken = new PasswordResetToken(token, user, expiryDate);
+        PasswordResetToken resetToken = tokenRepository.findByUser(user)
+                .orElse(new PasswordResetToken());
+
+        resetToken.setToken(token);
+        resetToken.setUser(user);
+        resetToken.setExpiryDate(expiryDate);
+        resetToken.setUsed(false);
+
         tokenRepository.save(resetToken);
 
-        String resetLink = "http://localhost:8080/auth/reset-password?token=" + token;
-        String senderEmail = "moviemood8080@gmail.com";
+        String resetLink = baseUrl + "/auth/reset-password?token=" + token;
 
-        System.out.println("==================================================");
-        System.out.println("FROM: " + senderEmail);
-        System.out.println("TO  : " + user.getEmail());
-        System.out.println("SUBJECT: Reset Your Password — MOVIEMOOD");
-        System.out.println("CLICK LINK TO TEST RESET: " + resetLink);
-        System.out.println("==================================================");
+        Context context = new Context();
+        context.setVariable("resetUrl", resetLink);
+
+        String emailContent = templateEngine.process("mail/reset-password-email", context);
+
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
+            helper.setFrom("moviemood8080@gmail.com");
+            helper.setTo(user.getEmail());
+            helper.setSubject("Reset Your Password — MOVIEMOOD");
+            helper.setText(emailContent, true);
+
+            mailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Failed to send reset email", e);
+        }
     }
 
     @Transactional
@@ -106,8 +138,34 @@ public class AuthService {
             throw new IllegalArgumentException("Token has expired");
         }
 
+        String newPassword = request.getNewPassword() != null ? request.getNewPassword().trim() : "";
+
+        if (newPassword.length() < 8) {
+            throw new IllegalArgumentException("Password must be at least 8 characters long");
+        }
+
+        boolean hasUpper = newPassword.chars().anyMatch(Character::isUpperCase);
+        boolean hasLower = newPassword.chars().anyMatch(Character::isLowerCase);
+        boolean hasDigit = newPassword.chars().anyMatch(Character::isDigit);
+        boolean hasSpecial = newPassword.matches(".*[!@#$%^&*(),.?\":{}|<>].*");
+
+        if (!hasUpper || !hasLower) {
+            throw new IllegalArgumentException("Password must contain both uppercase and lowercase letters");
+        }
+        if (!hasDigit) {
+            throw new IllegalArgumentException("Password must contain at least one number");
+        }
+        if (!hasSpecial) {
+            throw new IllegalArgumentException("Password must contain at least one special character");
+        }
+
         User user = resetToken.getUser();
-        user.setPassword(passwordEncoder.encode(request.getNewPassword().trim()));
+
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new IllegalArgumentException("New password cannot be the same as the old password");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
 
         resetToken.setUsed(true);
