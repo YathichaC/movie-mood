@@ -1,24 +1,27 @@
 package com.example.movie_mood.service;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.mail.javamail.JavaMailSender;
 import com.example.movie_mood.domain.entity.PasswordResetToken;
 import com.example.movie_mood.domain.entity.User;
 import com.example.movie_mood.dto.auth.ForgotPasswordRequest;
 import com.example.movie_mood.dto.auth.ResetPasswordRequest;
 import com.example.movie_mood.repository.PasswordResetTokenRepository;
 import com.example.movie_mood.repository.UserRepository;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.mail.SimpleMailMessage;
-
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 class AuthServiceForgotPasswordTest {
@@ -26,6 +29,7 @@ class AuthServiceForgotPasswordTest {
     private UserRepository userRepository;
     private PasswordResetTokenRepository tokenRepository;
     private JavaMailSender mailSender;
+    private TemplateEngine templateEngine;
     private AuthService authService;
 
     @BeforeEach
@@ -33,13 +37,17 @@ class AuthServiceForgotPasswordTest {
         userRepository = mock(UserRepository.class);
         tokenRepository = mock(PasswordResetTokenRepository.class);
         mailSender = mock(JavaMailSender.class);
-        authService = new AuthService(userRepository, tokenRepository, mailSender);
+        templateEngine = mock(TemplateEngine.class);
+        authService = new AuthService(userRepository, tokenRepository, mailSender, templateEngine);
     }
 
     @Test
     void processForgotPassword_whenEmailExists_shouldCreateToken() {
         User user = new User("testuser", "user@example.com", "hashedOldPass");
         when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(user));
+        when(templateEngine.process(eq("mail/reset-password-email"), any(Context.class)))
+                .thenReturn("<html>mock html</html>");
+        when(mailSender.createMimeMessage()).thenReturn(new MimeMessage((Session) null));
 
         ForgotPasswordRequest req = new ForgotPasswordRequest();
         req.setEmail("user@example.com");
@@ -47,7 +55,7 @@ class AuthServiceForgotPasswordTest {
         authService.processForgotPassword(req);
 
         verify(tokenRepository, times(1)).save(any(PasswordResetToken.class));
-        verify(mailSender, times(1)).send(any(SimpleMailMessage.class));
+        verify(mailSender, times(1)).send(any(MimeMessage.class));
     }
 
     @Test
@@ -59,7 +67,7 @@ class AuthServiceForgotPasswordTest {
 
         assertDoesNotThrow(() -> authService.processForgotPassword(req));
         verify(tokenRepository, never()).save(any(PasswordResetToken.class));
-        verify(mailSender, never()).send(any(SimpleMailMessage.class));
+        verify(mailSender, never()).send(any(MimeMessage.class));
     }
 
     @Test

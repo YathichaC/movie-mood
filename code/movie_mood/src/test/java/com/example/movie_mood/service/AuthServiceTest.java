@@ -8,8 +8,10 @@ import com.example.movie_mood.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.thymeleaf.TemplateEngine;
 
 import java.util.Optional;
 
@@ -24,12 +26,16 @@ class AuthServiceTest {
     private JavaMailSender mailSender;
     private AuthService authService;
 
+    @Mock
+    private TemplateEngine templateEngine;
+
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
         tokenRepository = mock(PasswordResetTokenRepository.class);
         mailSender = mock(JavaMailSender.class);
-        authService = new AuthService(userRepository, tokenRepository, mailSender); 
+        templateEngine = mock(TemplateEngine.class);
+        authService = new AuthService(userRepository, tokenRepository, mailSender, templateEngine); 
     }
 
     @Test

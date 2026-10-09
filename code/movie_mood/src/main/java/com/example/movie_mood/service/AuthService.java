@@ -9,16 +9,21 @@ import com.example.movie_mood.dto.auth.ResetPasswordRequest;
 import com.example.movie_mood.repository.PasswordResetTokenRepository;
 import com.example.movie_mood.repository.UserRepository;
 
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 
 @Service
 public class AuthService {
@@ -27,14 +32,17 @@ public class AuthService {
     private final PasswordResetTokenRepository tokenRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
+    private final TemplateEngine templateEngine;
 
     public AuthService(UserRepository userRepository, 
                        PasswordResetTokenRepository tokenRepository,
-                       JavaMailSender mailSender) {
+                       JavaMailSender mailSender,
+                       TemplateEngine templateEngine) {
         this.userRepository = userRepository;
         this.tokenRepository = tokenRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.mailSender = mailSender;
+        this.templateEngine = templateEngine;
     }
 
     public User register(RegisterRequest request) {
@@ -94,13 +102,23 @@ public class AuthService {
 
         String resetLink = "http://localhost:8080/auth/reset-password?token=" + token;
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("moviemood8080@gmail.com");
-        message.setTo(user.getEmail());
-        message.setSubject("Reset Your Password — MOVIEMOOD");
-        message.setText("Click the link to reset your password:\n" + resetLink);
+        Context context = new Context();
+        context.setVariable("resetUrl", resetLink);
 
-        mailSender.send(message);
+        String emailContent = templateEngine.process("mail/reset-password-email", context);
+
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
+            helper.setFrom("moviemood8080@gmail.com");
+            helper.setTo(user.getEmail());
+            helper.setSubject("Reset Your Password — MOVIEMOOD");
+            helper.setText(emailContent, true);
+
+            mailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Failed to send reset email", e);
+        }
     }
 
     @Transactional
