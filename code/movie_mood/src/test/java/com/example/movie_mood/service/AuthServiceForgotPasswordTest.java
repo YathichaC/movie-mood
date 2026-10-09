@@ -144,4 +144,53 @@ class AuthServiceForgotPasswordTest {
 
         assertEquals("Token has already been used", ex.getMessage());
     }
+
+    @Test
+    void resetPassword_withSameAsOldPassword_shouldThrowException() {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        User user = new User("testuser", "user@example.com", encoder.encode("SamePassword123!"));
+        PasswordResetToken resetToken = new PasswordResetToken(
+                "valid-token",
+                user,
+                Instant.now().plus(1, ChronoUnit.HOURS)
+        );
+
+        when(tokenRepository.findByToken("valid-token")).thenReturn(Optional.of(resetToken));
+
+        ResetPasswordRequest req = new ResetPasswordRequest();
+        req.setToken("valid-token");
+        req.setNewPassword("SamePassword123!"); 
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> authService.resetPassword(req)
+        );
+
+        assertEquals("New password cannot be the same as the old password", ex.getMessage());
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void resetPassword_withWeakPassword_shouldThrowException() {
+        User user = new User("testuser", "user@example.com", "hashedOldPass");
+        PasswordResetToken resetToken = new PasswordResetToken(
+                "valid-token",
+                user,
+                Instant.now().plus(1, ChronoUnit.HOURS)
+        );
+
+        when(tokenRepository.findByToken("valid-token")).thenReturn(Optional.of(resetToken));
+
+        ResetPasswordRequest req = new ResetPasswordRequest();
+        req.setToken("valid-token");
+        req.setNewPassword("weak");
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> authService.resetPassword(req)
+        );
+
+        assertEquals("Password must be at least 8 characters long", ex.getMessage());
+        verify(userRepository, never()).save(any(User.class));
+    }
 }

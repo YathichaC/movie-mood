@@ -9,6 +9,7 @@ import com.example.movie_mood.dto.auth.ResetPasswordRequest;
 import com.example.movie_mood.repository.PasswordResetTokenRepository;
 import com.example.movie_mood.repository.UserRepository;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -33,6 +34,9 @@ public class AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
+
+    @Value("${app.base-url:http://localhost:8080}")
+    private String baseUrl;
 
     public AuthService(UserRepository userRepository, 
                        PasswordResetTokenRepository tokenRepository,
@@ -100,7 +104,7 @@ public class AuthService {
 
         tokenRepository.save(resetToken);
 
-        String resetLink = "http://localhost:8080/auth/reset-password?token=" + token;
+        String resetLink = baseUrl + "/auth/reset-password?token=" + token;
 
         Context context = new Context();
         context.setVariable("resetUrl", resetLink);
@@ -134,8 +138,34 @@ public class AuthService {
             throw new IllegalArgumentException("Token has expired");
         }
 
+        String newPassword = request.getNewPassword() != null ? request.getNewPassword().trim() : "";
+
+        if (newPassword.length() < 8) {
+            throw new IllegalArgumentException("Password must be at least 8 characters long");
+        }
+
+        boolean hasUpper = newPassword.chars().anyMatch(Character::isUpperCase);
+        boolean hasLower = newPassword.chars().anyMatch(Character::isLowerCase);
+        boolean hasDigit = newPassword.chars().anyMatch(Character::isDigit);
+        boolean hasSpecial = newPassword.matches(".*[!@#$%^&*(),.?\":{}|<>].*");
+
+        if (!hasUpper || !hasLower) {
+            throw new IllegalArgumentException("Password must contain both uppercase and lowercase letters");
+        }
+        if (!hasDigit) {
+            throw new IllegalArgumentException("Password must contain at least one number");
+        }
+        if (!hasSpecial) {
+            throw new IllegalArgumentException("Password must contain at least one special character");
+        }
+
         User user = resetToken.getUser();
-        user.setPassword(passwordEncoder.encode(request.getNewPassword().trim()));
+
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new IllegalArgumentException("New password cannot be the same as the old password");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
 
         resetToken.setUsed(true);
