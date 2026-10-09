@@ -136,6 +136,42 @@ class AuthServiceTest {
     }
 
     @Test
+    void loginShouldAcceptNewPasswordAndRejectOldPasswordAfterUpdate() {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String oldPassword = "OldPassword123!";
+        String newPassword = "NewPassword123!";
+
+        User user = new User(
+                "testuser",
+                "test@example.com",
+                encoder.encode(oldPassword)
+        );
+
+        when(userRepository.findByUsername("testuser"))
+                .thenReturn(Optional.of(user));
+
+        user.setPassword(encoder.encode(newPassword));
+
+        LoginRequest newPasswordRequest = new LoginRequest();
+        newPasswordRequest.setUsername("testuser");
+        newPasswordRequest.setPassword(newPassword);
+
+        User result = authService.login(newPasswordRequest);
+        assertEquals("testuser", result.getUsername());
+
+        LoginRequest oldPasswordRequest = new LoginRequest();
+        oldPasswordRequest.setUsername("testuser");
+        oldPasswordRequest.setPassword(oldPassword);
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> authService.login(oldPasswordRequest)
+        );
+
+        assertEquals("Invalid username or password", exception.getMessage());
+    }
+
+    @Test
     void loginShouldRejectIncorrectPassword() {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 

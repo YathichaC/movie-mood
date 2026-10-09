@@ -1,5 +1,6 @@
 package com.example.movie_mood.service;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.mail.javamail.JavaMailSender;
 import com.example.movie_mood.domain.entity.PasswordResetToken;
 import com.example.movie_mood.domain.entity.User;
@@ -63,7 +64,10 @@ class AuthServiceForgotPasswordTest {
 
     @Test
     void resetPassword_withValidToken_shouldUpdatePasswordAndInvalidateToken() {
-        User user = new User("testuser", "user@example.com", "hashedOldPass");
+        User user = new User(
+                "testuser",
+                "user@example.com",
+                new BCryptPasswordEncoder().encode("OldPassword123!"));
         PasswordResetToken resetToken = new PasswordResetToken(
                 "valid-token",
                 user,
@@ -79,6 +83,8 @@ class AuthServiceForgotPasswordTest {
         authService.resetPassword(req);
 
         assertTrue(resetToken.isUsed());
+        assertTrue(new BCryptPasswordEncoder().matches("NewPassword123!", user.getPassword()));
+        assertFalse(new BCryptPasswordEncoder().matches("OldPassword123!", user.getPassword()));
         verify(userRepository, times(1)).save(user);
         verify(tokenRepository, times(1)).save(resetToken);
     }

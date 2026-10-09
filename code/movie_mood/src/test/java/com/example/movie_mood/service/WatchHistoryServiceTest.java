@@ -74,6 +74,38 @@ class WatchHistoryServiceTest {
     }
 
     @Test
+    void testToggleWatchedMovie_AddsWhenMissing() {
+        when(watchHistoryRepository.findByUserIdAndTmdbMovieId(userId, "550")).thenReturn(Optional.empty());
+        when(watchHistoryRepository.save(any(WatchHistory.class))).thenAnswer(invocation -> {
+            WatchHistory saved = invocation.getArgument(0);
+            saved.setHistoryId(UUID.randomUUID());
+            return saved;
+        });
+
+        WatchHistoryResponse response = watchHistoryService.toggleWatchedMovie(userId, "550");
+
+        assertNotNull(response);
+        assertTrue(response.isWatched());
+        assertEquals("550", response.getTmdbMovieId());
+        verify(watchHistoryRepository, times(1)).save(any(WatchHistory.class));
+    }
+
+    @Test
+    void testToggleWatchedMovie_RemovesWhenPresent() {
+        WatchHistory existingHistory = new WatchHistory(userId, "550");
+        existingHistory.setHistoryId(UUID.randomUUID());
+
+        when(watchHistoryRepository.findByUserIdAndTmdbMovieId(userId, "550")).thenReturn(Optional.of(existingHistory));
+
+        WatchHistoryResponse response = watchHistoryService.toggleWatchedMovie(userId, "550");
+
+        assertNotNull(response);
+        assertFalse(response.isWatched());
+        assertEquals("550", response.getTmdbMovieId());
+        verify(watchHistoryRepository, times(1)).delete(existingHistory);
+    }
+
+    @Test
     void testGetUserWatchHistory_ReturnsList() {
         WatchHistory movieA = new WatchHistory(userId, "101");
         WatchHistory movieB = new WatchHistory(userId, "102");

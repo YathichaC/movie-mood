@@ -15,6 +15,7 @@ import java.util.List;
 
 @Service
 public class MovieServiceImpl implements MovieService {
+    private static final int MAX_BATCH_MOVIE_REQUEST_SIZE = 50;
     private static final List<String> ALLOWED_DISCOVER_SORT_VALUES = List.of(
             "rating_desc",
             "rating_asc",
@@ -53,6 +54,40 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public List<Movie> getMovieBatch(List<String> tmdbMovieIds) {
+        if (tmdbMovieIds == null || tmdbMovieIds.isEmpty()) {
+            return List.of();
+        }
+
+        if (tmdbMovieIds.size() > MAX_BATCH_MOVIE_REQUEST_SIZE) {
+            throw new IllegalArgumentException(
+                    "Movie batch request exceeds the maximum size of "
+                            + MAX_BATCH_MOVIE_REQUEST_SIZE
+                            + " movies");
+        }
+
+        List<Movie> movies = new java.util.ArrayList<>();
+
+        for (String tmdbMovieId : tmdbMovieIds) {
+            if (tmdbMovieId == null) {
+                continue;
+            }
+
+            String normalizedMovieId = tmdbMovieId.trim();
+            if (normalizedMovieId.isBlank() || !normalizedMovieId.matches("\\d+")) {
+                continue;
+            }
+
+            Movie movie = movieProvider.getMovie(normalizedMovieId);
+            if (movie != null) {
+                movies.add(movie);
+            }
+        }
+
+        return movies;
+    }
+
+    @Override
     public Movie getMovieDetails(String tmdbMovieId) {
         Movie movie = movieProvider.getMovie(tmdbMovieId);
 
@@ -71,6 +106,22 @@ public class MovieServiceImpl implements MovieService {
         movie.setGenres(genreNames);
 
         return movie;
+    }
+
+    @Override
+    public Movie getMovieSummaryForHistory(String tmdbMovieId) {
+        Movie movie = movieProvider.getMovie(tmdbMovieId);
+        if (movie == null) {
+            return null;
+        }
+
+        Movie summary = new Movie();
+        summary.setTmdbMovieId(movie.getTmdbMovieId());
+        summary.setTitle(movie.getTitle());
+        summary.setPosterPath(movie.getPosterPath());
+        summary.setReleaseDate(movie.getReleaseDate());
+        summary.setRating(movie.getRating());
+        return summary;
     }
 
     @Override

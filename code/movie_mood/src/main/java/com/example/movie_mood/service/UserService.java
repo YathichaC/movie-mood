@@ -113,26 +113,25 @@ public class UserService {
 
         User user = getUserById(userId);
 
-        if (!passwordEncoder.matches(
-                request.getCurrentPassword(),
-                user.getPassword())) {
-
+        String newPassword = request.getNewPassword();
+        if (newPassword == null || newPassword.isBlank()) {
             throw new IllegalArgumentException(
-                    "Current password is incorrect");
+                    "New password cannot be blank");
         }
 
-        if (passwordEncoder.matches(
-                request.getNewPassword(),
-                user.getPassword())) {
+        String trimmedPassword = newPassword.trim();
+        if (!trimmedPassword.matches(
+                "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,72}$")) {
+            throw new IllegalArgumentException(
+                    "Password must include uppercase, lowercase, a number, and a special character");
+        }
 
+        if (passwordEncoder.matches(trimmedPassword, user.getPassword())) {
             throw new IllegalArgumentException(
                     "New password cannot be the same as current password");
         }
 
-        user.setPassword(
-                passwordEncoder.encode(
-                        request.getNewPassword().trim()));
-
+        user.setPassword(passwordEncoder.encode(trimmedPassword));
         userRepository.save(user);
     }
 

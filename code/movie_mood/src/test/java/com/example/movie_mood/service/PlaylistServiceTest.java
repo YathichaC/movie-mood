@@ -4,18 +4,22 @@ import com.example.movie_mood.domain.entity.Movielist;
 import com.example.movie_mood.domain.entity.Playlist;
 import com.example.movie_mood.dto.MovielistRequest;
 import com.example.movie_mood.dto.MovielistResponse;
+import com.example.movie_mood.dto.PlaylistMovieBatchRequest;
 import com.example.movie_mood.dto.PlaylistRequest;
 import com.example.movie_mood.dto.PlaylistResponse;
+import com.example.movie_mood.dto.PlaylistSummaryResponse;
 import com.example.movie_mood.repository.MovielistRepository;
 import com.example.movie_mood.repository.PlaylistRepository;
 import com.example.movie_mood.service.impl.PlaylistServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.security.access.AccessDeniedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -139,6 +143,88 @@ class PlaylistServiceTest {
 
         verify(movielistRepository, never())
                 .save(any(Movielist.class));
+    }
+
+    @Test
+    void testUpdateMoviePlaylists_BatchAddAndRemove_Success() {
+        UUID addPlaylistId = UUID.randomUUID();
+        UUID removePlaylistId = UUID.randomUUID();
+        Playlist addPlaylist = new Playlist(userId, "Add Playlist");
+        addPlaylist.setPlaylistId(addPlaylistId);
+        Playlist removePlaylist = new Playlist(userId, "Remove Playlist");
+        removePlaylist.setPlaylistId(removePlaylistId);
+
+        PlaylistMovieBatchRequest request = new PlaylistMovieBatchRequest();
+        request.setTmdbMovieId("550");
+        request.setAddToPlaylistIds(List.of(addPlaylistId));
+        request.setRemoveFromPlaylistIds(List.of(removePlaylistId));
+
+        when(playlistRepository.findByPlaylistIdAndUserId(addPlaylistId, userId))
+                .thenReturn(Optional.of(addPlaylist));
+        when(playlistRepository.findByPlaylistIdAndUserId(removePlaylistId, userId))
+                .thenReturn(Optional.of(removePlaylist));
+
+        when(movielistRepository.existsByPlaylist_PlaylistIdAndTmdbMovieId(addPlaylistId, "550"))
+                .thenReturn(false);
+
+        playlistService.updateMoviePlaylists(userId, request);
+
+        verify(movielistRepository, times(1))
+                .save(any(Movielist.class));
+        verify(movielistRepository, times(1))
+                .deleteByPlaylist_PlaylistIdAndTmdbMovieId(removePlaylistId, "550");
+    }
+
+    @Test
+    void testGetUserPlaylists_ReturnsSummaryDataWithoutItems() {
+        UUID playlistId = mockPlaylist.getPlaylistId();
+        List<Object[]> summaryRows = new java.util.ArrayList<>();
+        summaryRows.add(new Object[]{playlistId, "Favorite Movies", "playlists/cover.jpg", 3L});
+
+        when(playlistRepository.findSummaryByUserId(userId))
+                .thenReturn(summaryRows);
+
+        List<PlaylistSummaryResponse> response = playlistService.getUserPlaylists(userId);
+
+        assertEquals(1, response.size());
+        assertEquals(playlistId, response.get(0).getPlaylistId());
+        assertEquals("Favorite Movies", response.get(0).getPlaylistName());
+        assertEquals("playlists/cover.jpg", response.get(0).getCoverImagePath());
+        assertEquals(3, response.get(0).getItemCount());
+    }
+
+    @Test
+    void testGetUserPlaylistsForPicker_IncludesCurrentMovieFlag() {
+        UUID playlistId = mockPlaylist.getPlaylistId();
+        String movieId = "550";
+
+        List<Object[]> pickerRows = new java.util.ArrayList<>();
+        pickerRows.add(new Object[]{playlistId, "Favorite Movies", 3L});
+        when(playlistRepository.findPickerDataByUserId(userId))
+                .thenReturn(pickerRows);
+        when(movielistRepository.findPlaylistIdsByTmdbMovieIdAndUserId(movieId, userId))
+                .thenReturn(List.of(playlistId));
+
+        List<com.example.movie_mood.dto.PlaylistPickerResponse> response =
+                playlistService.getUserPlaylistsForPicker(userId, movieId);
+
+        assertEquals(1, response.size());
+        assertTrue(response.get(0).isContainsCurrentMovie());
+    }
+
+    @Test
+    void testGetPlaylistDetail_WhenUserDoesNotOwnPlaylist_ThrowsAccessDeniedException() {
+        UUID playlistId = mockPlaylist.getPlaylistId();
+        UUID otherUserId = UUID.randomUUID();
+
+        when(playlistRepository.findByPlaylistIdAndUserId(playlistId, otherUserId))
+                .thenReturn(Optional.empty());
+
+        AccessDeniedException exception = assertThrows(
+                AccessDeniedException.class,
+                () -> playlistService.getPlaylistDetail(playlistId, otherUserId));
+
+        assertEquals("Playlist not found or access denied", exception.getMessage());
     }
 
     @Test

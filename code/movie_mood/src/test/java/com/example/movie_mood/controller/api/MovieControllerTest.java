@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class MovieControllerTest {
@@ -245,5 +246,33 @@ class MovieControllerTest {
 
                 verify(movieDetailFacade).getMovieDetails("550");
                 verifyNoInteractions(movieService);
+        }
+
+        @Test
+        void getMovieBatch_shouldReturnMovieDetailsForSelectedIds() throws Exception {
+                Movie firstMovie = new Movie();
+                firstMovie.setTmdbMovieId("1");
+                firstMovie.setTitle("First Movie");
+                firstMovie.setPosterPath("/first.jpg");
+
+                Movie secondMovie = new Movie();
+                secondMovie.setTmdbMovieId("2");
+                secondMovie.setTitle("Second Movie");
+                secondMovie.setPosterPath("/second.jpg");
+
+                when(movieService.getMovieBatch(List.of("1", "2")))
+                                .thenReturn(List.of(firstMovie, secondMovie));
+
+                mockMvc.perform(post("/api/v1/movies/batch")
+                                .contentType("application/json")
+                                .content("[\"1\",\"2\"]"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$[0].id").value("1"))
+                                .andExpect(jsonPath("$[0].name").value("First Movie"))
+                                .andExpect(jsonPath("$[0].poster_path").value("/first.jpg"))
+                                .andExpect(jsonPath("$[1].id").value("2"))
+                                .andExpect(jsonPath("$[1].name").value("Second Movie"));
+
+                verify(movieService).getMovieBatch(List.of("1", "2"));
         }
 }

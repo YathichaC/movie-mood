@@ -1,3 +1,4 @@
+
 package com.example.movie_mood.domain.entity;
 
 import java.util.UUID;
@@ -8,8 +9,10 @@ import jakarta.persistence.*;
         @UniqueConstraint(name = "uk_watch_history_user_movie", columnNames = { "user_id", "tmdb_movie_id" })
 })
 public class WatchHistory {
+
     @Id
-    @Column(name = "history_id")
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "history_id", nullable = false, updatable = false)
     private UUID historyId;
 
     @Column(name = "user_id", nullable = false)
@@ -30,14 +33,6 @@ public class WatchHistory {
         return historyId;
     }
 
-    public void setHistoryId(UUID history_id) {
-        this.historyId = history_id;
-    }
-
-    public void setId(UUID history_id) {
-        this.historyId = history_id;
-    }
-
     public UUID getUserId() {
         return userId;
     }
@@ -48,6 +43,10 @@ public class WatchHistory {
 
     public String getTmdbMovieId() {
         return tmdbMovieId;
+    }
+
+    public void setHistoryId(UUID historyId) {
+        this.historyId = historyId;
     }
 
     public void setTmdbMovieId(String tmdbMovieId) {

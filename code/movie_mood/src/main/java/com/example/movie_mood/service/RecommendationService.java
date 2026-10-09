@@ -8,4 +8,5 @@ import java.util.List;
 public interface RecommendationService {
 
     List<Movie> getRecommendations(Mood mood, UUID userId);
+    List<Movie> getRecommendations(Mood mood, UUID userId, String strategy);
 }

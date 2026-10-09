@@ -1,5 +1,6 @@
-
 package com.example.movie_mood.controller.api;
+
+
 
 import com.example.movie_mood.domain.enums.Mood;
 import com.example.movie_mood.domain.model.Movie;
@@ -29,8 +30,7 @@ class RecommendationControllerTest {
     private RecommendationService recommendationService;
     private MovieMapper movieMapper;
 
-    private final UUID userId =
-            UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+    private final UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 
     @BeforeEach
     void setUp() {
@@ -38,8 +38,7 @@ class RecommendationControllerTest {
         recommendationService = Mockito.mock(RecommendationService.class);
         movieMapper = new MovieMapper();
 
-        RecommendationController controller =
-                new RecommendationController(recommendationService, movieMapper);
+        RecommendationController controller = new RecommendationController(recommendationService, movieMapper);
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(controller)
@@ -59,7 +58,8 @@ class RecommendationControllerTest {
 
         when(recommendationService.getRecommendations(
                 eq(Mood.HAPPY),
-                eq(userId))).thenReturn(List.of(movie));
+                eq(userId),
+                eq("default"))).thenReturn(List.of(movie));
 
         mockMvc.perform(
                 get("/api/v1/recommendations")
@@ -71,7 +71,7 @@ class RecommendationControllerTest {
                 .andExpect(jsonPath("$[0].rating").value(8.5));
 
         verify(recommendationService)
-                .getRecommendations(Mood.HAPPY, userId);
+                .getRecommendations(Mood.HAPPY, userId, "default");
     }
 
     @Test
@@ -79,7 +79,8 @@ class RecommendationControllerTest {
 
         when(recommendationService.getRecommendations(
                 eq(Mood.EXCITED),
-                eq(userId))).thenReturn(List.of());
+                eq(userId),
+                eq("default"))).thenReturn(List.of());
 
         mockMvc.perform(
                 get("/api/v1/recommendations")
@@ -89,7 +90,7 @@ class RecommendationControllerTest {
                 .andExpect(content().json("[]"));
 
         verify(recommendationService)
-                .getRecommendations(Mood.EXCITED, userId);
+                .getRecommendations(Mood.EXCITED, userId, "default");
     }
 
     @Test
@@ -121,6 +122,26 @@ class RecommendationControllerTest {
                         .value("Missing required parameter: mood"))
                 .andExpect(jsonPath("$.path")
                         .value("/api/v1/recommendations"));
+    }
+
+    @Test
+    void shouldPassSelectedStrategyToService() throws Exception {
+
+        when(recommendationService.getRecommendations(
+                eq(Mood.HAPPY),
+                eq(userId),
+                eq("mood"))).thenReturn(List.of());
+
+        mockMvc.perform(
+                get("/api/v1/recommendations")
+                        .param("mood", "HAPPY")
+                        .param("strategy", "mood")
+                        .principal(authentication()))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+
+        verify(recommendationService)
+                .getRecommendations(Mood.HAPPY, userId, "mood");
     }
 
     private UsernamePasswordAuthenticationToken authentication() {

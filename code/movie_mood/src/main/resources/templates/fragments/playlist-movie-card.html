@@ -3,7 +3,7 @@
 <th:block th:fragment="playlist-movie-card(title, year, rating, poster)">
     <article class="group relative flex flex-col gap-2.5">
         <div class="relative aspect-[2/3] w-full overflow-hidden bg-[#111111] border border-[#262626] transition-all duration-200 group-hover:border-[#F5F5F5] group-hover:-translate-y-1 rounded-sm">
-            <img th:alt="${title + ' poster frame'}" class="w-full h-full object-cover grayscale contrast-125 brightness-95 transition-transform duration-300 group-hover:scale-105" th:src="${poster}" />
+            <img th:alt="${title + ' poster frame'}" class="w-full h-full object-cover contrast-125 brightness-95 transition-transform duration-300 group-hover:scale-105" th:src="${poster}" />
         </div>
         <div class="flex flex-col">
             <h3 class="text-sm font-medium text-[#F5F5F5] truncate tracking-wide" th:text="${title}">Movie Title</h3>

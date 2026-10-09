@@ -90,7 +90,7 @@
                 <h2 class="text-2xl font-light text-[#F5F5F5] tracking-tight">Movies</h2>
             </div>
         </div>
-        <div id="playlist-movies" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <div id="playlist-movies" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6" aria-live="polite">
         </div>
     </main>
     <div th:replace="~{fragments/edit-playlist-modal :: edit-playlist-modal}"></div>

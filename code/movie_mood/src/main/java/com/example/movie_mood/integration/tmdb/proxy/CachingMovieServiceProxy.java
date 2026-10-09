@@ -4,20 +4,42 @@ import com.example.movie_mood.domain.model.Movie;
 import com.example.movie_mood.domain.model.Video;
 import com.example.movie_mood.integration.tmdb.MovieProvider;
 import com.example.movie_mood.integration.tmdb.TmdbMovieAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import com.example.movie_mood.domain.model.MoviePage;
+
+import java.time.Duration;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 @Primary
 public class CachingMovieServiceProxy implements MovieProvider {
 
+    private static final Logger log = LoggerFactory.getLogger(CachingMovieServiceProxy.class);
+    private static final long POPULAR_MOVIES_CACHE_TTL_MS = Duration.ofMinutes(5).toMillis();
+    private static final long MOVIE_CACHE_TTL_MS = Duration.ofMinutes(30).toMillis();
+    private static final int MAX_MOVIE_CACHE_ENTRIES = 512;
+
     private final TmdbMovieAdapter movieAdapter;
 
-    private final Map<String, Movie> movieCache = new ConcurrentHashMap<>();
+    private final Map<String, CacheEntry> movieCache = Collections.synchronizedMap(
+            new LinkedHashMap<String, CacheEntry>(128, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, CacheEntry> eldest) {
+                    return size() > MAX_MOVIE_CACHE_ENTRIES;
+                }
+            });
+    private final Map<String, CachedMoviePage> popularMoviesCache = Collections.synchronizedMap(new LinkedHashMap<>());
+    private final AtomicLong movieCacheHits = new AtomicLong();
+    private final AtomicLong movieCacheMisses = new AtomicLong();
+    private final AtomicLong popularMoviesCacheHits = new AtomicLong();
+    private final AtomicLong popularMoviesCacheMisses = new AtomicLong();
 
     public CachingMovieServiceProxy(
             TmdbMovieAdapter movieAdapter) {
@@ -26,7 +48,23 @@ public class CachingMovieServiceProxy implements MovieProvider {
 
     @Override
     public MoviePage getPopularMovies(int page) {
-        return movieAdapter.getPopularMovies(page);
+        String cacheKey = "popular:" + page;
+        long now = System.currentTimeMillis();
+        CachedMoviePage cachedResponse = popularMoviesCache.get(cacheKey);
+
+        if (cachedResponse != null && cachedResponse.expiresAt() > now) {
+            popularMoviesCacheHits.incrementAndGet();
+            return cachedResponse.moviePage();
+        }
+
+        if (cachedResponse != null && cachedResponse.expiresAt() <= now) {
+            popularMoviesCache.remove(cacheKey);
+        }
+
+        popularMoviesCacheMisses.incrementAndGet();
+        MoviePage moviePage = movieAdapter.getPopularMovies(page);
+        popularMoviesCache.put(cacheKey, new CachedMoviePage(moviePage, now + POPULAR_MOVIES_CACHE_TTL_MS));
+        return moviePage;
     }
 
     @Override
@@ -36,10 +74,56 @@ public class CachingMovieServiceProxy implements MovieProvider {
 
     @Override
     public Movie getMovie(String tmdbMovieId) {
+        long now = System.currentTimeMillis();
+        CacheEntry cachedEntry = movieCache.get(tmdbMovieId);
+        if (cachedEntry != null) {
+            if (cachedEntry.expiresAt() <= now) {
+                movieCache.remove(tmdbMovieId);
+            } else {
+                movieCacheHits.incrementAndGet();
+                return cachedEntry.movie();
+            }
+        }
 
-        return movieCache.computeIfAbsent(
-                tmdbMovieId,
-                movieAdapter::getMovie);
+        movieCacheMisses.incrementAndGet();
+        Movie loadedMovie = movieAdapter.getMovie(tmdbMovieId);
+        if (loadedMovie != null) {
+            movieCache.put(tmdbMovieId, new CacheEntry(loadedMovie, now + MOVIE_CACHE_TTL_MS));
+        }
+        return loadedMovie;
+    }
+
+    public CacheMetrics getCacheMetrics() {
+        return new CacheMetrics(
+                movieCacheHits.get(),
+                movieCacheMisses.get(),
+                popularMoviesCacheHits.get(),
+                popularMoviesCacheMisses.get());
+    }
+
+    public CacheMetrics snapshotAndResetCacheMetrics() {
+        CacheMetrics metrics = getCacheMetrics();
+        movieCacheHits.set(0);
+        movieCacheMisses.set(0);
+        popularMoviesCacheHits.set(0);
+        popularMoviesCacheMisses.set(0);
+        if (metrics.movieHits() > 0 || metrics.movieMisses() > 0 || metrics.popularHits() > 0 || metrics.popularMisses() > 0) {
+            log.info("TMDB cache summary for request movieHits={} movieMisses={} popularHits={} popularMisses={}",
+                    metrics.movieHits(),
+                    metrics.movieMisses(),
+                    metrics.popularHits(),
+                    metrics.popularMisses());
+        }
+        return metrics;
+    }
+
+    private record CachedMoviePage(MoviePage moviePage, long expiresAt) {
+    }
+
+    private record CacheEntry(Movie movie, long expiresAt) {
+    }
+
+    public record CacheMetrics(long movieHits, long movieMisses, long popularHits, long popularMisses) {
     }
 
     @Override

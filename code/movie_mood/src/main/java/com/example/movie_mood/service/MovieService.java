@@ -15,7 +15,11 @@ public interface MovieService {
 
     List<Movie> filterMoviesByMood(Mood mood);
 
+    List<Movie> getMovieBatch(List<String> tmdbMovieIds);
+
     Movie getMovieDetails(String tmdbMovieId);
+
+    Movie getMovieSummaryForHistory(String tmdbMovieId);
 
     Video getMovieTrailer(String tmdbMovieId);
 
