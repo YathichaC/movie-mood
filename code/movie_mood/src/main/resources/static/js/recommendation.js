@@ -1,9 +1,48 @@
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('recommendationsContainer');
+    const strategySelect = document.getElementById('strategySelect');
 
     if (!container) {
         return;
     }
+    strategySelect?.addEventListener('change', async () => {
+        const mood = new URLSearchParams(window.location.search).get('mood')
+            || sessionStorage.getItem('selectedMood');
+
+        if (!mood) {
+            showMessage('Please select a mood first.');
+            return;
+        }
+
+        strategySelect.disabled = true;
+        container.innerHTML = `
+        <p class="col-span-full text-center text-neutral-500">
+            Loading recommendations...
+        </p>
+    `;
+
+        try {
+            const response = await apiFetch(
+                `/v1/recommendations?mood=${encodeURIComponent(mood)}&strategy=${encodeURIComponent(strategySelect.value)}`
+            );
+
+            if (!response || !response.ok) {
+                throw new Error('Failed to fetch recommendations');
+            }
+
+            const movies = await response.json();
+
+            sessionStorage.setItem('recommendations', JSON.stringify(movies));
+            renderRecommendations(movies);
+
+        } catch (error) {
+            console.error('Failed to change strategy:', error);
+            showMessage('Failed to load recommendations.');
+        } finally {
+            strategySelect.disabled = false;
+        }
+    });
+
 
     const storedRecommendations =
         sessionStorage.getItem('recommendations');
@@ -37,6 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function createMovieCard(movie) {
         const title = escapeHtml(movie.title ?? 'Untitled');
+        const matchScore = movie.matchScore != null
+            ? `${Number(movie.matchScore).toFixed(0)}% Match`
+            : '';
 
         const rating = movie.rating != null
             ? Number(movie.rating).toFixed(1)
@@ -98,6 +140,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                 class="font-title-md text-title-md text-white font-semibold group-hover:text-primary transition-colors line-clamp-1">
                                 ${title}
                             </h3>
+                            ${matchScore ? `
+            <p class="mt-2 text-sm font-medium text-primary">
+                ${matchScore}
+            </p>
+        ` : ''}
                         </div>
                     </div>
 

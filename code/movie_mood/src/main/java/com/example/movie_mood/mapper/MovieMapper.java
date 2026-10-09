@@ -31,7 +31,7 @@ public class MovieMapper {
                 movie.getRating(),
                 movie.getReleaseDate(),
                 genreIds);
-
+        response.setMatchScore(movie.getMatchScore());
         response.setPosterPath(movie.getPosterPath());
         response.setBackdropPath(movie.getBackdropPath());
 
