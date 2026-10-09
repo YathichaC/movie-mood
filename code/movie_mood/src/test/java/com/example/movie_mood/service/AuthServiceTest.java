@@ -8,6 +8,7 @@ import com.example.movie_mood.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
@@ -20,13 +21,15 @@ class AuthServiceTest {
 
     private UserRepository userRepository;
     private PasswordResetTokenRepository tokenRepository;
+    private JavaMailSender mailSender;
     private AuthService authService;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
         tokenRepository = mock(PasswordResetTokenRepository.class);
-        authService = new AuthService(userRepository, tokenRepository);
+        mailSender = mock(JavaMailSender.class);
+        authService = new AuthService(userRepository, tokenRepository, mailSender); 
     }
 
     @Test

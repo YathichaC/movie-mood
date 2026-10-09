@@ -4,20 +4,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
+
         const emailInput = document.getElementById("email");
-        const email = emailInput ? emailInput.value : "";
+        const email = emailInput ? emailInput.value.trim() : "";
 
         try {
-            await fetch("/api/v1/auth/forgot-password", {
+            const response = await fetch("/api/v1/auth/forgot-password", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: email })
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ email })
             });
 
-            window.location.href = "/auth/password-email";
+            const result = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                alert(result.message || "Failed to send reset instructions. Please try again.");
+                return;
+            }
+            sessionStorage.setItem("resetEmail", email);
+
+            window.location.href = "/auth/password-reset";
+
         } catch (error) {
-            console.error("Error requesting password reset:", error);
-            window.location.href = "/auth/password-email";
+            console.error("Forgot password error:", error);
+            alert("Unable to connect to the server. Please check your connection and try again.");
         }
     });
 });

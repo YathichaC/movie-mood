@@ -1,5 +1,6 @@
 package com.example.movie_mood.service;
 
+import org.springframework.mail.javamail.JavaMailSender;
 import com.example.movie_mood.domain.entity.PasswordResetToken;
 import com.example.movie_mood.domain.entity.User;
 import com.example.movie_mood.dto.auth.ForgotPasswordRequest;
@@ -8,12 +9,13 @@ import com.example.movie_mood.repository.PasswordResetTokenRepository;
 import com.example.movie_mood.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import org.springframework.mail.SimpleMailMessage;
+
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
-import java.util.UUID;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -22,13 +24,15 @@ class AuthServiceForgotPasswordTest {
 
     private UserRepository userRepository;
     private PasswordResetTokenRepository tokenRepository;
+    private JavaMailSender mailSender;
     private AuthService authService;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
         tokenRepository = mock(PasswordResetTokenRepository.class);
-        authService = new AuthService(userRepository, tokenRepository);
+        mailSender = mock(JavaMailSender.class);
+        authService = new AuthService(userRepository, tokenRepository, mailSender);
     }
 
     @Test
@@ -42,6 +46,7 @@ class AuthServiceForgotPasswordTest {
         authService.processForgotPassword(req);
 
         verify(tokenRepository, times(1)).save(any(PasswordResetToken.class));
+        verify(mailSender, times(1)).send(any(SimpleMailMessage.class));
     }
 
     @Test
@@ -53,6 +58,7 @@ class AuthServiceForgotPasswordTest {
 
         assertDoesNotThrow(() -> authService.processForgotPassword(req));
         verify(tokenRepository, never()).save(any(PasswordResetToken.class));
+        verify(mailSender, never()).send(any(SimpleMailMessage.class));
     }
 
     @Test

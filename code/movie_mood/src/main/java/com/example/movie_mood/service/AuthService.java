@@ -9,7 +9,8 @@ import com.example.movie_mood.dto.auth.ResetPasswordRequest;
 import com.example.movie_mood.repository.PasswordResetTokenRepository;
 import com.example.movie_mood.repository.UserRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,12 +26,15 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordResetTokenRepository tokenRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JavaMailSender mailSender;
 
-    
-    public AuthService(UserRepository userRepository, PasswordResetTokenRepository tokenRepository) {
+    public AuthService(UserRepository userRepository, 
+                       PasswordResetTokenRepository tokenRepository,
+                       JavaMailSender mailSender) {
         this.userRepository = userRepository;
         this.tokenRepository = tokenRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
+        this.mailSender = mailSender;
     }
 
     public User register(RegisterRequest request) {
@@ -71,25 +75,32 @@ public class AuthService {
         Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
 
         if (userOptional.isEmpty()) {
-            return; 
+            return;
         }
 
         User user = userOptional.get();
         String token = UUID.randomUUID().toString();
-        Instant expiryDate = Instant.now().plus(1, ChronoUnit.HOURS);
+        Instant expiryDate = Instant.now().plus(10, ChronoUnit.MINUTES);
 
-        PasswordResetToken resetToken = new PasswordResetToken(token, user, expiryDate);
+        PasswordResetToken resetToken = tokenRepository.findByUser(user)
+                .orElse(new PasswordResetToken());
+
+        resetToken.setToken(token);
+        resetToken.setUser(user);
+        resetToken.setExpiryDate(expiryDate);
+        resetToken.setUsed(false);
+
         tokenRepository.save(resetToken);
 
         String resetLink = "http://localhost:8080/auth/reset-password?token=" + token;
-        String senderEmail = "moviemood8080@gmail.com";
 
-        System.out.println("==================================================");
-        System.out.println("FROM: " + senderEmail);
-        System.out.println("TO  : " + user.getEmail());
-        System.out.println("SUBJECT: Reset Your Password — MOVIEMOOD");
-        System.out.println("CLICK LINK TO TEST RESET: " + resetLink);
-        System.out.println("==================================================");
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("moviemood8080@gmail.com");
+        message.setTo(user.getEmail());
+        message.setSubject("Reset Your Password — MOVIEMOOD");
+        message.setText("Click the link to reset your password:\n" + resetLink);
+
+        mailSender.send(message);
     }
 
     @Transactional
