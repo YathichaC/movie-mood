@@ -28,6 +28,14 @@ public class PageController {
         return "auth/password-email";
     }
 
+    @GetMapping("/auth/reset-password")
+public String resetPassword(
+        @RequestParam(value = "token", required = false) String token,
+        Model model) {
+    model.addAttribute("token", token);
+    return "auth/changepassword";
+}
+
     @GetMapping("/privacy-policy")
     public String privacyPolicy() {
         return "docs/privacy-policy";

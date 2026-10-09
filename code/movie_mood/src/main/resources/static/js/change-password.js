@@ -14,90 +14,60 @@ function togglePasswordVisibility(inputId, iconId) {
     }
 }
 
-function updateRequirement(elId, met) {
-    const item = document.getElementById(elId);
+function validatePassword(password) {
+    return {
+        length: password.length >= 8,
+        upper: /[A-Z]/.test(password),
+        lower: /[a-z]/.test(password),
+        number: /[0-9]/.test(password),
+        special: /[^A-Za-z0-9]/.test(password)
+    };
+}
+
+function updateRequirement(elementId, isValid) {
+    const item = document.getElementById(elementId);
     if (!item) return;
-    const icon = item.querySelector('.material-symbols-outlined');
-    if (met) {
-        if (icon) {
-            icon.textContent = 'check_circle';
-            icon.className = 'material-symbols-outlined text-[16px] text-secondary';
+
+    const bullet = item.querySelector(".bullet");
+    const icon = item.querySelector(".material-symbols-outlined");
+
+    if (isValid) {
+        item.classList.remove("text-[#737373]");
+        item.classList.add("text-[#B8A58A]");
+        if (bullet) {
+            bullet.textContent = "✓";
+            bullet.classList.remove("border-[#404040]");
+            bullet.classList.add("border-[#B8A58A]", "text-[#B8A58A]");
         }
-        item.classList.add('text-on-surface');
-        item.classList.remove('text-on-surface-variant');
+        if (icon) {
+            icon.textContent = "check_circle";
+            icon.classList.remove("text-[#737373]");
+            icon.classList.add("text-[#B8A58A]");
+        }
     } else {
-        if (icon) {
-            icon.textContent = 'radio_button_unchecked';
-            icon.className = 'material-symbols-outlined text-[16px] text-outline';
+        item.classList.remove("text-[#B8A58A]");
+        item.classList.add("text-[#737373]");
+        if (bullet) {
+            bullet.textContent = "○";
+            bullet.classList.remove("border-[#B8A58A]", "text-[#B8A58A]");
+            bullet.classList.add("border-[#404040]");
         }
-        item.classList.remove('text-on-surface');
-        item.classList.add('text-on-surface-variant');
+        if (icon) {
+            icon.textContent = "radio_button_unchecked";
+            icon.classList.remove("text-[#B8A58A]");
+            icon.classList.add("text-[#737373]");
+        }
     }
 }
 
 function validatePasswordStrength(pwd) {
-    const hasLength = pwd.length >= 8;
-    const hasCase = /[a-z]/.test(pwd) && /[A-Z]/.test(pwd);
-    const hasNum = /[0-9]/.test(pwd);
-    const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd);
+    const rules = validatePassword(pwd);
 
-    updateRequirement('req-length', hasLength);
-    updateRequirement('req-case', hasCase);
-    updateRequirement('req-number', hasNum);
-    updateRequirement('req-special', hasSpecial);
-
-    const score = [hasLength, hasCase, hasNum, hasSpecial].filter(Boolean).length;
-
-    const bars = [
-        document.getElementById('bar-1'),
-        document.getElementById('bar-2'),
-        document.getElementById('bar-3'),
-        document.getElementById('bar-4')
-    ];
-    const label = document.getElementById('strength-label');
-
-    bars.forEach(b => {
-        if (b) b.className = 'h-full rounded-full bg-surface-container-high transition-colors duration-300';
-    });
-
-    if (!pwd) {
-        if (label) {
-            label.textContent = 'Empty';
-            label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
-        }
-        return;
-    }
-
-    if (score === 1) {
-        if (label) {
-            label.textContent = 'Weak';
-            label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
-        }
-        if (bars[0]) bars[0].className = 'h-full rounded-full bg-error transition-colors duration-300';
-    } else if (score === 2) {
-        if (label) {
-            label.textContent = 'Fair';
-            label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
-        }
-        if (bars[0]) bars[0].className = 'h-full rounded-full bg-primary-container transition-colors duration-300';
-        if (bars[1]) bars[1].className = 'h-full rounded-full bg-primary-container transition-colors duration-300';
-    } else if (score === 3) {
-        if (label) {
-            label.textContent = 'Good';
-            label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
-        }
-        if (bars[0]) bars[0].className = 'h-full rounded-full bg-secondary transition-colors duration-300';
-        if (bars[1]) bars[1].className = 'h-full rounded-full bg-secondary transition-colors duration-300';
-        if (bars[2]) bars[2].className = 'h-full rounded-full bg-secondary transition-colors duration-300';
-    } else if (score === 4) {
-        if (label) {
-            label.textContent = 'Strong';
-            label.className = 'font-manrope text-[11px] text-on-surface-variant font-semibold';
-        }
-        bars.forEach(b => {
-            if (b) b.className = 'h-full rounded-full bg-secondary transition-colors duration-300';
-        });
-    }
+    updateRequirement('req-length', rules.length);
+    updateRequirement('req-upper', rules.upper);
+    updateRequirement('req-lower', rules.lower);
+    updateRequirement('req-number', rules.number);
+    updateRequirement('req-special', rules.special);
 
     validateMatch();
 }
@@ -118,6 +88,47 @@ function validateMatch() {
     }
 }
 
+let toastTimeout = null;
+
+function showNotification(message, isError = false) {
+    const toast = document.getElementById("notification-toast");
+
+    if (!toast) {
+        return;
+    }
+
+    const icon = toast.querySelector(".material-symbols-outlined");
+    const text = toast.querySelector("span:last-child");
+
+    if (text) {
+        text.textContent = message;
+    }
+
+    if (isError) {
+        if (icon) {
+            icon.textContent = "error";
+            icon.classList.remove("text-green-400");
+            icon.classList.add("text-red-400");
+        }
+    } else {
+        if (icon) {
+            icon.textContent = "check_circle";
+            icon.classList.remove("text-red-400");
+            icon.classList.add("text-green-400");
+        }
+    }
+
+    toast.classList.remove("translate-x-full", "opacity-0");
+
+    if (toastTimeout) {
+        clearTimeout(toastTimeout);
+    }
+
+    toastTimeout = setTimeout(() => {
+        toast.classList.add("translate-x-full", "opacity-0");
+    }, 3000);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("password-form");
     if (!form) return;
@@ -127,13 +138,21 @@ document.addEventListener("DOMContentLoaded", () => {
         const newPassword = document.getElementById("new-password")?.value || "";
         const confirmPassword = document.getElementById("confirm-password")?.value || "";
 
+        const rules = validatePassword(newPassword);
+        const validPassword = Object.values(rules).every(Boolean);
+
+        if (!validPassword) {
+            showNotification("Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.", true);
+            return;
+        }
+
         if (newPassword !== confirmPassword) {
-            alert("Passwords do not match!");
+            showNotification("Passwords do not match!", true);
             return;
         }
 
         if (!resetToken) {
-            alert("Invalid or missing reset token. Please request a new password reset link.");
+            showNotification("Invalid or missing reset token. Please request a new password reset link.", true);
             return;
         }
 
@@ -149,14 +168,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const data = await response.json();
             if (response.ok) {
-                alert("Password has been reset successfully! Redirecting to login...");
-                window.location.href = "/auth/login";
+                showNotification("Password has been reset successfully! Redirecting to login...");
+                setTimeout(() => {
+                    window.location.href = "/auth/login";
+                }, 1500);
             } else {
-                alert(data.message || "Failed to reset password.");
+                showNotification(data.message || "Failed to reset password.", true);
             }
         } catch (error) {
             console.error("Error resetting password:", error);
-            alert("Error connecting to server.");
+            showNotification("Error connecting to server.", true);
         }
     });
 });

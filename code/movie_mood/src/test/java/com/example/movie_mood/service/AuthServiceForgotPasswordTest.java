@@ -6,36 +6,49 @@ import com.example.movie_mood.dto.auth.ForgotPasswordRequest;
 import com.example.movie_mood.dto.auth.ResetPasswordRequest;
 import com.example.movie_mood.repository.PasswordResetTokenRepository;
 import com.example.movie_mood.repository.UserRepository;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 class AuthServiceForgotPasswordTest {
 
     private UserRepository userRepository;
     private PasswordResetTokenRepository tokenRepository;
+    private JavaMailSender mailSender;
+    private TemplateEngine templateEngine;
+    private EmailService emailService;
     private AuthService authService;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
         tokenRepository = mock(PasswordResetTokenRepository.class);
-        authService = new AuthService(userRepository, tokenRepository, new BCryptPasswordEncoder());
+        mailSender = mock(JavaMailSender.class);
+        templateEngine = mock(TemplateEngine.class);
+        emailService = mock(EmailService.class);
+        authService = new AuthService(userRepository, tokenRepository, mailSender, templateEngine, emailService);
     }
 
     @Test
     void processForgotPassword_whenEmailExists_shouldCreateToken() {
         User user = new User("testuser", "user@example.com", "hashedOldPass");
         when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(user));
+        when(templateEngine.process(eq("mail/reset-password-email"), any(Context.class)))
+                .thenReturn("<html>mock html</html>");
 
         ForgotPasswordRequest req = new ForgotPasswordRequest();
         req.setEmail("user@example.com");
@@ -43,6 +56,7 @@ class AuthServiceForgotPasswordTest {
         authService.processForgotPassword(req);
 
         verify(tokenRepository, times(1)).save(any(PasswordResetToken.class));
+        verify(emailService, times(1)).sendResetPasswordEmail(eq("user@example.com"), anyString());
     }
 
     @Test
@@ -54,6 +68,7 @@ class AuthServiceForgotPasswordTest {
 
         assertDoesNotThrow(() -> authService.processForgotPassword(req));
         verify(tokenRepository, never()).save(any(PasswordResetToken.class));
+        verify(mailSender, never()).send(any(MimeMessage.class));
     }
 
     @Test
@@ -129,5 +144,54 @@ class AuthServiceForgotPasswordTest {
         );
 
         assertEquals("Token has already been used", ex.getMessage());
+    }
+
+    @Test
+    void resetPassword_withSameAsOldPassword_shouldThrowException() {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        User user = new User("testuser", "user@example.com", encoder.encode("SamePassword123!"));
+        PasswordResetToken resetToken = new PasswordResetToken(
+                "valid-token",
+                user,
+                Instant.now().plus(1, ChronoUnit.HOURS)
+        );
+
+        when(tokenRepository.findByToken("valid-token")).thenReturn(Optional.of(resetToken));
+
+        ResetPasswordRequest req = new ResetPasswordRequest();
+        req.setToken("valid-token");
+        req.setNewPassword("SamePassword123!"); 
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> authService.resetPassword(req)
+        );
+
+        assertEquals("New password cannot be the same as the old password", ex.getMessage());
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void resetPassword_withWeakPassword_shouldThrowException() {
+        User user = new User("testuser", "user@example.com", "hashedOldPass");
+        PasswordResetToken resetToken = new PasswordResetToken(
+                "valid-token",
+                user,
+                Instant.now().plus(1, ChronoUnit.HOURS)
+        );
+
+        when(tokenRepository.findByToken("valid-token")).thenReturn(Optional.of(resetToken));
+
+        ResetPasswordRequest req = new ResetPasswordRequest();
+        req.setToken("valid-token");
+        req.setNewPassword("weak");
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> authService.resetPassword(req)
+        );
+
+        assertEquals("Password must be at least 8 characters long", ex.getMessage());
+        verify(userRepository, never()).save(any(User.class));
     }
 }
