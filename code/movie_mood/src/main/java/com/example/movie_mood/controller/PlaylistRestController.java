@@ -138,25 +138,16 @@ public class PlaylistRestController {
     }
 
     @DeleteMapping("/{id}/image")
-    public ResponseEntity<?> deletePlaylistImage(
+    public ResponseEntity<Void> deletePlaylistImage(
             @PathVariable("id") UUID id,
             Authentication authentication) {
 
         UUID userId = getCurrentUserId(authentication);
 
-        // ตรวจ owner ก่อน และเอา path รูปเดิม
-        PlaylistResponse current = playlistService.getPlaylistDetail(
+        String oldImagePath = playlistService.deletePlaylistImage(
                 id,
                 userId);
 
-        String oldImagePath = current.getCoverImagePath();
-
-        // ล้าง path ใน database
-        PlaylistResponse updated = playlistService.deletePlaylistImage(
-                id,
-                userId);
-
-        // ลบไฟล์จริง
         if (oldImagePath != null
                 && !oldImagePath.isBlank()) {
 
@@ -164,7 +155,7 @@ public class PlaylistRestController {
                     oldImagePath);
         }
 
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")

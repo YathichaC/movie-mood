@@ -1,4 +1,4 @@
-const MAX_MOVIES_PER_PAGE = 10;
+const MAX_MOVIES_PER_PAGE = 5;
 let currentPage = 1;
 let totalPages = 1;
 let activeRequestController = null;
@@ -53,15 +53,14 @@ async function loadMovies(pageNumber) {
         activeRequestController.abort();
     }
 
-    const requestController = new AbortController();
-    activeRequestController = requestController;
+    activeRequestController = new AbortController();
     setLoadingState();
 
     try {
 
         const response =
             await fetch(`/api/v1/movies?page=${safePage}`, {
-                signal: requestController.signal,
+                signal: activeRequestController.signal,
             });
 
         if (!response.ok) {
@@ -96,9 +95,7 @@ async function loadMovies(pageNumber) {
         console.error("Failed to load movies:", error);
         showMovieError();
     } finally {
-        if (activeRequestController === requestController) {
-            activeRequestController = null;
-        }
+        activeRequestController = null;
     }
 }
 

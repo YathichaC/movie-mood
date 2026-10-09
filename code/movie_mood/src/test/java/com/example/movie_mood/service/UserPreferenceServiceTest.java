@@ -152,14 +152,9 @@ class UserPreferenceServiceTest {
         }
 
         @Test
-        void changePasswordShouldSucceedWhenCurrentPasswordMatches() {
+        void changePasswordShouldSucceedWhenPasswordMeetsRequirements() {
                 when(userRepository.findById(userId))
                                 .thenReturn(Optional.of(existingUser));
-
-                when(passwordEncoder.matches(
-                                "CurrentPass123!",
-                                "encodedPassword123"))
-                                .thenReturn(true);
 
                 when(passwordEncoder.matches(
                                 "NewPass12345!",
@@ -170,7 +165,6 @@ class UserPreferenceServiceTest {
                                 .thenReturn("newEncodedPassword123");
 
                 ChangePasswordRequest request = new ChangePasswordRequest();
-                request.setCurrentPassword("CurrentPass123!");
                 request.setNewPassword("NewPass12345!");
 
                 userService.changePassword(userId, request);
@@ -183,25 +177,24 @@ class UserPreferenceServiceTest {
         }
 
         @Test
-        void changePasswordShouldRejectWhenCurrentPasswordIsIncorrect() {
+        void changePasswordShouldRejectWhenNewPasswordIsSameAsCurrent() {
                 when(userRepository.findById(userId))
                                 .thenReturn(Optional.of(existingUser));
 
                 when(passwordEncoder.matches(
-                                "WrongPass123!",
+                                "OldPass123!",
                                 "encodedPassword123"))
-                                .thenReturn(false);
+                                .thenReturn(true);
 
                 ChangePasswordRequest request = new ChangePasswordRequest();
-                request.setCurrentPassword("WrongPass123!");
-                request.setNewPassword("NewPass12345!");
+                request.setNewPassword("OldPass123!");
 
                 IllegalArgumentException exception = assertThrows(
                                 IllegalArgumentException.class,
                                 () -> userService.changePassword(userId, request));
 
                 assertEquals(
-                                "Current password is incorrect",
+                                "New password cannot be the same as current password",
                                 exception.getMessage());
 
                 verify(userRepository, never()).save(any(User.class));
