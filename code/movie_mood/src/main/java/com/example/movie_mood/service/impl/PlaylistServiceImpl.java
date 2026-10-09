@@ -265,21 +265,21 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
-    public PlaylistResponse deletePlaylistImage(
+    public String deletePlaylistImage(
             UUID playlistId,
             UUID userId) {
 
         Playlist playlist = requireOwnedPlaylist(playlistId, userId);
 
         PlaylistDetail detail = playlist.getDetail();
+        String oldImagePath = detail != null ? detail.getCoverImagePath() : null;
 
         if (detail != null) {
             detail.setCoverImagePath(null);
+            playlistRepository.save(playlist);
         }
 
-        Playlist saved = playlistRepository.save(playlist);
-
-        return new PlaylistResponse(saved);
+        return oldImagePath;
     }
 
     private Playlist requireOwnedPlaylist(UUID playlistId, UUID userId) {

@@ -51,7 +51,7 @@ public interface PlaylistService {
                         String tmdbMovieId,
                         UUID userId);
 
-        PlaylistResponse deletePlaylistImage(
+        String deletePlaylistImage(
                         UUID playlistId,
                         UUID userId);
 }

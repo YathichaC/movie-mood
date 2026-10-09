@@ -52,6 +52,7 @@ export function setupPlaylistActions({ reload }) {
 
             if (nameInput) nameInput.value = '';
             createForm?.classList.add('hidden');
+            closeModal('create-playlist-modal');
 
             if (search) search.value = '';
 
@@ -109,8 +110,6 @@ export function setupPlaylistActions({ reload }) {
             }
         });
 
-        closeModal();
-
         const saveLabel = saveButton.querySelector('span')?.textContent || 'Save';
         saveButton.disabled = true;
         saveButton.innerHTML = '<span>Saving...</span>';
@@ -121,6 +120,8 @@ export function setupPlaylistActions({ reload }) {
                 addToPlaylistIds,
                 removeFromPlaylistIds
             });
+
+            closeModal();
 
             clearPlaylistCache();
             clearPlaylistPickerCache();
