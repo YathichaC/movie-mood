@@ -2,8 +2,11 @@ package com.example.movie_mood.controller;
 
 import com.example.movie_mood.dto.MovielistRequest;
 import com.example.movie_mood.dto.MovielistResponse;
+import com.example.movie_mood.dto.PlaylistMovieBatchRequest;
+import com.example.movie_mood.dto.PlaylistPickerResponse;
 import com.example.movie_mood.dto.PlaylistRequest;
 import com.example.movie_mood.dto.PlaylistResponse;
+import com.example.movie_mood.dto.PlaylistSummaryResponse;
 import com.example.movie_mood.service.PlaylistImageService;
 import com.example.movie_mood.service.PlaylistService;
 
@@ -42,7 +45,19 @@ public class PlaylistRestController {
 
         UUID userId = getCurrentUserId(authentication);
 
-        List<PlaylistResponse> playlists = playlistService.getUserPlaylists(userId);
+        List<PlaylistSummaryResponse> playlists = playlistService.getUserPlaylists(userId);
+
+        return ResponseEntity.ok(playlists);
+    }
+
+    @GetMapping("/picker")
+    public ResponseEntity<List<PlaylistPickerResponse>> getPlaylistPicker(
+            Authentication authentication,
+            @RequestParam(required = false) String tmdbMovieId) {
+
+        UUID userId = getCurrentUserId(authentication);
+
+        List<PlaylistPickerResponse> playlists = playlistService.getUserPlaylistsForPicker(userId, tmdbMovieId);
 
         return ResponseEntity.ok(playlists);
     }
@@ -178,22 +193,18 @@ public class PlaylistRestController {
                 .build();
     }
 
-    @PostMapping("/{id}/movies")
-    public ResponseEntity<?> addMovieToPlaylist(
-            @PathVariable("id") UUID id,
-            @RequestBody MovielistRequest request,
+    @PutMapping("/movies")
+    public ResponseEntity<Void> updateMoviePlaylists(
+            @Valid @RequestBody PlaylistMovieBatchRequest request,
             Authentication authentication) {
 
         UUID userId = getCurrentUserId(authentication);
 
-        MovielistResponse item = playlistService.addMovieToPlaylist(
-                id,
+        playlistService.updateMoviePlaylists(
                 userId,
                 request);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(item);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}/movies/{tmdbMovieId}")

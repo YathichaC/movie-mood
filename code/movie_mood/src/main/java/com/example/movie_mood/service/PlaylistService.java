@@ -2,16 +2,23 @@ package com.example.movie_mood.service;
 
 import com.example.movie_mood.dto.MovielistRequest;
 import com.example.movie_mood.dto.MovielistResponse;
+import com.example.movie_mood.dto.PlaylistMovieBatchRequest;
+import com.example.movie_mood.dto.PlaylistPickerResponse;
 import com.example.movie_mood.dto.PlaylistRequest;
 import com.example.movie_mood.dto.PlaylistResponse;
+import com.example.movie_mood.dto.PlaylistSummaryResponse;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface PlaylistService {
 
-        List<PlaylistResponse> getUserPlaylists(
+        List<PlaylistSummaryResponse> getUserPlaylists(
                         UUID userId);
+
+        List<PlaylistPickerResponse> getUserPlaylistsForPicker(
+                        UUID userId,
+                        String tmdbMovieId);
 
         PlaylistResponse getPlaylistDetail(
                         UUID playlistId,
@@ -34,6 +41,10 @@ public interface PlaylistService {
                         UUID playlistId,
                         UUID userId,
                         MovielistRequest request);
+
+        void updateMoviePlaylists(
+                        UUID userId,
+                        PlaylistMovieBatchRequest request);
 
         void removeMovieFromPlaylist(
                         UUID playlistId,

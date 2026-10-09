@@ -28,261 +28,65 @@
                     Watch History</h1>
                 <p class="text-body-md font-body-md mt-2">Movies you’ve watched</p>
             </div>
-            <button id="clear-all-btn" type="button" onclick="openClearModal()"
-                class="hidden px-4 py-2 text-xs font-medium text-neutral-400 hover:text-white border border-white/10 rounded-lg hover:border-white/30 transition">
-                Clear watch history
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <p id="history-count" class="text-sm text-neutral-400"></p>
+            <div id="empty-state" class="hidden flex-col items-center justify-center py-24 text-center">
+                <span class="material-symbols-outlined text-6xl text-neutral-600 mb-5" aria-hidden="true">
+                    movie
+                </span>
+                <h2 class="text-xl font-medium text-white mb-2">
+                    ยังไม่มีหนังที่ดูแล้ว
+                </h2>
+                <p class="text-sm text-neutral-400 max-w-sm leading-relaxed">
+                    หนังที่คุณทำเครื่องหมายว่าดูแล้วจะแสดงอยู่ที่นี่
+                </p>
+            </div>
+        </div>
+
+        <!-- Movie cards -->
+        <div id="history-container"
+            class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-10 gap-x-6">
+        </div>
+
+        <!-- Error -->
+        <div id="history-error" class="hidden text-center py-12 text-red-400">
+            <p id="history-error-message">
+                Unable to load watch history.
+            </p>
+            <button id="retry-history-btn" type="button" class="mt-4 underline underline-offset-4 hover:text-white">
+                Try again
             </button>
         </div>
-
-        <!-- Movie Grid Container (โหลดผ่าน JS) -->
-        <div id="history-container" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-10 gap-x-6">
-        </div>
-
-        <!-- Pagination Bar (ตรงตามสไตล์หน้าค้นหาของเพื่อน) -->
-        <div id="pagination-wrapper" class="hidden mt-12 flex items-center justify-between border-t border-white/10 pt-6">
-            <p id="pagination-info" class="text-xs text-neutral-500">Showing 0-0 of 0 movies</p>
+        <div id="pagination-wrapper"
+            class="hidden mt-10 flex items-center justify-between border-t border-white/10 pt-6">
+            <p id="pagination-info" class="text-xs text-neutral-500">
+                Page 1 of 1
+            </p>
             <div id="pagination-container" class="flex items-center gap-2">
             </div>
         </div>
-
-        <!-- EMPTY STATE -->
-        <div class="hidden flex-col items-center justify-center py-28 text-center max-w-md mx-auto" id="empty-state">
-            <div
-                class="w-16 h-16 rounded border border-surface-variant flex items-center justify-center mb-6 text-secondary bg-surface-container">
-                <span class="material-symbols-outlined text-3xl" data-icon="movie">movie</span>
-            </div>
-            <h2 class="text-headline-sm font-headline-sm text-on-surface font-medium">
-                No watch history yet
-            </h2>
-            <p class="text-body-md font-body-md text-secondary mt-2 mb-8">
-                Movies you watch will appear here.
-            </p>
-            <a class="px-6 py-2.5 bg-white text-black font-semibold text-body-sm rounded-sm hover:bg-neutral-200 transition-colors uppercase tracking-wider"
-                th:href="@{/movies}">
-                Discover Movies
-            </a>
-        </div>
     </main>
-
-    <!-- CONFIRMATION MODAL -->
     <div class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 p-4" id="clear-modal">
         <div class="w-full max-w-sm bg-surface-container border border-surface-variant p-6 rounded-sm space-y-4">
             <div class="flex items-center space-x-3 text-on-surface">
                 <span class="material-symbols-outlined" data-icon="history">history</span>
                 <h3 class="text-headline-sm font-headline-sm font-medium">Clear watch history?</h3>
             </div>
-            <p class="text-body-sm font-body-sm text-secondary">
-                This will remove all recorded movie screenings from your archive account. This action cannot be
-                reversed.
-            </p>
+            <p class="text-body-sm font-body-sm text-secondary">This will remove all recorded movie screenings from your
+                archive account. This action cannot be reversed.</p>
             <div class="flex items-center justify-end space-x-3 pt-4 border-t border-surface-variant">
                 <button onclick="closeClearModal()"
                     class="px-3.5 py-1.5 text-body-sm font-body-sm text-secondary hover:text-white border border-surface-variant rounded-sm transition-colors"
-                    type="button">
-                    Cancel
-                </button>
+                    type="button">Cancel</button>
                 <button onclick="confirmClearHistory()"
                     class="px-3.5 py-1.5 text-body-sm font-body-sm bg-white text-black font-semibold hover:bg-neutral-200 rounded-sm transition-colors"
-                    type="button">
-                    Clear All
-                </button>
+                    type="button">Clear All</button>
             </div>
         </div>
     </div>
-
     <footer th:replace="~{fragments/footer :: footer}"></footer>
-
-    <script>
-        let currentPage = 1;
-        const pageSize = 15;
-
-        async function fetchHistory(page = 1) {
-            currentPage = page;
-            const container = document.getElementById('history-container');
-            const emptyState = document.getElementById('empty-state');
-            const paginationWrapper = document.getElementById('pagination-wrapper');
-            const clearBtn = document.getElementById('clear-all-btn');
-
-            try {
-                const response = await fetch(`/api/history?page=${page}&size=${pageSize}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch history');
-                }
-                const data = await response.json();
-
-                if (!data.content || data.content.length === 0) {
-                    container.innerHTML = '';
-                    container.classList.add('hidden');
-                    paginationWrapper.classList.add('hidden');
-                    if (clearBtn) clearBtn.classList.add('hidden');
-                    emptyState.classList.remove('hidden');
-                    emptyState.classList.add('flex');
-                    return;
-                }
-
-                emptyState.classList.add('hidden');
-                emptyState.classList.remove('flex');
-                container.classList.remove('hidden');
-                paginationWrapper.classList.remove('hidden');
-                if (clearBtn) clearBtn.classList.remove('hidden');
-
-                // ดึงรายละเอียดหนังจาก TMDB/Movie API ผ่าน ID
-                const movieDetails = await Promise.all(
-                    data.content.map(async item => {
-                        try {
-                            const res = await fetch(`/api/movies/${item.tmdbMovieId}`);
-                            if (res.ok) return await res.json();
-                        } catch (e) {
-                            console.warn("Could not fetch detail for movie:", item.tmdbMovieId);
-                        }
-                        return { id: item.tmdbMovieId, title: 'Movie #' + item.tmdbMovieId, posterPath: null, voteAverage: 0 };
-                    })
-                );
-
-                renderMovieCards(movieDetails);
-                renderPagination(data.totalPages, currentPage, data.totalElements);
-
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            } catch (error) {
-                console.error('Error fetching watch history:', error);
-            }
-        }
-
-        function renderMovieCards(movies) {
-            const container = document.getElementById('history-container');
-            container.innerHTML = movies.map(movie => {
-                const title = movie.title || 'Untitled';
-                const poster = movie.posterPath 
-                    ? (movie.posterPath.startsWith('http') ? movie.posterPath : `https://image.tmdb.org/t/p/w500${movie.posterPath}`)
-                    : 'https://via.placeholder.com/500x750?text=No+Poster';
-                const rating = movie.voteAverage ? Number(movie.voteAverage).toFixed(1) : '-';
-                const year = movie.releaseDate ? movie.releaseDate.substring(0, 4) : '';
-
-                return `
-                    <div class="group relative flex flex-col cursor-pointer transition-transform duration-300 hover:-translate-y-1.5"
-                         onclick="window.location.href='/movies/${movie.id}'">
-                        <div class="relative aspect-[2/3] w-full overflow-hidden rounded-md bg-neutral-900 border border-white/5">
-                            <img src="${poster}" alt="${title}" class="h-full w-full object-cover transition-opacity duration-300 group-hover:opacity-90" loading="lazy">
-                            <div class="absolute top-2 left-2 flex items-center gap-1 rounded bg-black/70 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-sm">
-                                <span class="material-symbols-outlined text-[14px] text-amber-400">star</span>
-                                <span>${rating}</span>
-                            </div>
-                            ${year ? `<div class="absolute top-2 right-2 rounded bg-black/70 px-2 py-0.5 text-xs text-neutral-300 backdrop-blur-sm">${year}</div>` : ''}
-                        </div>
-                        <h3 class="mt-3 truncate text-sm font-medium text-[#F5F5F5] group-hover:text-white">${title}</h3>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderPagination(totalPages, activePage, totalElements) {
-            const container = document.getElementById('pagination-container');
-            const info = document.getElementById('pagination-info');
-
-            if (info) {
-                const start = (activePage - 1) * pageSize + 1;
-                const end = Math.min(activePage * pageSize, totalElements);
-                info.textContent = `Showing ${start}-${end} of ${totalElements} movies`;
-            }
-
-            if (totalPages <= 1) {
-                container.innerHTML = '';
-                return;
-            }
-
-            let html = '';
-
-            // ปุ่ม Previous (<)
-            const prevDisabled = activePage <= 1;
-            html += `
-                <button type="button" aria-label="Previous page" ${prevDisabled ? 'disabled' : ''} onclick="goToPage(${activePage - 1})"
-                    class="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-neutral-400 transition hover:border-white/30 hover:text-white disabled:cursor-not-allowed disabled:text-neutral-700">
-                    <span class="material-symbols-outlined text-lg">chevron_left</span>
-                </button>
-            `;
-
-            // ลำดับหน้าพร้อมเครื่องหมายจุดไข่ปลา (...)
-            const pages = getPaginationRange(activePage, totalPages);
-            pages.forEach(p => {
-                if (p === '...') {
-                    html += `<span class="flex h-9 w-9 items-center justify-center text-sm text-neutral-600">...</span>`;
-                } else if (p === activePage) {
-                    html += `
-                        <button type="button" aria-label="Page ${p}" aria-current="page" onclick="goToPage(${p})"
-                            class="flex h-9 min-w-9 items-center justify-center rounded-lg border text-sm font-medium transition border-white/20 bg-white text-black px-2">
-                            ${p}
-                        </button>
-                    `;
-                } else {
-                    html += `
-                        <button type="button" aria-label="Page ${p}" onclick="goToPage(${p})"
-                            class="flex h-9 min-w-9 items-center justify-center rounded-lg border text-sm font-medium transition border-white/10 text-neutral-400 hover:border-white/30 hover:text-white px-2">
-                            ${p}
-                        </button>
-                    `;
-                }
-            });
-
-            // ปุ่ม Next (>)
-            const nextDisabled = activePage >= totalPages;
-            html += `
-                <button type="button" aria-label="Next page" ${nextDisabled ? 'disabled' : ''} onclick="goToPage(${activePage + 1})"
-                    class="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-neutral-400 transition hover:border-white/30 hover:text-white disabled:cursor-not-allowed disabled:text-neutral-700">
-                    <span class="material-symbols-outlined text-lg">chevron_right</span>
-                </button>
-            `;
-
-            container.innerHTML = html;
-        }
-
-        function getPaginationRange(current, total) {
-            if (total <= 7) {
-                return Array.from({ length: total }, (_, i) => i + 1);
-            }
-            const range = [];
-            const delta = 1;
-            for (let i = 1; i <= total; i++) {
-                if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
-                    range.push(i);
-                } else if (range[range.length - 1] !== '...') {
-                    range.push('...');
-                }
-            }
-            return range;
-        }
-
-        function goToPage(page) {
-            if (page < 1) return;
-            fetchHistory(page);
-        }
-
-        function openClearModal() {
-            document.getElementById('clear-modal').classList.remove('hidden');
-            document.getElementById('clear-modal').classList.add('flex');
-        }
-
-        function closeClearModal() {
-            document.getElementById('clear-modal').classList.add('hidden');
-            document.getElementById('clear-modal').classList.remove('flex');
-        }
-
-        async function confirmClearHistory() {
-            try {
-                const res = await fetch('/api/history', { method: 'DELETE' });
-                if (res.ok) {
-                    closeClearModal();
-                    fetchHistory(1);
-                }
-            } catch (err) {
-                console.error('Error clearing history:', err);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchHistory(1);
-        });
-    </script>
+    <script th:src="@{/js/movie-history.js}"></script>
 </body>
 
 </html>

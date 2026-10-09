@@ -1,10 +1,12 @@
 import {
     createPlaylist,
-    addMovieToPlaylist,
-    request
+    updateMoviePlaylists,
+    clearPlaylistCache,
+    clearPlaylistPickerCache
 } from './playlist-api.js';
 
 import { closeModal } from './playlist-modal.js';
+import { resetPlaylistCheckboxCount } from './playlist-render.js';
 
 export function setupPlaylistActions({ reload }) {
     const list = document.getElementById('playlistsList');
@@ -21,8 +23,7 @@ export function setupPlaylistActions({ reload }) {
         list?.querySelectorAll(
             'input[type="checkbox"][data-playlist-id]'
         ).forEach(checkbox => {
-            checkbox.checked =
-                checkbox.dataset.originalChecked === 'true';
+            resetPlaylistCheckboxCount(checkbox);
         });
     }
 
@@ -54,6 +55,8 @@ export function setupPlaylistActions({ reload }) {
 
             if (search) search.value = '';
 
+            clearPlaylistCache();
+            clearPlaylistPickerCache();
             await reload();
 
             notify(
@@ -92,43 +95,56 @@ export function setupPlaylistActions({ reload }) {
             return;
         }
 
-        // เก็บข้อมูลที่ต้องส่งก่อนปิด Modal
-        const changes = changedCheckboxes.map(checkbox => ({
-            playlistId: checkbox.dataset.playlistId,
-            wasChecked: checkbox.dataset.originalChecked === 'true',
-            isChecked: checkbox.checked
-        }));
+        const addToPlaylistIds = [];
+        const removeFromPlaylistIds = [];
 
-        // ปิด Modal ทันที ไม่ต้องรอ API
+        changedCheckboxes.forEach(checkbox => {
+            const playlistId = checkbox.dataset.playlistId;
+            if (!playlistId) return;
+
+            if (checkbox.checked) {
+                addToPlaylistIds.push(playlistId);
+            } else {
+                removeFromPlaylistIds.push(playlistId);
+            }
+        });
+
         closeModal();
 
+        const saveLabel = saveButton.querySelector('span')?.textContent || 'Save';
         saveButton.disabled = true;
+        saveButton.innerHTML = '<span>Saving...</span>';
 
         try {
-            await Promise.all(
-                changes.map(change => {
-                    const { playlistId, wasChecked, isChecked } = change;
+            await updateMoviePlaylists({
+                tmdbMovieId: movieId,
+                addToPlaylistIds,
+                removeFromPlaylistIds
+            });
 
-                    if (!playlistId || wasChecked === isChecked) {
-                        return Promise.resolve();
-                    }
+            clearPlaylistCache();
+            clearPlaylistPickerCache();
 
-                    if (isChecked) {
-                        // เพิ่มหนังด้วย POST
-                        return addMovieToPlaylist(playlistId, movieId);
-                    }
+            const localPlaylists = Array.from(
+                list?.querySelectorAll('input[type="checkbox"][data-playlist-id]') || []
+            ).map(checkbox => ({
+                playlistId: checkbox.dataset.playlistId,
+                containsCurrentMovie: checkbox.checked,
+                containsMovie: checkbox.checked,
+                inPlaylist: checkbox.checked
+            }));
 
-                    // นำหนังออกด้วย DELETE
-                    return request(
-                        `/v1/playlists/${encodeURIComponent(playlistId)}/movies/${encodeURIComponent(movieId)}`,
-                        { method: 'DELETE' }
-                    );
-                })
-            );
-
+            Array.from(
+                list?.querySelectorAll('input[type="checkbox"][data-playlist-id]') || []
+            ).forEach(checkbox => {
+                checkbox.dataset.originalChecked = String(checkbox.checked);
+            });
 
             window.dispatchEvent(new CustomEvent('playlist-updated', {
-                detail: { tmdbMovieId: String(movieId) }
+                detail: {
+                    tmdbMovieId: String(movieId),
+                    playlists: localPlaylists
+                }
             }));
 
             notify(
@@ -137,9 +153,9 @@ export function setupPlaylistActions({ reload }) {
                 'playlist_add_check'
             );
 
-            // โหลดข้อมูลล่าสุดหลังบันทึกสำเร็จ
-            await reload();
-
+            if (document.getElementById('playlist-items-list')) {
+                await reload();
+            }
         } catch (error) {
             console.error('Failed to update playlists:', error);
 
@@ -148,14 +164,16 @@ export function setupPlaylistActions({ reload }) {
                 error.message || 'Please try again.'
             );
 
-            // โหลดสถานะล่าสุดใหม่ เผื่อบางรายการสำเร็จไปแล้ว
             try {
-                await reload();
+                if (document.getElementById('playlist-items-list')) {
+                    await reload();
+                }
             } catch (reloadError) {
                 console.error('Failed to reload playlists:', reloadError);
             }
         } finally {
             saveButton.disabled = false;
+            saveButton.innerHTML = `<span>${saveLabel}</span>`;
         }
     });
 

@@ -286,7 +286,6 @@ function updatePagination(data) {
     pagination.innerHTML = `
         <p class="text-xs text-neutral-600">
             Page ${page} of ${pages}
-            ${total > 0 ? ` · ${total.toLocaleString()} movies` : ''}
         </p>
         <div class="flex items-center gap-2">
             <button
