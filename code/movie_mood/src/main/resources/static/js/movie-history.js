@@ -107,21 +107,21 @@ async function fetchHistory(page = 1) {
             }
 
             emptyState.innerHTML = `
-                <span
-                    class="material-symbols-outlined mb-5 text-6xl text-neutral-600"
-                    aria-hidden="true"
-                >
-                    movie
-                </span>
+    <span
+        class="material-symbols-outlined mb-5 text-6xl text-neutral-600"
+        aria-hidden="true"
+    >
+        movie
+    </span>
 
-                <h2 class="mb-2 text-xl font-medium text-white">
-                    ยังไม่มีหนังที่ดูแล้ว
-                </h2>
+    <h2 class="mb-2 text-xl font-medium text-white">
+        No Movies Yet
+    </h2>
 
-                <p class="max-w-sm text-sm leading-relaxed text-neutral-400">
-                    หนังที่คุณทำเครื่องหมายว่าดูแล้วจะแสดงอยู่ที่นี่
-                </p>
-            `;
+    <p class="max-w-sm text-sm leading-relaxed text-neutral-400">
+        Movies you mark as watched will appear here.
+    </p>
+`;
 
             emptyState.classList.remove('hidden');
             emptyState.classList.add('flex');
@@ -408,8 +408,8 @@ function renderPageNumbers(current, total) {
                 ${active ? 'aria-current="page"' : ''}
                 onclick="goToPage(${page})"
                 class="flex h-9 min-w-9 items-center justify-center rounded-lg border text-sm font-medium transition ${active
-                    ? 'border-white/20 bg-white text-black'
-                    : 'border-white/10 text-neutral-400 hover:border-white/30 hover:text-white'}"
+                ? 'border-white/20 bg-white text-black'
+                : 'border-white/10 text-neutral-400 hover:border-white/30 hover:text-white'}"
                 ${active ? 'disabled' : ''}
             >
                 ${page}

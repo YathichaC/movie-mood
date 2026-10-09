@@ -27,6 +27,7 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     private static final int RECOMMENDATION_COUNT = 10;
     private static final int MAX_PAGES = 10;
+    private static final int CANDIDATE_COUNT = 10;
 
     private final MovieProvider movieProvider;
     private final MoodGenreMapper moodGenreMapper;
@@ -42,12 +43,9 @@ public class RecommendationServiceImpl implements RecommendationService {
             MoodGenreMapper moodGenreMapper,
             UserPreferenceService userPreferenceService,
             WatchHistoryService watchHistoryService,
-            @Qualifier("defaultMatchScoreStrategy")
-            MatchScoreStrategy defaultStrategy,
-            @Qualifier("moodFocusedStrategy")
-            MatchScoreStrategy moodStrategy,
-            @Qualifier("topRatedStrategy")
-            MatchScoreStrategy ratingStrategy) {
+            @Qualifier("defaultMatchScoreStrategy") MatchScoreStrategy defaultStrategy,
+            @Qualifier("moodFocusedStrategy") MatchScoreStrategy moodStrategy,
+            @Qualifier("topRatedStrategy") MatchScoreStrategy ratingStrategy) {
 
         this.movieProvider = movieProvider;
         this.moodGenreMapper = moodGenreMapper;
@@ -82,22 +80,19 @@ public class RecommendationServiceImpl implements RecommendationService {
 
         List<Integer> moodGenreIds = moodGenreMapper.getGenreIds(mood);
 
-        Set<Integer> dislikedGenreIds =
-                userPreferenceService.getDislikedGenreIds(userId)
-                        .stream()
-                        .map(Integer::parseInt)
-                        .collect(Collectors.toSet());
+        Set<Integer> dislikedGenreIds = userPreferenceService.getDislikedGenreIds(userId)
+                .stream()
+                .map(Integer::parseInt)
+                .collect(Collectors.toSet());
 
-        Set<String> watchedMovieIds =
-                watchHistoryService.getUserWatchHistory(userId)
-                        .stream()
-                        .map(WatchHistoryResponse::getTmdbMovieId)
-                        .collect(Collectors.toSet());
+        Set<String> watchedMovieIds = watchHistoryService.getUserWatchHistory(userId)
+                .stream()
+                .map(WatchHistoryResponse::getTmdbMovieId)
+                .collect(Collectors.toSet());
 
         List<Movie> recommendations = new ArrayList<>();
         Set<String> seenMovieIds = new HashSet<>();
 
-        // รวบรวมหนังจากหลายหน้าก่อนนำไปจัดอันดับ
         for (int page = 1; page <= MAX_PAGES; page++) {
 
             MoviePage moviePage = movieProvider.discoverMovies(
@@ -116,20 +111,16 @@ public class RecommendationServiceImpl implements RecommendationService {
 
             for (Movie movie : moviePage.getMovies()) {
 
-                if (movie == null) {
+                if (movie == null || movie.getTmdbMovieId() == null) {
                     continue;
                 }
 
-                boolean hasDislikedGenre =
-                        movie.getGenreIds() != null
-                                && movie.getGenreIds().stream()
-                                        .anyMatch(dislikedGenreIds::contains);
+                boolean hasDislikedGenre = movie.getGenreIds() != null
+                        && movie.getGenreIds().stream()
+                                .anyMatch(dislikedGenreIds::contains);
 
-                if (hasDislikedGenre) {
-                    continue;
-                }
-
-                if (watchedMovieIds.contains(movie.getTmdbMovieId())) {
+                if (hasDislikedGenre
+                        || watchedMovieIds.contains(movie.getTmdbMovieId())) {
                     continue;
                 }
 
@@ -138,8 +129,11 @@ public class RecommendationServiceImpl implements RecommendationService {
                 }
             }
 
-            // ไม่หยุดทันทีเมื่อครบ 10 เรื่อง
-            // เพื่อให้ Strategy จัดอันดับจากหนังหลายหน้าได้
+            // Stop fetching more pages when 10 candidates are available
+            if (recommendations.size() >= CANDIDATE_COUNT) {
+                break;
+            }
+
             if (page >= moviePage.getTotalPages()) {
                 break;
             }
