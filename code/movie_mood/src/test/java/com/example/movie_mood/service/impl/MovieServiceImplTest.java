@@ -217,6 +217,28 @@ class MovieServiceImplTest {
         }
 
         @Test
+        void getMovieBatch_shouldReturnValidMoviesInRequestedOrder() {
+                Movie firstMovie = new Movie();
+                firstMovie.setTmdbMovieId("10");
+                firstMovie.setTitle("First Movie");
+                firstMovie.setPosterPath("/first.jpg");
+
+                Movie secondMovie = new Movie();
+                secondMovie.setTmdbMovieId("20");
+                secondMovie.setTitle("Second Movie");
+                secondMovie.setPosterPath("/second.jpg");
+
+                when(movieProvider.getMovie("10")).thenReturn(firstMovie);
+                when(movieProvider.getMovie("20")).thenReturn(secondMovie);
+
+                List<Movie> result = movieService.getMovieBatch(List.of("10", "", "20"));
+
+                assertEquals(List.of(firstMovie, secondMovie), result);
+                verify(movieProvider).getMovie("10");
+                verify(movieProvider).getMovie("20");
+        }
+
+        @Test
         void discoverMovies_withLowestRating_shouldPassSortToProvider() {
                 String sortBy = "rating_asc";
                 int page = 1;

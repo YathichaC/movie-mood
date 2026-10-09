@@ -1,6 +1,7 @@
 package com.example.movie_mood.mapper;
 
 import com.example.movie_mood.domain.model.Movie;
+import com.example.movie_mood.dto.response.MovieBatchResponse;
 import com.example.movie_mood.dto.response.MovieResponse;
 import org.springframework.stereotype.Component;
 import com.example.movie_mood.domain.model.MoviePage;
@@ -50,6 +51,27 @@ public class MovieMapper {
 
         return movies.stream()
                 .map(this::toResponse)
+                .toList();
+    }
+
+    public MovieBatchResponse toBatchResponse(Movie movie) {
+        if (movie == null) {
+            return null;
+        }
+
+        return new MovieBatchResponse(
+                String.valueOf(movie.getTmdbMovieId()),
+                movie.getPosterPath(),
+                movie.getTitle());
+    }
+
+    public List<MovieBatchResponse> toBatchResponseList(List<Movie> movies) {
+        if (movies == null) {
+            return List.of();
+        }
+
+        return movies.stream()
+                .map(this::toBatchResponse)
                 .toList();
     }
     

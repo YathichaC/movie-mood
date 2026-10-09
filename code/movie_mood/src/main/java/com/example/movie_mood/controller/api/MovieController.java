@@ -4,6 +4,7 @@ import com.example.movie_mood.domain.model.Video;
 import org.springframework.http.ResponseEntity;
 import java.util.Map;
 import com.example.movie_mood.domain.enums.Mood;
+import com.example.movie_mood.dto.response.MovieBatchResponse;
 import com.example.movie_mood.dto.response.MovieResponse;
 import com.example.movie_mood.exception.MovieTrailerNotFoundException;
 import com.example.movie_mood.facade.MovieDetailFacade;
@@ -99,6 +100,23 @@ public class MovieController {
         minRating,
         sortBy,
         page));
+        }
+
+        @Operation(summary = "Get multiple movie summaries", description = "Returns a batch of TMDB movie summaries for playlist rendering")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Movies retrieved successfully"),
+                        @ApiResponse(responseCode = "400", description = "Batch request is invalid or exceeds the maximum size", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+        })
+        @PostMapping("/batch")
+        public List<MovieBatchResponse> getMovieBatch(
+                        @RequestBody List<String> tmdbMovieIds) {
+
+                if (tmdbMovieIds == null) {
+                        return List.of();
+                }
+
+                return movieMapper.toBatchResponseList(
+                                movieService.getMovieBatch(tmdbMovieIds));
         }
 
         @Operation(summary = "Get movie details", description = "Returns details of a movie using its TMDB movie ID")

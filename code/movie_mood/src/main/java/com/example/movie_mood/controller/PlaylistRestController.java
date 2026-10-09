@@ -6,6 +6,7 @@ import com.example.movie_mood.dto.PlaylistMovieBatchRequest;
 import com.example.movie_mood.dto.PlaylistPickerResponse;
 import com.example.movie_mood.dto.PlaylistRequest;
 import com.example.movie_mood.dto.PlaylistResponse;
+import com.example.movie_mood.dto.PlaylistSummaryResponse;
 import com.example.movie_mood.service.PlaylistImageService;
 import com.example.movie_mood.service.PlaylistService;
 
@@ -44,7 +45,7 @@ public class PlaylistRestController {
 
         UUID userId = getCurrentUserId(authentication);
 
-        List<PlaylistResponse> playlists = playlistService.getUserPlaylists(userId);
+        List<PlaylistSummaryResponse> playlists = playlistService.getUserPlaylists(userId);
 
         return ResponseEntity.ok(playlists);
     }

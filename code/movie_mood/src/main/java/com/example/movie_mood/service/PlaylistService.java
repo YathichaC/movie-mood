@@ -6,13 +6,14 @@ import com.example.movie_mood.dto.PlaylistMovieBatchRequest;
 import com.example.movie_mood.dto.PlaylistPickerResponse;
 import com.example.movie_mood.dto.PlaylistRequest;
 import com.example.movie_mood.dto.PlaylistResponse;
+import com.example.movie_mood.dto.PlaylistSummaryResponse;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface PlaylistService {
 
-        List<PlaylistResponse> getUserPlaylists(
+        List<PlaylistSummaryResponse> getUserPlaylists(
                         UUID userId);
 
         List<PlaylistPickerResponse> getUserPlaylistsForPicker(

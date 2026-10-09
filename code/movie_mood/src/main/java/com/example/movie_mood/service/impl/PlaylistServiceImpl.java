@@ -8,9 +8,11 @@ import com.example.movie_mood.dto.PlaylistMovieBatchRequest;
 import com.example.movie_mood.dto.PlaylistPickerResponse;
 import com.example.movie_mood.dto.PlaylistRequest;
 import com.example.movie_mood.dto.PlaylistResponse;
+import com.example.movie_mood.dto.PlaylistSummaryResponse;
 import com.example.movie_mood.repository.MovielistRepository;
 import com.example.movie_mood.repository.PlaylistRepository;
 import com.example.movie_mood.service.PlaylistService;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.movie_mood.domain.entity.PlaylistDetail;
@@ -40,12 +42,21 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PlaylistResponse> getUserPlaylists(UUID userId) {
+    public List<PlaylistSummaryResponse> getUserPlaylists(UUID userId) {
 
-        return playlistRepository
-                .findByUserId(userId)
-                .stream()
-                .map(PlaylistResponse::new)
+        return playlistRepository.findSummaryByUserId(userId).stream()
+                .map(row -> {
+                    UUID playlistId = (UUID) row[0];
+                    String playlistName = (String) row[1];
+                    String coverImagePath = row[2] == null ? null : row[2].toString();
+                    long itemCount = row[3] == null ? 0L : ((Number) row[3]).longValue();
+
+                    return new PlaylistSummaryResponse(
+                            playlistId,
+                            playlistName,
+                            coverImagePath,
+                            Math.toIntExact(itemCount));
+                })
                 .collect(Collectors.toList());
     }
 
@@ -81,12 +92,7 @@ public class PlaylistServiceImpl implements PlaylistService {
             UUID playlistId,
             UUID userId) {
 
-        Playlist playlist = playlistRepository
-                .findByPlaylistIdAndUserId(
-                        playlistId,
-                        userId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Playlist not found or access denied"));
+        Playlist playlist = requireOwnedPlaylist(playlistId, userId);
 
         return new PlaylistResponse(playlist);
     }
@@ -118,12 +124,7 @@ public class PlaylistServiceImpl implements PlaylistService {
             UUID userId,
             PlaylistRequest request) {
 
-        Playlist playlist = playlistRepository
-                .findByPlaylistIdAndUserId(
-                        playlistId,
-                        userId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Playlist not found or access denied"));
+        Playlist playlist = requireOwnedPlaylist(playlistId, userId);
 
         playlist.setPlaylistName(
                 request.getPlaylistName());
@@ -162,12 +163,7 @@ public class PlaylistServiceImpl implements PlaylistService {
             UUID playlistId,
             UUID userId) {
 
-        Playlist playlist = playlistRepository
-                .findByPlaylistIdAndUserId(
-                        playlistId,
-                        userId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Playlist not found or access denied"));
+        Playlist playlist = requireOwnedPlaylist(playlistId, userId);
 
         playlistRepository.delete(playlist);
     }
@@ -178,12 +174,7 @@ public class PlaylistServiceImpl implements PlaylistService {
             UUID userId,
             MovielistRequest request) {
 
-        Playlist playlist = playlistRepository
-                .findByPlaylistIdAndUserId(
-                        playlistId,
-                        userId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Playlist not found or access denied"));
+        Playlist playlist = requireOwnedPlaylist(playlistId, userId);
 
         if (movielistRepository
                 .existsByPlaylist_PlaylistIdAndTmdbMovieId(
@@ -233,10 +224,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         Map<UUID, Playlist> authorizedPlaylists = new HashMap<>();
         for (UUID playlistId : allPlaylistIds) {
-            Playlist playlist = playlistRepository
-                    .findByPlaylistIdAndUserId(playlistId, userId)
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Playlist not found or access denied"));
+            Playlist playlist = requireOwnedPlaylist(playlistId, userId);
 
             authorizedPlaylists.put(playlistId, playlist);
         }
@@ -267,12 +255,7 @@ public class PlaylistServiceImpl implements PlaylistService {
             String tmdbMovieId,
             UUID userId) {
 
-        playlistRepository
-                .findByPlaylistIdAndUserId(
-                        playlistId,
-                        userId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Playlist not found or access denied"));
+        requireOwnedPlaylist(playlistId, userId);
 
         movielistRepository
                 .deleteByPlaylist_PlaylistIdAndTmdbMovieId(
@@ -286,12 +269,7 @@ public class PlaylistServiceImpl implements PlaylistService {
             UUID playlistId,
             UUID userId) {
 
-        Playlist playlist = playlistRepository
-                .findByPlaylistIdAndUserId(
-                        playlistId,
-                        userId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Playlist not found or access denied"));
+        Playlist playlist = requireOwnedPlaylist(playlistId, userId);
 
         PlaylistDetail detail = playlist.getDetail();
 
@@ -302,5 +280,10 @@ public class PlaylistServiceImpl implements PlaylistService {
         Playlist saved = playlistRepository.save(playlist);
 
         return new PlaylistResponse(saved);
+    }
+
+    private Playlist requireOwnedPlaylist(UUID playlistId, UUID userId) {
+        return playlistRepository.findByPlaylistIdAndUserId(playlistId, userId)
+                .orElseThrow(() -> new AccessDeniedException("Playlist not found or access denied"));
     }
 }

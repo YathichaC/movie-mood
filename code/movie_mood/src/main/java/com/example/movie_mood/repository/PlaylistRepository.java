@@ -14,6 +14,17 @@ public interface PlaylistRepository extends JpaRepository<Playlist, UUID> {
     List<Playlist> findByUserId(UUID userId);
 
     @Query("""
+        select p.playlistId, p.playlistName, pd.coverImagePath, count(m.id)
+        from Playlist p
+        left join p.detail pd
+        left join p.items m
+        where p.userId = :userId
+        group by p.playlistId, p.playlistName, pd.coverImagePath
+        order by p.playlistName asc
+        """)
+    List<Object[]> findSummaryByUserId(@Param("userId") UUID userId);
+
+    @Query("""
         select p.playlistId, p.playlistName, count(m.id)
         from Playlist p
         left join p.items m

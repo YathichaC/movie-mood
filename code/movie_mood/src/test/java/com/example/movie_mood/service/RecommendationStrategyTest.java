@@ -66,6 +66,11 @@ public class RecommendationStrategyTest {
             }
 
             @Override
+            public List<Movie> getMovieBatch(List<String> tmdbMovieIds) {
+                return List.of();
+            }
+
+            @Override
             public Movie getMovieDetails(String tmdbMovieId) {
                 return null;
             }
