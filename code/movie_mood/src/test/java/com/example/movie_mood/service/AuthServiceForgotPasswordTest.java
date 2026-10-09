@@ -30,6 +30,7 @@ class AuthServiceForgotPasswordTest {
     private PasswordResetTokenRepository tokenRepository;
     private JavaMailSender mailSender;
     private TemplateEngine templateEngine;
+    private EmailService emailService;
     private AuthService authService;
 
     @BeforeEach
@@ -38,7 +39,8 @@ class AuthServiceForgotPasswordTest {
         tokenRepository = mock(PasswordResetTokenRepository.class);
         mailSender = mock(JavaMailSender.class);
         templateEngine = mock(TemplateEngine.class);
-        authService = new AuthService(userRepository, tokenRepository, mailSender, templateEngine);
+        emailService = mock(EmailService.class);
+        authService = new AuthService(userRepository, tokenRepository, mailSender, templateEngine, emailService);
     }
 
     @Test
@@ -47,7 +49,6 @@ class AuthServiceForgotPasswordTest {
         when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(user));
         when(templateEngine.process(eq("mail/reset-password-email"), any(Context.class)))
                 .thenReturn("<html>mock html</html>");
-        when(mailSender.createMimeMessage()).thenReturn(new MimeMessage((Session) null));
 
         ForgotPasswordRequest req = new ForgotPasswordRequest();
         req.setEmail("user@example.com");
@@ -55,7 +56,7 @@ class AuthServiceForgotPasswordTest {
         authService.processForgotPassword(req);
 
         verify(tokenRepository, times(1)).save(any(PasswordResetToken.class));
-        verify(mailSender, times(1)).send(any(MimeMessage.class));
+        verify(emailService, times(1)).sendResetPasswordEmail(eq("user@example.com"), anyString());
     }
 
     @Test

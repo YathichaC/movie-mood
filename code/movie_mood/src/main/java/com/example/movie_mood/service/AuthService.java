@@ -34,19 +34,26 @@ public class AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
+    private final EmailService emailService;
 
     @Value("${app.base-url:http://localhost:8080}")
     private String baseUrl;
 
-    public AuthService(UserRepository userRepository, 
-                       PasswordResetTokenRepository tokenRepository,
-                       JavaMailSender mailSender,
-                       TemplateEngine templateEngine) {
+    @Value("${spring.mail.username:moviemood8080@gmail.com}")
+    private String mailUsername = "moviemood8080@gmail.com";
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public AuthService(UserRepository userRepository,
+            PasswordResetTokenRepository tokenRepository,
+            JavaMailSender mailSender,
+            TemplateEngine templateEngine,
+            EmailService emailService) {
         this.userRepository = userRepository;
         this.tokenRepository = tokenRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.mailSender = mailSender;
         this.templateEngine = templateEngine;
+        this.emailService = emailService;
     }
 
     public User register(RegisterRequest request) {
@@ -82,13 +89,18 @@ public class AuthService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AuthService.class);
+
     @Transactional
-    public void processForgotPassword(ForgotPasswordRequest request) {
-        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+    public boolean processForgotPassword(ForgotPasswordRequest request) {
+        Optional<User> userOptional = userRepository.findByEmail(request.getEmail().trim());
 
         if (userOptional.isEmpty()) {
-            return;
+            log.info("Forgot password: no matching account found");
+            return false;
         }
+
+        log.info("Forgot password: matching account found");
 
         User user = userOptional.get();
         String token = UUID.randomUUID().toString();
@@ -109,20 +121,10 @@ public class AuthService {
         Context context = new Context();
         context.setVariable("resetUrl", resetLink);
 
-        String emailContent = templateEngine.process("mail/reset-password-email", context);
-
-        try {
-            MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
-            helper.setFrom("moviemood8080@gmail.com");
-            helper.setTo(user.getEmail());
-            helper.setSubject("Reset Your Password — MOVIEMOOD");
-            helper.setText(emailContent, true);
-
-            mailSender.send(mimeMessage);
-        } catch (MessagingException e) {
-            throw new RuntimeException("Failed to send reset email", e);
-        }
+        String emailContent = templateEngine.process("mail/reset-password-email",
+                context);
+        emailService.sendResetPasswordEmail(user.getEmail(), emailContent);
+        return true;
     }
 
     @Transactional
@@ -147,7 +149,7 @@ public class AuthService {
         boolean hasUpper = newPassword.chars().anyMatch(Character::isUpperCase);
         boolean hasLower = newPassword.chars().anyMatch(Character::isLowerCase);
         boolean hasDigit = newPassword.chars().anyMatch(Character::isDigit);
-        boolean hasSpecial = newPassword.matches(".*[!@#$%^&*(),.?\":{}|<>].*");
+        boolean hasSpecial = newPassword.matches(".*[^A-Za-z0-9].*");
 
         if (!hasUpper || !hasLower) {
             throw new IllegalArgumentException("Password must contain both uppercase and lowercase letters");

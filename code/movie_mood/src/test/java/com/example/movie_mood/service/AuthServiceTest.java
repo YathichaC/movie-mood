@@ -35,7 +35,8 @@ class AuthServiceTest {
         tokenRepository = mock(PasswordResetTokenRepository.class);
         mailSender = mock(JavaMailSender.class);
         templateEngine = mock(TemplateEngine.class);
-        authService = new AuthService(userRepository, tokenRepository, mailSender, templateEngine); 
+        EmailService emailService = mock(EmailService.class);
+        authService = new AuthService(userRepository, tokenRepository, mailSender, templateEngine, emailService); 
     }
 
     @Test
