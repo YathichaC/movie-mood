@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="edit-playlist-modal">
+    <div class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4" id="editModal">
+        <div class="w-full max-w-lg bg-[#0A0A0A] border border-[#262626] rounded-sm p-6 flex flex-col gap-6">
+            <div class="flex items-center justify-between border-b border-[#262626] pb-4">
+                <h3 class="text-lg font-medium text-[#F5F5F5]">Edit Playlist</h3>
+                <button class="text-[#737373] hover:text-[#F5F5F5] transition-colors p-1 leading-none text-xl"
+                    onclick="cancelEditModal()" type="button">
+                    ×
+                </button>
+            </div>
+            <div class="flex flex-col gap-2">
+                <label class="text-xs uppercase tracking-widest text-[#737373]" for="playlistName">
+                    Playlist Name
+                </label>
+                <input
+                    class="w-full bg-[#111111] border border-[#262626] focus:border-white focus:ring-0 text-sm text-[#F5F5F5] px-3.5 py-2.5 rounded-sm outline-none transition-colors"
+                    id="playlistName" type="text" placeholder="Enter playlist name">
+            </div>
+            <div class="flex flex-col gap-2">
+                <label class="text-xs uppercase tracking-widest text-[#737373]" for="playlistDetail">
+                    Description
+                </label>
+                <textarea
+                    class="w-full min-h-[90px] bg-[#111111] border border-[#262626] focus:border-white focus:ring-0 text-sm text-[#F5F5F5] px-3.5 py-2.5 rounded-sm outline-none transition-colors resize-none"
+                    id="playlistDetail" placeholder="Enter playlist description"></textarea>
+            </div>
+            <div class="flex flex-col gap-2">
+                <label class="text-xs uppercase tracking-widest text-[#737373]" for="playlistCoverInput">
+                    Playlist Cover
+                </label>
+                <div class="flex items-center gap-4 p-3 bg-[#111111] border border-[#262626] rounded-sm">
+                    <div
+                        class="relative w-16 h-16 border border-[#262626] bg-[#0A0A0A] overflow-hidden rounded-sm shrink-0 flex items-center justify-center">
+                        <img id="coverPreview" alt="Playlist cover preview" class="w-full h-full object-cover hidden">
+                        <span id="coverPlaceholder" class="material-symbols-outlined text-2xl text-[#525252]">
+                            movie
+                        </span>
+                    </div>
+                    <div class="flex flex-col gap-1.5 min-w-0 flex-1">
+                        <input id="playlistCoverInput" type="file" accept="image/png,image/jpeg,image/webp"
+                            class="hidden" onchange="previewPlaylistCover(this)">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <button type="button" onclick="document.getElementById('playlistCoverInput').click()"
+                                class="inline-flex items-center justify-center gap-2 px-3 py-1.5 border border-[#262626] bg-[#0A0A0A] hover:bg-[#161616] hover:border-white text-xs uppercase tracking-wider text-[#F5F5F5] transition-colors rounded-sm">
+                                <span class="material-symbols-outlined text-sm">
+                                    upload
+                                </span>
+                                <span>Upload Cover Image</span>
+                            </button>
+                            <button id="removeCoverButton" type="button" onclick="removePlaylistCover()"
+                                class="hidden inline-flex items-center justify-center gap-2 px-3 py-1.5 border border-red-900/50 bg-red-950/20 hover:bg-red-950/40 hover:border-red-700 text-xs uppercase tracking-wider text-red-400 transition-colors rounded-sm">
+                                <span class="material-symbols-outlined text-sm">
+                                    delete
+                                </span>
+                                <span>Remove</span>
+                            </button>
+                        </div>
+                        <span id="coverFileName" class="text-[10px] text-[#737373] truncate">
+                            PNG, JPG, WEBP up to 5MB
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-3 border-t border-[#262626]">
+                <button
+                    class="px-4 py-2 border border-[#262626] bg-[#0A0A0A] hover:bg-[#141414] hover:border-neutral-500 text-xs uppercase tracking-widest text-[#F5F5F5] transition-colors rounded-sm"
+                    onclick="cancelEditModal()" type="button">
+                    Cancel
+                </button>
+                <button
+                    class="px-4 py-2 bg-[#F5F5F5] hover:bg-white text-black text-xs font-semibold uppercase tracking-widest transition-colors rounded-sm"
+                    onclick="updatePlaylist()" type="button">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+</html>

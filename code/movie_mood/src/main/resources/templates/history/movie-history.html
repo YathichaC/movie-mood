@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="icon" type="image/png" th:href="@{/img/moviemood_logo.png}">
+    <title>MovieMood</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script th:src="@{/js/tailwind-config.js}"></script>
+</head>
+
+<body
+    class="bg-[#000000] text-on-surface antialiased min-h-screen flex flex-col selection:bg-neutral-800 selection:text-white">
+    <header th:replace="~{fragments/navbar :: navbar('history')}"></header>
+    <main class="flex-grow w-full max-w-[1600px] mx-auto px-space-lg md:px-margin pt-10 pb-20">
+        <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-surface-variant pb-8 mb-12">
+            <div>
+                <h1
+                    class="font-outfit text-4xl md:text-3xl lg:text-4xl font-light text-[#F5F5F5] tracking-tight mb-4 leading-[1.08]">
+                    Watch History</h1>
+                <p class="text-body-md font-body-md mt-2">Movies you’ve watched</p>
+            </div>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <div class="flex items-center justify-between gap-4 mb-8">
+                <p id="history-count" class="text-sm text-neutral-400"></p>
+            </div>
+            <div id="empty-state" class="hidden min-h-[360px] w-full flex-col items-center justify-center text-center">
+                <span class="material-symbols-outlined text-6xl text-neutral-600 mb-5" aria-hidden="true">
+                    movie
+                </span>
+                <h2 class="text-xl font-medium text-white mb-2">
+                    No Movies Yet
+                </h2>
+                <p class="text-sm text-neutral-400 max-w-sm leading-relaxed">
+                    Movies you mark as watched will appear here.
+                </p>
+            </div>
+        </div>
+
+        <!-- Movie cards -->
+        <div id="history-container"
+            class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-10 gap-x-6">
+        </div>
+
+        <!-- Error -->
+        <div id="history-error" class="hidden text-center py-12 text-red-400">
+            <p id="history-error-message">
+                Unable to load watch history.
+            </p>
+            <button id="retry-history-btn" type="button" class="mt-4 underline underline-offset-4 hover:text-white">
+                Try again
+            </button>
+        </div>
+        <div id="pagination-wrapper"
+            class="hidden mt-10 flex items-center justify-between border-t border-white/10 pt-6">
+            <p id="pagination-info" class="text-xs text-neutral-500">
+                Page 1 of 1
+            </p>
+            <div id="pagination-container" class="flex items-center gap-2">
+            </div>
+        </div>
+    </main>
+    <div class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 p-4" id="clear-modal">
+        <div class="w-full max-w-sm bg-surface-container border border-surface-variant p-6 rounded-sm space-y-4">
+            <div class="flex items-center space-x-3 text-on-surface">
+                <span class="material-symbols-outlined" data-icon="history">history</span>
+                <h3 class="text-headline-sm font-headline-sm font-medium">Clear watch history?</h3>
+            </div>
+            <p class="text-body-sm font-body-sm text-secondary">This will remove all recorded movie screenings from your
+                archive account. This action cannot be reversed.</p>
+            <div class="flex items-center justify-end space-x-3 pt-4 border-t border-surface-variant">
+                <button onclick="closeClearModal()"
+                    class="px-3.5 py-1.5 text-body-sm font-body-sm text-secondary hover:text-white border border-surface-variant rounded-sm transition-colors"
+                    type="button">Cancel</button>
+                <button onclick="confirmClearHistory()"
+                    class="px-3.5 py-1.5 text-body-sm font-body-sm bg-white text-black font-semibold hover:bg-neutral-200 rounded-sm transition-colors"
+                    type="button">Clear All</button>
+            </div>
+        </div>
+    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/movie-history.js}"></script>
+</body>
+
+</html>

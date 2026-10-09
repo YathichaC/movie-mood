@@ -1,0 +1,35 @@
+<div th:fragment="createPlaylistModal"
+    class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 hidden"
+    id="create-playlist-modal">
+    <div role="dialog" aria-modal="true" aria-labelledby="modal-title"
+        class="w-full max-w-[420px] bg-black border border-[#262626] rounded p-6 sm:p-7 flex flex-col gap-6">
+        <div>
+            <h2 id="modal-title"
+                class="text-xl sm:text-[22px] font-semibold tracking-tight text-[#F5F5F5] leading-none font-['Outfit']">
+                Create Playlist
+            </h2>
+        </div>
+        <form id="createPlaylistForm" onsubmit="event.preventDefault();" class="flex flex-col gap-6">
+            <div class="flex flex-col gap-2">
+                <label for="newPlaylistNameInput"
+                    class="text-xs font-medium tracking-wide uppercase text-[#A3A3A3] font-['Outfit']">
+                    Playlist Name
+                </label>
+                <input type="text" id="newPlaylistNameInput" name="playlistName" placeholder="Enter playlist name"
+                    autocomplete="off"
+                    class="w-full h-11 px-3.5 bg-[#0A0A0A] border border-[#262626] rounded text-sm text-[#F5F5F5] placeholder-[#737373] outline-none transition-colors duration-150 focus:border-[#525252] focus:bg-black font-['Outfit']">
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-1">
+                <button type="button"
+                    class="h-9 px-4 rounded border border-[#262626] bg-black text-[#A3A3A3] text-xs sm:text-sm font-medium hover:text-[#F5F5F5] hover:border-[#525252] transition-colors duration-150 font-['Outfit']"
+                    onclick="closeModal('create-playlist-modal')">
+                    Cancel
+                </button>
+                <button type="button" id="confirmCreatePlaylistBtn"
+                    class="h-9 px-5 rounded bg-white text-black text-xs sm:text-sm font-medium hover:bg-[#E5E5E5] transition-colors duration-150 font-['Outfit']">
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

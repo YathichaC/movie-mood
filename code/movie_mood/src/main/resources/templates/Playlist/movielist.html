@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html class="dark" lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="icon" type="image/png" th:href="@{/img/moviemood_logo.png}">
+    <title>MovieMood</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script th:src="@{/js/tailwind-config.js}"></script>
+    <style>
+        body {
+            background-color: #000000;
+            color: #F5F5F5;
+            font-family: 'Outfit', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 20px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-black text-[#F5F5F5] min-h-screen flex flex-col antialiased selection:bg-neutral-800 selection:text-white">
+    <header th:replace="~{fragments/navbar :: navbar('playlist')}"></header>
+    <main class="flex-1 w-full max-w-[1440px] mx-auto px-6 lg:px-12 py-10 flex flex-col gap-10">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-[#262626]">
+            <div class="flex items-center gap-6">
+                <div id="playlist-cover-container"
+                    class="w-[200px] h-[200px] bg-[#0b0c0f] flex items-center justify-center overflow-hidden">
+                    <img id="playlist-cover" alt="Playlist cover" class="w-full h-full object-cover">
+
+                    <span id="playlist-cover-icon" class="material-symbols-outlined text-5xl text-white/20 hidden">
+                        movie
+                    </span>
+                </div>
+
+                <div class="flex flex-col justify-center gap-2">
+                    <span class="text-[11px] tracking-widest text-[#737373] uppercase">
+                        PLAYLIST
+                    </span>
+
+                    <h1 id="playlist-name" class="text-3xl lg:text-4xl font-medium text-[#F5F5F5] tracking-tight">
+                        Loading...
+                    </h1>
+
+                    <p id="playlist-description" class="max-w-xl text-sm leading-relaxed text-[#8A8A8A]">
+                        Loading...
+                    </p>
+
+                    <p id="playlist-count" class="text-xs text-[#525252] tracking-wide uppercase">
+                        Loading...
+                    </p>
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <button
+                    class="inline-flex items-center gap-2 px-4 py-2 border border-[#262626] bg-[#0A0A0A] hover:bg-[#141414] hover:border-neutral-500 text-xs uppercase tracking-widest text-[#F5F5F5] transition-colors rounded-sm"
+                    onclick="openModal('deleteModal')" type="button">
+                    Delete Playlist
+                </button>
+                <button
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F5F5] hover:bg-white text-black text-xs font-semibold uppercase tracking-widest transition-colors rounded-sm"
+                    onclick="openEditModal()" type="button">
+                    Edit Playlist
+                </button>
+            </div>
+        </div>
+        <div class="flex items-center justify-between border-b border-[#262626] pb-3">
+            <div class="flex items-center gap-3">
+                <h2 class="text-2xl font-light text-[#F5F5F5] tracking-tight">Movies</h2>
+            </div>
+        </div>
+        <div id="playlist-movies" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6" aria-live="polite">
+        </div>
+    </main>
+    <div th:replace="~{fragments/edit-playlist-modal :: edit-playlist-modal}"></div>
+    <div th:replace="~{fragments/delete-playlist-modal :: delete-playlist-modal}"></div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/api.js}"></script>
+    <script th:src="@{/js/movielist.js}"></script>
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="icon" type="image/png" th:href="@{/img/moviemood_logo.png}">
+    <title>MovieMood</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script th:src="@{/js/tailwind-config.js}"></script>
+</head>
+
+<body class="bg-[#000000] text-white font-['Outfit'] min-h-screen flex flex-col antialiased">
+    <header th:replace="~{fragments/navbar :: navbar('playlist')}"></header>
+    <main class="flex-1 w-full max-w-[1500px] mx-auto px-6 md:px-10 lg:px-14 py-10">
+        <section>
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
+                <div>
+                    <p class="text-[11px] uppercase tracking-[0.28em] text-white/35 mb-2">Your Collection</p>
+                    <h1
+                        class="font-outfit text-4xl md:text-4xl lg:text-5xl font-light text-[#F5F5F5] tracking-tight mb-4 leading-[1.08]">
+                        Playlists
+                    </h1>
+                </div>
+                <button type="button" onclick="openModal('create-playlist-modal')"
+                    class="inline-flex items-center justify-center gap-2 rounded-full bg-white text-black px-5 py-3 text-sm font-medium hover:bg-white/90 transition">
+                    <span class="material-symbols-outlined text-[20px]">add</span>
+                    <span>Create Playlist</span>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5" id="playlist-items-list">
+                <div class="col-span-full py-20 text-center">
+                    <span class="material-symbols-outlined text-5xl text-white/20">playlist_play</span>
+                    <p class="text-white/40 mt-4">Loading playlists...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <div th:replace="~{fragments/create-playlist-modal :: createPlaylistModal}"></div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/api.js}"></script>
+    <script type="module" th:src="@{/js/playlist.js}"></script>
+</body>
+
+</html>

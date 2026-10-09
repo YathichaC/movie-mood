@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="icon" type="image/png" th:href="@{/img/moviemood_logo.png}">
+    <title>MovieMood</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script th:src="@{/js/tailwind-config.js}"></script>
+</head>
+<style>
+    input[type="range"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 100%;
+        height: 14px;
+        background: transparent;
+        outline: none;
+        cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+        height: 4px;
+        background: transparent;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        margin-top: -5px;
+        border-radius: 50%;
+        border: 2px solid #131412;
+        background: #d8c4a7;
+        box-shadow: 0 0 0 1px rgba(216, 196, 167, 0.35);
+        cursor: pointer;
+        position: relative;
+        z-index: 50;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.15);
+        box-shadow: 0 0 0 4px rgba(216, 196, 167, 0.12);
+    }
+
+    input[type="range"]::-moz-range-track {
+        height: 4px;
+        background: transparent;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid #131412;
+        background: #d8c4a7;
+        cursor: pointer;
+    }
+
+    input[type="checkbox"] {
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        accent-color: transparent !important;
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        border: 1px solid #4c463d !important;
+        border-radius: 4px;
+        background-color: #131412 !important;
+        cursor: pointer;
+        position: relative;
+        outline: none !important;
+        box-shadow: none !important;
+        transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input[type="checkbox"]:hover {
+        border-color: #988f85 !important;
+        background-color: #1b1c1a !important;
+    }
+
+    input[type="checkbox"]:checked {
+        background-color: #d8c4a7 !important;
+        border-color: #d8c4a7 !important;
+    }
+
+    input[type="checkbox"]:checked:hover {
+        background-color: #d8c4a7 !important;
+        border-color: #d8c4a7 !important;
+        box-shadow: 0 0 0 3px rgba(216, 196, 167, 0.10) !important;
+    }
+
+    input[type="checkbox"]:checked::after {
+        content: "";
+        position: absolute;
+        left: 4px;
+        top: 1px;
+        width: 5px;
+        height: 9px;
+        border: solid #131412;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+
+    input[type="checkbox"]:focus,
+    input[type="checkbox"]:focus-visible {
+        outline: none !important;
+        border-color: #d8c4a7 !important;
+        box-shadow: 0 0 0 2px rgba(216, 196, 167, 0.18) !important;
+    }
+
+    input[type="checkbox"]:checked:focus,
+    input[type="checkbox"]:checked:focus-visible {
+        background-color: #d8c4a7 !important;
+        border-color: #d8c4a7 !important;
+        box-shadow: 0 0 0 2px rgba(216, 196, 167, 0.18) !important;
+    }
+</style>
+
+<body
+    class="bg-[#000000] text-[#F5F5F5] antialiased selection:bg-[#B8A58A] selection:text-[#000000] min-h-screen w-100% w-full flex flex-col">
+    <header th:replace="~{fragments/navbar :: navbar('movies')}"></header>
+    <main class="w-full max-w-[1600px] mx-auto px-5 py-10 sm:px-8 lg:px-12 lg:py-14">
+        <section class="mb-10">
+            <div class="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+
+                <div>
+                    <h1
+                        class="font-outfit text-5xl md:text-6xl lg:text-7xl font-light text-[#F5F5F5] tracking-tight mb-4 leading-[1.08]">
+                        Discover films
+                    </h1>
+
+                    <p class="text-sm md:text-base text-neutral-400 leading-relaxed max-w-lg mb-8">
+                        Find something worth watching. Explore films by rating, release year, and the genres you love.
+                    </p>
+                </div>
+
+                <div
+                    class="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.035] px-4 py-3 lg:max-w-md">
+
+                    <span class="material-symbols-outlined text-neutral-500">search</span>
+
+                    <input id="searchInput" type="search" placeholder="Search movies..."
+                        class="min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-white placeholder:text-neutral-600 focus:ring-0">
+
+                    <kbd class="hidden rounded border border-white/10 px-2 py-1 text-[10px] text-neutral-500 sm:block">
+                        SEARCH
+                    </kbd>
+                </div>
+
+            </div>
+        </section>
+        <div
+            class="grid grid-cols-1 gap-10 md:grid-cols-[220px_minmax(0,1fr)] lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-14">
+            <aside id="filterSidebar"
+                class="hidden h-fit rounded-2xl border border-white/10 bg-white/[0.025] p-5 md:sticky md:top-24 md:block">
+                <div class="mb-6 flex items-center justify-between">
+                    <h2 class="text-lg font-medium">Refine results</h2>
+                    <button id="resetFiltersButton" type="button"
+                        class="text-xs text-neutral-500 transition hover:text-white">
+                        Reset
+                    </button>
+                </div>
+                <div class="space-y-7">
+                    <section>
+                        <h3 class="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">Minimum
+                            rating</h3>
+                        <div class="mb-3 flex items-center justify-between">
+                            <span class="text-sm text-neutral-400">TMDB score</span>
+                            <span id="ratingValue" class="font-display text-sm font-semibold text-white">7.0+</span>
+                        </div>
+                        <div class="relative w-full h-4 flex items-center">
+                            <div class="absolute inset-x-0 h-1.5 rounded-full bg-[#343533] pointer-events-none"></div>
+                            <div id="ratingTrack" class="absolute h-1.5 rounded-full bg-[#d8c4a7] pointer-events-none"
+                                style="left: 0%; right: 30%;"></div>
+                            <input id="ratingSlider" type="range" min="0" max="10" step="0.5" value="7"
+                                class="absolute inset-x-0 w-full appearance-none bg-transparent cursor-pointer pointer-events-auto accent-[#d8c4a7] z-10"
+                                oninput="updateRatingSlider()">
+                        </div>
+                        <div class="mt-2 flex justify-between text-[11px] text-neutral-600">
+                            <span>0.0</span><span>10.0</span>
+                        </div>
+                    </section>
+                    <div class="h-px bg-white/10"></div>
+                    <section>
+                        <h3 class="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">Release year
+                        </h3>
+                        <div class="mb-3 flex items-center justify-between font-display text-sm">
+                            <span class="text-sm text-neutral-400">Year range</span>
+                            <span id="yearValue" class="font-semibold text-white">2000 - 2026</span>
+                        </div>
+                        <div class="relative w-full h-4 flex items-center">
+                            <div class="absolute inset-x-0 h-1.5 rounded-full bg-[#343533] pointer-events-none"></div>
+                            <div id="yearTrack" class="absolute h-1.5 rounded-full bg-[#d8c4a7] pointer-events-none"
+                                style="left: 79.37%; right: 0%;"></div>
+                            <input id="yearStartSlider" type="range" min="1900" max="2026" value="2000"
+                                aria-label="Start year"
+                                class="absolute inset-x-0 w-full appearance-none bg-transparent cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-moz-range-thumb]:pointer-events-auto z-20"
+                                oninput="updateYearSlider('start')">
+                            <input id="yearEndSlider" type="range" min="1900" max="2026" value="2026"
+                                aria-label="End year"
+                                class="absolute inset-x-0 w-full appearance-none bg-transparent cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-moz-range-thumb]:pointer-events-auto z-10"
+                                oninput="updateYearSlider('end')">
+                        </div>
+                        <div class="mt-2 flex justify-between text-[11px] text-neutral-600">
+                            <span>1900</span><span>2026</span>
+                        </div>
+                    </section>
+                    <div class="h-px bg-white/10"></div>
+                    <section>
+                        <h3 class="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">Genres</h3>
+                        <div class="grid grid-cols-2 gap-y-3 gap-x-2">
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="28">
+                                Action
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="12">
+                                Adventure
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="16">
+                                Animation
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="35">
+                                Comedy
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="80">
+                                Crime
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="18">
+                                Drama
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="14">
+                                Fantasy
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="27">
+                                Horror
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="9648">
+                                Mystery
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="10749">
+                                Romance
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="878">
+                                Sci-Fi
+                            </label>
+
+                            <label class="flex items-center gap-2 text-sm text-neutral-400">
+                                <input type="checkbox" name="genre" value="53">
+                                Thriller
+                            </label>
+                        </div>
+                    </section>
+                </div>
+            </aside>
+            <section class="min-w-0">
+                <div
+                    class="mb-6 flex flex-col justify-between gap-4 border-b border-white/10 pb-5 sm:flex-row sm:items-center">
+                    <div>
+                        <h2 class="font-display text-xl font-medium">Explore the collection</h2>
+                        <p class="mt-1 text-xs text-neutral-500">A handpicked selection for your next movie night</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <label for="sortSelector" class="whitespace-nowrap text-xs text-neutral-500">Sort by</label>
+                        <select id="sortSelector"
+                            class="w-[250px] rounded-lg border border-white/10 bg-[#141414] px-3 py-2.5 text-xs text-neutral-300 outline-none transition focus:border-white/30">
+                            <option value="" selected>Default</option>
+                            <option value="rating_desc">Highest rating</option>
+                            <option value="rating_asc">Lowest rating</option>
+                            <option value="alphabet_asc">Alphabet A-Z</option>
+                            <option value="release_desc">Newest first</option>
+                            <option value="release_asc">Oldest first</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="resultsContainer"
+                    class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-5 lg:grid-cols-4 xl:gap-x-6">
+
+                </div>
+                <div id="emptyStateContainer"
+                    class="hidden rounded-2xl border border-white/10 bg-white/[0.02] px-6 py-20 text-center">
+                    <div
+                        class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]">
+                        <span class="material-symbols-outlined text-3xl text-neutral-500">movie_filter</span>
+                    </div>
+                    <h3 class="font-display text-2xl font-medium">Nothing on screen</h3>
+                    <p class="mx-auto mt-3 max-w-sm text-sm leading-6 text-neutral-500">No movies match your current
+                        selection. Try adjusting your filters or explore the full collection.</p>
+                </div>
+                <div id="paginationContainer"
+                    class="mt-10 flex items-center justify-between border-t border-white/10 pt-6">
+                </div>
+            </section>
+        </div>
+    </main>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/search.js}"></script>
+</body>
+
+</html>

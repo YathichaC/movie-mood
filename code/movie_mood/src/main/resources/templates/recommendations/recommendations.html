@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="icon" type="image/png" th:href="@{/img/moviemood_logo.png}">
+    <title>MovieMood</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script th:src="@{/js/tailwind-config.js}"></script>
+</head>
+
+<body class="bg-[#000000] text-on-background font-['Outfit'] antialiased">
+    <header th:replace="~{fragments/navbar :: navbar('recommendations')}"></header>
+    <main class="min-h-screen px-6 py-16 md:px-10 lg:px-16">
+        <section class="mx-auto flex max-w-7xl flex-col gap-8 md:flex-row md:items-end md:justify-between">
+            <div>
+                <h1 class="text-4xl font-light tracking-tight text-on-surface md:text-5xl lg:text-6xl">
+                    Recommended for You
+                </h1>
+            </div>
+            <button type="button" th:onclick="|window.location.href='@{/recommendations}'|"
+                class="flex w-fit items-center gap-2 rounded-full border border-outline-variant px-5 py-3 text-sm font-medium text-on-surface transition hover:border-primary hover:text-primary">
+                <span class="material-symbols-outlined text-[18px]">swap_horiz</span>
+                Change Mood
+            </button>
+        </section>
+        <section class="mx-auto mt-20 max-w-7xl">
+            <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <h2 class="text-2xl font-medium tracking-tight text-on-surface">
+                    Top 10 Movies
+                </h2>
+
+                <div class="flex items-center gap-3">
+                    <label for="strategySelect" class="text-sm text-on-surface">
+                        Recommendation Strategy
+                    </label>
+
+                    <select id="strategySelect"
+                        class="min-w-[170px] rounded-lg border border-outline-variant bg-black pl-4 pr-10 py-2 text-sm text-white focus:border-primary focus:ring-primary">
+                        <option value="default">Default Match</option>
+                        <option value="mood">Mood Focused</option>
+                        <option value="rating">Top Rated</option>
+                    </select>
+                </div>
+            </div>
+            <div id="recommendationsContainer"
+                class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-5">
+            </div>
+        </section>
+    </main>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/recommendation.js}"></script>
+</body>
+
+</html>
