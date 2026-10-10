@@ -28,7 +28,7 @@ MovieMood เป็นเว็บแอปพลิเคชันสำหร�
 
 ## System Architecture
 
-ระบบใช้ Layered Architecture แบ่งการทำงานออกเป็น Controller, Service และ Repository โดยเชื่อมต่อกับฐานข้อมูล PostgreSQL บน Supabase และ TMDB API สำหรับดึงข้อมูลภาพยนตร์ รวมถึงใช้ Spring Security และ JWT สำหรับการรักษาความปลอดภัย
+ระบบใช้ Layered Architecture โดยแยกความรับผิดชอบระหว่าง Controller, Service และ Repository เชื่อมต่อฐานข้อมูล PostgreSQL บน Supabase และ TMDB API สำหรับข้อมูลภาพยนตร์ พร้อมใช้ Spring Security และ JWT สำหรับการรักษาความปลอดภัย
 
 ```mermaid
 flowchart TD
@@ -56,7 +56,7 @@ Entity หลักของระบบประกอบด้วย `User`, `
 
 ### สิ่งที่ต้องมี
 
-- JDK 26 และ Git
+- JDK เวอร์ชันที่โปรเจกต์กำหนด และ Git
 - PostgreSQL/Supabase
 - TMDB API Token
 - Docker และ Docker Compose (กรณีรันผ่าน Docker)
@@ -84,7 +84,7 @@ Copy-Item .env.example .env
 cp .env.example .env
 ```
 
-> **หมายเหตุ:** ต้องกำหนด Environment Variables ให้กับระบบหรือ IDE ก่อนรันแอปพลิเคชัน เนื่องจาก Spring Boot ไม่ได้โหลดไฟล์ `.env` โดยอัตโนมัติเมื่อรันผ่าน Maven ในทุกสภาพแวดล้อม
+> **หมายเหตุ:** Spring Boot ไม่ได้โหลดไฟล์ `.env` โดยอัตโนมัติในทุกสภาพแวดล้อม ต้องกำหนด Environment Variables ผ่านระบบปฏิบัติการ IDE หรือกลไกการตั้งค่าที่โปรเจกต์รองรับก่อนรันแอปพลิเคชัน
 
 > ห้ามเผยแพร่ไฟล์ `.env`, API Token, Password หรือ Secret Key ลงใน Repository
 
@@ -166,7 +166,7 @@ mvnw.cmd test
 ./mvnw test
 ```
 
-ชุดทดสอบอยู่ภายใน `src/test/` โดยใช้ Spring Boot Test, JUnit และ Mockito ตามที่กำหนดในโปรเจกต์ เพื่อทดสอบส่วน Controller, Service, Recommendation Strategy และการทำงานร่วมกับส่วนต่าง ๆ ของระบบ
+ชุดทดสอบอยู่ภายใน `src/test/` โดยใช้ Spring Boot Test, JUnit และ Mockito เพื่อทดสอบส่วนต่าง ๆ ของระบบ เช่น Controller, Service, Recommendation Strategy และการทำงานร่วมกับบริการภายนอกตามที่มีการเขียน Test ไว้
 
 ## Deployment
 
@@ -180,7 +180,8 @@ mvnw.cmd test
 movie-mood/
 ├── .github/
 │   └── workflows/
-│       └── ci.yml
+│       ├── ci.yml
+│       └── deploy.yml
 ├── code/
 │   └── movie_mood/
 │       ├── .mvn/
@@ -218,30 +219,25 @@ movie-mood/
 │       └── svg/
 ├── doc/
 ├── img/
-│   ├── 01-home.png
-│   ├── 02-movie-search.png
-│   ├── 03-recommendation.png
-│   ├── 04-playlist.png
-│   └── 05-watch-history.png
 ├── test/
 │   ├── images/
 │   └── test-report.md
 └── README.md
 ```
 
-> โครงสร้างข้างต้นเป็นภาพรวมของโปรเจกต์ ควรตรวจสอบชื่อโฟลเดอร์และไฟล์จริงใน Repository อีกครั้ง โดยเฉพาะ `integration/`, `mapper/`, `doc/`, `img/` และไฟล์รายงานทดสอบ
+> โครงสร้างข้างต้นเป็นภาพรวมของโปรเจกต์ ควรตรวจสอบชื่อโฟลเดอร์และไฟล์จริงใน Repository อีกครั้งก่อนส่งงาน
 
 ## Design Patterns
 
 MovieMood นำแนวคิดการออกแบบซอฟต์แวร์และ Design Patterns มาใช้เพื่อแยกความรับผิดชอบและเพิ่มความยืดหยุ่นในการพัฒนา เช่น
 
 - **Layered Architecture:** แยก Controller, Service และ Repository
-- **Strategy Pattern:** รองรับการแยกกลยุทธ์การแนะนำภาพยนตร์
-- **Adapter Pattern:** ใช้ปรับรูปแบบการเชื่อมต่อกับ TMDB API ให้เข้ากับระบบ
-- **Facade Pattern:** รวมการทำงานที่ซับซ้อนไว้ภายใต้ Interface ที่ใช้งานง่าย
-- **Proxy Pattern:** รองรับการเพิ่มชั้นการทำงานระหว่างระบบกับบริการภาพยนตร์ภายนอก เช่น การจัดการ Cache
+- **Strategy Pattern:** แยกกลยุทธ์การแนะนำภาพยนตร์ออกจากส่วนที่เรียกใช้
+- **Adapter Pattern:** ปรับรูปแบบการเชื่อมต่อกับ TMDB API ให้เข้ากับระบบ
+- **Facade Pattern:** รวมการทำงานหลายส่วนไว้ภายใต้ Interface ที่เรียกใช้งานได้สะดวก
+- **Proxy Pattern:** เพิ่มชั้นการทำงานระหว่างระบบกับบริการภาพยนตร์ภายนอก เช่น การจัดการ Cache
 
-การใช้งานแต่ละ Pattern ควรอ้างอิงจากคลาสที่มีอยู่จริงใน Repository
+การอธิบายแต่ละ Pattern ควรสอดคล้องกับคลาสและการใช้งานจริงใน Repository
 
 ## License
 

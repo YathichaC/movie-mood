@@ -1,3 +1,4 @@
+```yaml
 name: CD - Deploy to Render
 
 on:
@@ -11,6 +12,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: moviemood-production
+  cancel-in-progress: false
 
 jobs:
   test:
@@ -53,3 +58,4 @@ jobs:
           curl --fail --silent --show-error \
             --request POST \
             "$RENDER_DEPLOY_HOOK_URL"
+```
