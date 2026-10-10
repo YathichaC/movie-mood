@@ -3,6 +3,8 @@ let totalPages = 1;
 let currentKeyword = '';
 const API_BASE_URL = '/api/v1/movies';
 let discoverMode = false;
+let searchAbortController = null;
+let searchRequestId = 0;
 function toggleEmptyState() {
     const results = document.getElementById('resultsContainer');
     const empty = document.getElementById('emptyStateContainer');
@@ -103,13 +105,67 @@ async function loadPopularMovies(page = 1) {
 }
 async function searchMovies(page = 1) {
     const resultsContainer = document.getElementById('resultsContainer');
+
     if (!resultsContainer) return;
+
     const keyword = currentKeyword.trim();
+
+    // ยกเลิก Request ค้นหาเก่า
+    if (searchAbortController) {
+        searchAbortController.abort();
+    }
+
+    const controller = new AbortController();
+    searchAbortController = controller;
+
+    // ใช้ป้องกัน Response เก่ามาเขียนทับผลลัพธ์ใหม่
+    const requestId = ++searchRequestId;
+
+    // ถ้าไม่มี Keyword ให้แสดงหนัง Popular
     if (!keyword) {
         await loadPopularMovies(page);
         return;
     }
+
+    // อ่าน Genre ที่เลือก
+    const selectedGenres = Array.from(
+        document.querySelectorAll('input[name="genre"]:checked')
+    ).map(input => input.value);
+
+    // อ่านค่าตัวกรองทั้งหมด
+    const ratingSlider = document.getElementById('ratingSlider');
+    const yearStartSlider = document.getElementById('yearStartSlider');
+    const yearEndSlider = document.getElementById('yearEndSlider');
+    const sortSelector = document.getElementById('sortSelector');
+
+    // สร้าง Query Parameters
+    const params = new URLSearchParams();
+
+    params.set('keyword', keyword);
+    params.set('page', String(page));
+
+    if (selectedGenres.length > 0) {
+        params.set('genreIds', selectedGenres.join(','));
+    }
+
+    if (ratingSlider) {
+        params.set('minRating', ratingSlider.value);
+    }
+
+    if (yearStartSlider) {
+        params.set('startYear', yearStartSlider.value);
+    }
+
+    if (yearEndSlider) {
+        params.set('endYear', yearEndSlider.value);
+    }
+
+    if (sortSelector && sortSelector.value) {
+        params.set('sortBy', sortSelector.value);
+    }
+
     try {
+        // แสดง Loading
         resultsContainer.innerHTML = `
             <div class="col-span-full flex justify-center py-20">
                 <span class="material-symbols-outlined animate-spin text-3xl text-neutral-500">
@@ -117,25 +173,62 @@ async function searchMovies(page = 1) {
                 </span>
             </div>
         `;
-        const response = await fetch(`${API_BASE_URL}/search?keyword=${encodeURIComponent(keyword)}&page=${page}`);
+
+        // เรียก Backend พร้อมตัวกรองทั้งหมด
+        const response = await fetch(
+            `${API_BASE_URL}/search?${params.toString()}`,
+            {
+                signal: controller.signal
+            }
+        );
+
         if (!response.ok) {
             throw new Error(`Search failed: ${response.status}`);
         }
+
         const data = await response.json();
+
+        // ถ้ามี Request ใหม่แล้ว ไม่ใช้ผลลัพธ์เก่า
+        if (requestId !== searchRequestId || controller.signal.aborted) {
+            return;
+        }
+
         currentPage = data.page || page;
         totalPages = data.totalPages || 1;
+
+        // Backend กรองและแบ่งหน้าเรียบร้อยแล้ว
+        // ไม่ต้องเรียก filterSearchResults() อีก
         const movies = data.content || [];
+
         if (movies.length === 0) {
             resultsContainer.innerHTML = '';
             showEmptyState();
             updatePagination(data);
             return;
         }
+
         hideEmptyState();
+
+        // แสดงหนังจาก Backend โดยตรง
         renderMovies(movies);
+
+        // ใช้จำนวนหน้าที่ Backend คำนวณแล้ว
         updatePagination(data);
+
     } catch (error) {
+
+        // การยกเลิก Request ไม่ถือเป็น Error
+        if (error.name === 'AbortError') {
+            return;
+        }
+
+        // ไม่ให้ Request เก่าแสดงข้อความ Error ทับ Request ใหม่
+        if (requestId !== searchRequestId) {
+            return;
+        }
+
         console.error('Failed to search movies:', error);
+
         resultsContainer.innerHTML = `
             <div class="col-span-full flex flex-col items-center justify-center py-20 text-center">
                 <span class="material-symbols-outlined mb-3 text-4xl text-neutral-600">
@@ -146,13 +239,20 @@ async function searchMovies(page = 1) {
                 </p>
             </div>
         `;
+
         updatePagination({
             page: 1,
             totalPages: 1,
             totalElements: 0
         });
+
+    } finally {
+        if (searchAbortController === controller) {
+            searchAbortController = null;
+        }
     }
 }
+
 async function discoverMovies(page = 1) {
     const resultsContainer = document.getElementById('resultsContainer');
     if (!resultsContainer) return;
@@ -443,28 +543,27 @@ document.querySelectorAll('input[name="genre"]').forEach(input => {
             label.classList.toggle('text-white', genreInput.checked);
             label.classList.toggle('text-neutral-400', !genreInput.checked);
         });
-        currentKeyword = '';
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-            searchInput.value = '';
-        }
-        discoverMode = true;
         currentPage = 1;
-        discoverMovies(1);
+
+        if (currentKeyword.trim()) {
+            searchMovies(1);
+        } else {
+            discoverMode = true;
+            discoverMovies(1);
+        }
     });
 });
 let filterTimeout;
 function scheduleDiscover() {
     clearTimeout(filterTimeout);
-    currentKeyword = '';
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.value = '';
-    }
-    discoverMode = true;
     currentPage = 1;
     filterTimeout = setTimeout(() => {
-        discoverMovies(1);
+        if (currentKeyword.trim()) {
+            searchMovies(1);
+        } else {
+            discoverMode = true;
+            discoverMovies(1);
+        }
     }, 300);
 }
 if (ratingSlider) {
@@ -482,12 +581,7 @@ if (sortSelector) {
 }
 function resetFilters() {
     discoverMode = false;
-    currentKeyword = '';
     currentPage = 1;
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.value = '';
-    }
     document.querySelectorAll('input[name="genre"]').forEach(input => {
         input.checked = false;
         const label = input.closest('label');
@@ -516,8 +610,12 @@ function resetFilters() {
         sortSelector.value = '';
     }
 
-    discoverMode = true;
-    discoverMovies(1);
+    if (currentKeyword.trim()) {
+        searchMovies(1);
+    } else {
+        discoverMode = true;
+        discoverMovies(1);
+    }
 }
 const resetFiltersButton = document.getElementById('resetFiltersButton');
 if (resetFiltersButton) {

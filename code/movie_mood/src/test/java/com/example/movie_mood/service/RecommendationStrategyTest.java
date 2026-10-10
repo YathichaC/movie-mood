@@ -20,24 +20,27 @@ public class RecommendationStrategyTest {
     public void testRecommendationLogic() {
 
         MovieService mockMovieService = new MovieService() {
-
             @Override
             public MoviePage browseMovies(int page) {
-                Movie m1 = new Movie();
-                m1.setTitle("Inside Out 2");
-                m1.setRating(8.0);
-                m1.setGenreIds(List.of(16, 35));
-
-                Movie m2 = new Movie();
-                m2.setTitle("A Quiet Place: Day One");
-                m2.setRating(7.0);
-                m2.setGenreIds(List.of(27, 53));
-
                 return new MoviePage(
-                        List.of(m1, m2),
+                        List.of(),
                         page,
-                        1,
-                        2);
+                        0,
+                        0);
+            }
+
+            @Override
+            public MoviePage searchMoviesWithFilters(
+                    String keyword,
+                    List<Integer> genreIds,
+                    Integer startYear,
+                    Integer endYear,
+                    Double minRating,
+                    String sortBy,
+                    int page) {
+
+                throw new UnsupportedOperationException(
+                        "Not used in RecommendationStrategyTest");
             }
 
             @Override
@@ -104,18 +107,21 @@ public class RecommendationStrategyTest {
 
         List<Movie> results = strategy.recommend(Mood.HAPPY, List.of(27));
 
-        Assertions.assertEquals(
-                1,
-                results.size(),
+        Assertions.assertEquals(2, results.size(),
+                "Both non-horror movies should remain");
+
+        Assertions.assertTrue(
+                results.stream().noneMatch(movie -> movie.getGenreIds() != null
+                        && movie.getGenreIds().stream()
+                                .anyMatch(id -> "27".equals(String.valueOf(id)))),
                 "Disliked horror genre should be excluded");
 
-        Assertions.assertEquals(
-                "Inside Out 2",
-                results.get(0).getTitle());
+        Assertions.assertTrue(
+                results.stream().anyMatch(movie -> "Inside Out 2".equals(movie.getTitle())));
 
-        Assertions.assertNotNull(
-                results.get(0).getMatchScore(),
-                "Match score should not be null");
+        Assertions.assertTrue(
+                results.stream().allMatch(movie -> movie.getMatchScore() != null),
+                "Every recommended movie should have a match score");
 
         System.out.println("====== TEST PASSED ======");
         System.out.println(
