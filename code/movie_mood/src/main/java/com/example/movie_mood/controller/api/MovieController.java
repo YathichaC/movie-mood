@@ -67,10 +67,28 @@ public class MovieController {
         @GetMapping("/search")
         public MoviePageResponse searchMovies(
                         @RequestParam @NotBlank String keyword,
+
+                        @RequestParam(required = false) List<@Positive Integer> genreIds,
+
+                        @RequestParam(required = false) @Min(1900) @Max(2100) Integer startYear,
+
+                        @RequestParam(required = false) @Min(1900) @Max(2100) Integer endYear,
+
+                        @RequestParam(required = false) @DecimalMin("0.0") @DecimalMax("10.0") Double minRating,
+
+                        @RequestParam(required = false) String sortBy,
+
                         @RequestParam(defaultValue = "1") @Positive @Max(500) int page) {
 
                 return movieMapper.toPageResponse(
-                                movieService.searchMovies(keyword, page));
+                                movieService.searchMoviesWithFilters(
+                                                keyword,
+                                                genreIds,
+                                                startYear,
+                                                endYear,
+                                                minRating,
+                                                sortBy,
+                                                page));
         }
 
         @Operation(summary = "Discover movies", description = "Filters and sorts TMDB movies by genre, release year, minimum rating, and sort order")
@@ -93,13 +111,13 @@ public class MovieController {
                         @RequestParam(defaultValue = "1") @Positive @Max(500) int page) {
 
                 return movieMapper.toPageResponse(
-                                        movieService.discoverMovies(
-        genreIds,
-        startYear,
-        endYear,
-        minRating,
-        sortBy,
-        page));
+                                movieService.discoverMovies(
+                                                genreIds,
+                                                startYear,
+                                                endYear,
+                                                minRating,
+                                                sortBy,
+                                                page));
         }
 
         @Operation(summary = "Get multiple movie summaries", description = "Returns a batch of TMDB movie summaries for playlist rendering")
