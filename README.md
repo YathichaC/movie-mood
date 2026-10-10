@@ -152,38 +152,64 @@ mvnw.cmd test
 
 ## Deployment URL
 
-- **Live Website:** [MovieMood](https://movie-mood-n62i.onrender.com/)
+- **Live Website:** [MovieMood](https://moviemood.dev/)
 - **Platform:** Render
 
 ## Project Structure
 
 ```text
 movie-mood/
-├── .github/workflows/           # CI
-├── docs/diagrams/              # UML และ ER Diagram
-├── README.md
-└── code/movie_mood/
-    ├── .env.example
-    ├── Dockerfile
-    ├── docker-compose.yml
-    ├── pom.xml
-    ├── mvnw
-    ├── mvnw.cmd
-    └── src/
-        ├── main/
-        │   ├── java/com/example/movie_mood/
-        │   │   ├── config/
-        │   │   ├── controller/
-        │   │   ├── domain/
-        │   │   ├── dto/
-        │   │   ├── facade/
-        │   │   ├── integration/tmdb/
-        │   │   ├── repository/
-        │   │   ├── security/
-        │   │   ├── service/
-        │   │   └── strategy/
-        │   └── resources/
-        │       ├── static/
-        │       └── templates/
-        └── test/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
+├── code/
+│   └── movie_mood/
+│       ├── .mvn/                 # Maven Wrapper
+│       ├── src/
+│       │   ├── main/
+│       │   │   ├── java/com/example/movie_mood/
+│       │   │   │   ├── config/          # Application configuration
+│       │   │   │   ├── controller/      # REST API and Web controllers
+│       │   │   │   ├── domain/          # Entities and domain models
+│       │   │   │   ├── dto/             # Request and response objects
+│       │   │   │   ├── exception/       # Exception handling
+│       │   │   │   ├── facade/          # Facade pattern
+│       │   │   │   ├── integration/     # TMDB Adapter and Proxy
+│       │   │   │   ├── mapper/          # Data mapping
+│       │   │   │   ├── repository/      # Database access
+│       │   │   │   ├── security/        # JWT and Spring Security
+│       │   │   │   ├── service/         # Business logic
+│       │   │   │   └── strategy/        # Recommendation strategies
+│       │   │   └── resources/
+│       │   │       ├── static/          # CSS, JavaScript and images
+│       │   │       ├── templates/       # Thymeleaf templates
+│       │   │       └── application.properties
+│       │   └── test/
+│       │       ├── java/                # JUnit 5 and Mockito tests
+│       │       └── resources/           # Test configuration
+│       ├── pom.xml
+│       ├── Dockerfile
+│       ├── docker-compose.yml
+│       └── mvnw
+│
+├── test/
+│   ├── images/                         # Test evidence screenshots
+│   └── test-report.md                  # Test results and report
+│
+├── doc/                                # Project documents and slides
+│
+├── img/                                # Application screenshots
+│   ├── 01-home.png
+│   ├── 02-movie-search.png
+│   ├── 03-recommendation.png
+│   ├── 04-playlist.png
+│   └── 05-watch-history.png
+│
+├── docs/
+│   └── diagrams/                       # UML and architecture diagrams
+│       ├── png/
+│       └── svg/
+│
+└── README.md
 ```
