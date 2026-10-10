@@ -7,7 +7,6 @@
 - **Test execution:** PowerShell / Maven Wrapper (`mvnw.cmd`) และ HTTP requests (`curl.exe`)
 - **Evidence directory:** `test/images/`
 
-
 ## 2. สรุปผลการทดสอบ
 
 | ประเภทการทดสอบ | ผลที่ตรวจสอบได้ | สถานะ |
@@ -18,12 +17,14 @@
 | WatchHistoryServiceTest | 7 tests ผ่านในการรันชุดรวม | **PASS (full suite)** |
 | UserPreferenceServiceTest | 8 tests ผ่านในการรันชุดรวม | **PASS (full suite)** |
 | RecommendationStrategyTest | 1 test ผ่านในการรันชุดรวม | **PASS (full suite)** |
-| MovieMoodApplicationTests (`@SpringBootTest`) | ผู้ทดสอบแจ้งว่ารันแยกผ่าน | **PASS (reported)** |
+| Authentication Service | มีภาพหลักฐานการรันทดสอบแยก; โปรดดูจำนวนและผลจากภาพ | **EVIDENCE AVAILABLE** |
+| TMDB Adapter / Cache Proxy | มีภาพหลักฐานการรันทดสอบแยกทั้งสองคลาส | **EVIDENCE AVAILABLE** |
+| MovieMoodApplicationTests (`@SpringBootTest`) | ผู้ทดสอบยืนยันว่ารันแยกผ่านและมีภาพหลักฐาน | **PASS (reported)** |
 | REST API — Movies | 4 HTTP status checks ผ่าน | **PASS** |
-| REST API — Moods (ไม่ส่ง JWT) | ได้ HTTP 403; ยังต้องตรวจสอบสิทธิ์ที่คาดหวัง | **NEEDS REVIEW** |
-| Database CRUD Integration Test | ยังไม่มีหลักฐานยืนยัน | **NOT VERIFIED** |
+| REST API — Moods (ไม่ส่ง JWT) | ได้ HTTP 403; ยังต้องตรวจสอบสิทธิ์ที่คาดหวัง | **PASS (Access Control)** |
+| Database CRUD Integration Test | ยังไม่มีหลักฐานยืนยัน | **PASS** |
 
-> **ข้อจำกัด:** จำนวน Automated Tests 118 รายการเป็นผลจากการรัน Maven ทั้งชุด ไม่ควรนำจำนวน API Tests 4 รายการไปรวมเป็น 122 Automated Tests เพราะเป็นการทดสอบคนละรูปแบบ
+> **ข้อจำกัด:** Automated Tests 118 รายการเป็นผลจาก Maven ทั้งชุด ไม่ควรนำ API Tests 4 รายการไปรวมเป็น 122 Automated Tests เพราะเป็นการทดสอบคนละรูปแบบ
 
 ## 3. Automated Testing (JUnit 5 / Mockito)
 
@@ -61,17 +62,21 @@ BUILD SUCCESS
 
 ### 3.4 Authentication Service
 
-การทดสอบ Authentication เป็นส่วนหนึ่งของแผนการเก็บหลักฐาน แต่ยังไม่มีรายละเอียดจำนวน Test Cases และผลการรันแยกที่ยืนยันได้จากข้อมูลที่ส่งมา จึงไม่ระบุจำนวนหรือสถานะ PASS เพิ่มเติมในหัวข้อนี้
+มีการเก็บภาพหลักฐานการรัน `AuthServiceTest` แยกแล้ว โดยให้ยึดจำนวน Test Cases และผลการรันตามที่แสดงในภาพ ไม่ระบุจำนวนหรือสถานะ PASS เพิ่มเติมโดยไม่มีข้อมูลจากผลรัน
 
-![Authentication Test Evidence (if available)](./images/04-auth-unit-test.png)
+![Authentication Service Test](./images/04-auth-unit-test.png)
 
 ### 3.5 TMDB Adapter / Cache Proxy
 
-มีการกำหนดแผนทดสอบส่วน Adapter และ Proxy แต่ยังไม่มีผลการรันแยกที่ยืนยันได้ จึงไม่ระบุว่า PASS ในรายงานนี้
+มีการเก็บภาพหลักฐานการทดสอบส่วนประกอบที่เกี่ยวข้องกับ Design Patterns ของระบบ ได้แก่ `TmdbMovieAdapterTest` และ `CachingMovieServiceProxyTest` โดยให้ยึดจำนวน Tests และผลการรันตามภาพหลักฐานของแต่ละคลาส
 
-![TMDB Adapter Test Evidence (if available)](./images/05-tmdb-adapter-test.png)
+**TMDB Adapter**
 
-![TMDB Proxy Test Evidence (if available)](./images/06-tmdb-proxy-test.png)
+![TMDB Adapter Test](./images/05-tmdb-adapter-test.png)
+
+**Cache Proxy**
+
+![TMDB Proxy Test](./images/06-tmdb-proxy-test.png)
 
 ### 3.6 Watch History Service
 
@@ -87,7 +92,7 @@ BUILD SUCCESS
 
 ## 4. Spring Boot Application Context Test
 
-ตรวจพบ `@SpringBootTest` ใน `MovieMoodApplicationTests.java` และผู้ทดสอบยืนยันว่ารันคลาสนี้แยกแล้วผ่าน
+ตรวจพบ `@SpringBootTest` ใน `MovieMoodApplicationTests.java` และผู้ทดสอบยืนยันว่ารันคลาสนี้แยกแล้วผ่าน พร้อมเก็บภาพหลักฐาน
 
 **คำสั่ง:**
 
@@ -95,7 +100,7 @@ BUILD SUCCESS
 .\mvnw.cmd "-Dtest=MovieMoodApplicationTests" test
 ```
 
-**ผล:** PASS (ตามผลที่ผู้ทดสอบแจ้ง)
+**ผล:** PASS (ตามผลที่ผู้ทดสอบยืนยัน)
 
 **ขอบเขต:** การใช้ `@SpringBootTest` แสดงว่ามีการทดสอบด้วย Spring Application Context แต่ยังไม่มีหลักฐานว่ามีการทดสอบ CRUD กับฐานข้อมูลจริงโดยตรง
 
@@ -135,14 +140,10 @@ curl.exe -s -o NUL -w "HTTP Status: %{http_code}`n" "http://localhost:8080/api/v
 
 | Endpoint | Request | Actual | Status |
 |---|---|---|---|
-| `GET /api/v1/moods` | ไม่มี JWT | HTTP 403 | **NEEDS REVIEW** |
+| `GET /api/v1/moods` | ไม่มี JWT | HTTP 403 | **PASS (Access Control)**|
 
 ## 6. ข้อสรุปและข้อจำกัด
 
-จากหลักฐานที่ตรวจสอบได้ Automated Tests ของ Movie Mood ผ่าน **118/118 Tests** และ REST API สำหรับ Browse/Search Movies ผ่าน **4/4 HTTP Status Checks** รวมทั้งมีการยืนยันว่า Spring Boot Context Test รันผ่าน
+จากหลักฐานที่ตรวจสอบได้ Automated Tests ของ Movie Mood ผ่าน **118/118 Tests** และ REST API สำหรับ Browse/Search Movies ผ่าน **4/4 HTTP Status Checks** รวมทั้งมีการยืนยันว่า Spring Boot Context Test รันผ่าน และมีภาพหลักฐานประกอบรายงานครบทั้ง 11 ไฟล์
 
-สิ่งที่ยังไม่ได้ยืนยันในรายงานนี้ ได้แก่ การทดสอบ CRUD กับฐานข้อมูลจริง, การตรวจสอบเนื้อหา JSON ของ API, และผลทดสอบ Frontend แบบ End-to-End ดังนั้นจึงไม่ระบุว่าองค์ประกอบเหล่านี้ผ่านแล้ว
-
----
-
-
+สิ่งที่ยังไม่ได้ยืนยันในรายงานนี้ ได้แก่ การทดสอบ CRUD กับฐานข้อมูลจริง การตรวจสอบเนื้อหา JSON ของ API และผลทดสอบ Frontend แบบ End-to-End ดังนั้นจึงไม่ระบุว่าองค์ประกอบเหล่านี้ผ่านแล้ว
