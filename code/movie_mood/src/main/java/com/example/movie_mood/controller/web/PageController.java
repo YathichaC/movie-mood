@@ -43,7 +43,7 @@ public String resetPassword(
 
     @GetMapping("/terms-of-service")
     public String termsOfService() {
-        return "docs/terms-of-service";
+        return "docs/term-of-service";
     }
 
     @GetMapping("/home")
