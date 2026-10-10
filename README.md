@@ -1,251 +1,189 @@
-# MovieMood
+# ระบบแนะนำหนังตามอารมณ์ MovieMood (กลุ่มที่ 8)
 
-ระบบจัดการและแนะนำภาพยนตร์ตามอารมณ์และความชอบของผู้ใช้
+MovieMood เป็นเว็บแอปพลิเคชันสำหรับค้นหาและแนะนำภาพยนตร์ตามอารมณ์ โดยใช้ข้อมูลจาก TMDB API  
+ผู้ใช้สามารถค้นหา กรอง และดูรายละเอียดภาพยนตร์ รวมถึงรับคำแนะนำผ่าน Recommendation Engine  
+ระบบรองรับการสมัครสมาชิก การจัดการโปรไฟล์ Playlist ประวัติการรับชม และประเภทภาพยนตร์ที่ไม่ต้องการ  
+พัฒนาด้วย Spring Boot, Thymeleaf, JavaScript และ PostgreSQL บน Supabase
 
-## รายละเอียดโปรเจกต์
+## สมาชิกกลุ่ม (กลุ่มที่ 8)
 
-MovieMood เป็น Web Application สำหรับจัดการข้อมูลภาพยนตร์และแนะนำภาพยนตร์ให้เหมาะกับอารมณ์และความชอบของผู้ใช้ โดยผู้ใช้สามารถเลือกอารมณ์ ค้นหาและดูรายละเอียดภาพยนตร์ ให้คะแนนภาพยนตร์ และดูประวัติการรับชมได้
+| ลำดับ | ชื่อ-นามสกุล | รหัสนักศึกษา | Section | Branch | หน้าที่รับผิดชอบ |
+|---:|---|---|---|---|---|
+| 1 | กนกพร บุญครอง | 673380024-0 | SEC 1 | `kanokporn_6733800240_01` | **User Management & Authentication** — ระบบสมาชิก การสมัคร/เข้าสู่ระบบ โปรไฟล์ การยืนยันตัวตน และ User Preferences |
+| 2 | ชิดชนก ชนะพา | 673380033-9 | SEC 1 | `chidchanok_6733800339_01` | **Movie & Mood Management** — ข้อมูลภาพยนตร์ Genre และ Mood รวมถึงการค้นหา กรองข้อมูล และความสัมพันธ์ระหว่าง Mood กับ Genre |
+| 3 | ญาทิชา จันทรศรีสุริยวงศ์ | 673380034-7 | SEC 2 | `yathicha_6733800347_02` | **Frontend Development & Integration** — พัฒนาหน้าจอ UI/UX และเชื่อมต่อ Frontend กับ Backend |
+| 4 | อรปรีญา แซ่โซ้ง | 673380070-3 | SEC 1 | `onpriya_6733800703_01` | **Watch History, Playlist & Recommendation Engine** — ประวัติการรับชม Playlist, Recommendation Logic, Match Score และ Strategy Pattern |
 
-ระบบจะนำข้อมูลเกี่ยวกับ Mood, Genre และความชอบของผู้ใช้มาใช้ในการแนะนำภาพยนตร์ที่เหมาะสม
+## Tech Stack
 
-## สมาชิกกลุ่ม
+| หมวดหมู่ | เทคโนโลยี |
+|---|---|
+| Backend | Java 26, Spring Boot 4.1.1, Spring Web MVC |
+| Frontend | HTML, CSS, JavaScript, Thymeleaf, Tailwind CSS |
+| Database | PostgreSQL (Supabase), Spring Data JPA / Hibernate |
+| Authentication | Spring Security, JWT |
+| Movie Data | TMDB API |
+| File Storage | Supabase Storage |
+| Build & Test | Maven Wrapper, Spring Boot Test, H2 |
+| Tools & Deployment | Git, GitHub, GitHub Actions, Docker, Docker Compose, Render |
 
-| ลำดับ | ชื่อ - นามสกุล | รหัสนักศึกษา | Sec | Email | Branch | หน้าที่รับผิดชอบ |
-|---:|---|---|---|---|---|---|
-| 1 | กนกพร บุญครอง | 673380024-0  | SEC 1 | kanokporn.bo@kkumail.com | kanokporn_6733800240_01 | **User Management & Authentication** — พัฒนา User Entity, User Profile, Registration/Login และจัดการข้อมูล Preference ของผู้ใช้ |
-| 2 | ชิดชนก ชนะพา | 673380033-9| SEC 1 | chidchanok.cha@kkumail.com | chidchanok_6733800339_01 | **Movie & Mood Management** — พัฒนา Movie, Genre, Mood Entity รวมถึง CRUD, Search, Filter และจัดการความสัมพันธ์ระหว่าง Movie กับ Mood |
-| 3 | ญาทิชา จันทรศรีสุริยวงศ์ | 673380034-7 | SEC 2 | yathicha.c@kkumail.com | yathicha_6733800347_02 | **Recommendation Engine & Design Patterns** — พัฒนา Recommendation Logic, Match Score และประยุกต์ใช้ Strategy Pattern สำหรับการคำนวณ Recommendation |
-| 4 | อรปรีญา แซ่โซ้ง | 673380070-3 | SEC 1 | onpriya122549@gmail.com | onpriya_6733800703_01 | **Rating, Watch History & Frontend Integration** — พัฒนา Rating API, Watch History, Dashboard และเชื่อมต่อ Frontend กับ REST API |
+## System Architecture
 
----
+ระบบแบ่งการทำงานเป็น Controller, Service และ Repository โดยเชื่อมต่อฐานข้อมูล Supabase และ TMDB API
 
-##  Tech Stack
-
-### Backend
-- Java 17
-- Spring Boot
-- Spring Web
-- Spring Data JPA
-- Hibernate
-- Maven
-
-### Frontend
-- HTML
-- CSS
-- JavaScript
-- Thymeleaf
-
-### Database
-- Supabase (PostgreSQL)
-
-### Testing
-- JUnit
-- Mockito
-
-### Version Control
-- Git
-- GitHub
-
----
-
-##  System Architecture
-
-MovieMood ใช้แนวคิด **Layered Architecture** โดยแบ่งระบบออกเป็นแต่ละ Layer เพื่อแยกหน้าที่และลดการเชื่อมโยงระหว่างส่วนต่าง ๆ ของระบบ
-
-```text
-┌─────────────────────────────┐
-│          Frontend           │
-│      HTML / CSS / JS        │
-└──────────────┬──────────────┘
-               │
-               ▼
-┌─────────────────────────────┐
-│        Controller Layer     │
-│      REST API / Routing     │
-└──────────────┬──────────────┘
-               │
-               ▼
-┌─────────────────────────────┐
-│         Service Layer       │
-│        Business Logic       │
-└──────────────┬──────────────┘
-               │
-               ▼
-┌─────────────────────────────┐
-│       Repository Layer      │
-│       Spring Data JPA       │
-└──────────────┬──────────────┘
-               │
-               ▼
-┌─────────────────────────────┐
-│    Supabase (PostgreSQL)    │
-│          Database           │
-
-└─────────────────────────────┘
+```mermaid
+flowchart TD
+    U[User / Browser] --> F[Thymeleaf / JavaScript]
+    F --> C[Spring MVC / REST Controllers]
+    C --> S[Service / Recommendation Engine]
+    S --> R[Spring Data JPA Repositories]
+    R --> DB[(Supabase PostgreSQL)]
+    S --> T[TMDB API]
+    S --> ST[Supabase Storage]
+    C --> A[Spring Security / JWT]
 ```
 
----
+![Component Diagram](docs/diagrams/svg/09_component_diagram.svg)
 
-##  โครงสร้างโปรเจกต์ (Project Structure)
+## Database Design (ER Diagram)
 
-```text
-MovieMood/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── com.example.moviemood/
-│   │   │       ├── controller/        # REST Controllers สำหรับจัดการ HTTP Request และ Routing
-│   │   │       ├── service/           # Business Logic ของระบบ
-│   │   │       ├── repository/        # Interface สำหรับเข้าถึง Database ผ่าน Spring Data JPA
-│   │   │       ├── entity/            # Database Models / Entities
-│   │   │       ├── dto/               # Data Transfer Objects
-│   │   │       ├── strategy/          # Strategy Pattern สำหรับอัลกอริทึมการแนะนำ
-│   │   │       └── factory/           # Factory Pattern สำหรับการสร้าง Object
-│   │   │
-│   │   └── resources/
-│   │       ├── static/                # Static Assets (CSS, JS, Images)
-│   │       │   ├── css/
-│   │       │   ├── js/
-│   │       │   └── images/
-│   │       ├── templates/             # HTML Templates (Thymeleaf/UI)
-│   │       │   ├── index.html         # หน้าแรกของเว็บไซต์
-│   │       │   ├── login.html         # หน้าเข้าสู่ระบบ
-│   │       │   ├── movies.html        # หน้าแสดงรายการภาพยนตร์ทั้งหมด
-│   │       │   ├── movie-detail.html  # หน้ารายละเอียดภาพยนตร์
-│   │       │   ├── mood.html          # หน้าเลือกอารมณ์/ความรู้สึก
-│   │       │   ├── recommendation.html # หน้าแสดงผลการแนะนำภาพยนตร์
-│   │       │   ├── rating.html        # หน้าให้คะแนนภาพยนตร์
-│   │       │   ├── history.html       # หน้าประวัติการใช้งาน
-│   │       │   └── profile.html       # หน้าโปรไฟล์ผู้ใช้
-│   │       └── application.properties # ไฟล์ตั้งค่า Spring Boot และ Database
-│   │
-│   └── test/                          # Unit Tests และ Integration Tests
-│
-├── README.md                          # เอกสารอธิบายโปรเจกต์
-├── pom.xml                            # ไฟล์จัดการ Dependencies ของ Maven
-└── .gitignore                         # ไฟล์ระบุสิ่งที่ Git ไม่ต้องติดตามหรือ Commit
-```
+![MovieMood ER Diagram](docs/diagrams/svg/08_er_diagram.svg)
 
----
+ฐานข้อมูลมี Entity หลัก ได้แก่ `User`, `Genre`, `WatchHistory`, `Playlist`, `Movielist`, `PlaylistDetail`, `UserDislikedGenre` และ `PasswordResetToken`
 
-##  Installation & Setup
+## Installation & Setup
 
-### Requirements
-- Java 17 หรือสูงกว่า
-- Maven
-- Git
-- GitHub Account
-- Supabase Account
+**สิ่งที่ต้องมี:**
+- JDK 26 และ Git สำหรับรันผ่าน Maven Wrapper
+- PostgreSQL/Supabase และ TMDB API Token
+- Docker และ Docker Compose (กรณีรันผ่าน Docker)
 
-### 1. Clone Repository
+
+1. Clone Repository และเข้าสู่โฟลเดอร์โปรเจกต์:
+
 ```bash
-git clone <repository-url>
-cd MovieMood
+git clone https://github.com/YathichaC/movie-mood.git
+cd movie-mood/code/movie_mood
 ```
 
-### 2. Setup Supabase
-1. สร้าง Project บน Supabase
-2. สร้าง Database Tables ตาม ER Diagram
-3. เตรียมข้อมูล Database Connection ของ Supabase
-4. ตั้งค่าการเชื่อมต่อ Database ใน `application.properties`
+2. คัดลอกไฟล์ `.env.example` เป็น `.env` แล้วกำหนดค่าการเชื่อมต่อฐานข้อมูล, TMDB API, JWT, Supabase Storage และ SMTP ตามที่ใช้งานจริง:
 
-### 3. Configure Database
-เปิดไฟล์ `src/main/resources/application.properties` และกำหนดค่า:
-
-```properties
-spring.datasource.url=${DB_URL}
-spring.datasource.username=${DB_USERNAME}
-spring.datasource.password=${DB_PASSWORD}
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
+```powershell
+# Windows PowerShell
+Copy-Item .env.example .env
 ```
 
-> **คำเตือน:** ไม่ควรใส่ Password จริงในไฟล์หรือ Commit ข้อมูลสำคัญขึ้น GitHub
+```bash
+# macOS / Linux
+cp .env.example .env
+```
 
----
+
+> **หมายเหตุ:** ให้รันคำสั่งติดตั้งและทดสอบภายในโฟลเดอร์ `code/movie_mood` และไม่ควรเผยแพร่ไฟล์ `.env` หรือ Secret Key ลงใน Repository
+
+
+Spring Boot อาจไม่โหลด `.env` อัตโนมัติเมื่อรันผ่าน Maven จึงต้องกำหนด Environment Variables ในระบบหรือ IDE ก่อนใช้งาน ทั้งนี้ฐานข้อมูลต้องมี Schema ที่ตรงกับ Entity เนื่องจากตั้งค่า `spring.jpa.hibernate.ddl-auto=validate`
+
 
 ## How to Run
 
-### สำหรับ Windows / macOS / Linux
-เปิด Terminal ในโฟลเดอร์ของโปรเจกต์ แล้วใช้คำสั่งสำหรับ **Windows**:
+**Maven Wrapper** (หลังตั้งค่า Environment Variables)
 
+**Windows**
 ```cmd
 mvnw.cmd spring-boot:run
 ```
 
-หรือหากติดตั้ง Maven ไว้ในเครื่องแล้ว สามารถใช้คำสั่ง:
-
+**macOS / Linux**
 ```bash
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
-เมื่อ Application ทำงานสำเร็จ สามารถเข้าใช้งานผ่าน Web Browser ได้ที่:
---> **[http://localhost:8080](http://localhost:8080)**
-
-### Stop Application
-กด `Ctrl + C` ใน Terminal เพื่อหยุดการทำงานของ Application
-
----
-
-##  API Documentation
-
-### User API
-- `POST   /api/users/register`
-- `POST   /api/users/login`
-- `GET    /api/users/{id}`
-- `PUT    /api/users/{id}`
-
-### Movie API
-- `GET    /api/movies`
-- `GET    /api/movies/{id}`
-- `POST   /api/movies`
-- `PUT    /api/movies/{id}`
-- `DELETE /api/movies/{id}`
-
-### Mood API
-- `GET    /api/moods`
-- `POST   /api/moods`
-
-### Recommendation API
-- `GET    /api/recommendations/{userId}`
-- `POST   /api/recommendations`
-
-### Rating API
-- `POST   /api/ratings`
-- `GET    /api/ratings/movie/{movieId}`
-
-### Watch History API
-- `POST   /api/history`
-- `GET    /api/history/user/{userId}`
-
-### Swagger / OpenAPI
-สามารถดูและทดสอบ REST API ผ่าน Swagger UI ได้ที่:
---> **[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)**
-
----
-
-##  How to Run Tests
-
-โปรเจกต์ใช้ **JUnit** และ **Mockito** สำหรับทดสอบการทำงานของระบบ
+หรือรันผ่าน **Docker Compose** หลังตั้งค่า `.env`
 
 ```bash
-mvn test
+docker compose up --build
 ```
 
-สำหรับ Windows:
+เปิดเว็บที่ [http://localhost:8080](http://localhost:8080)
+
+หากต้องการหยุด Docker ให้ใช้คำสั่ง `docker compose down`
+
+
+## API Documentation
+
+เมื่อรันระบบแล้ว สามารถดูเอกสาร API และรูปแบบ Request/Response ได้ที่:
+
+- [Swagger UI](http://localhost:8080/swagger-ui.html)
+- [OpenAPI JSON](http://localhost:8080/v3/api-docs)
+
+ตัวอย่าง API หลักจาก Controller:
+
+| Method | Endpoint | การทำงาน |
+|---|---|---|
+| POST | `/api/v1/auth/register` | สมัครสมาชิก |
+| POST | `/api/v1/auth/login` | เข้าสู่ระบบ |
+| GET | `/api/v1/auth/me` | ข้อมูลผู้ใช้ที่เข้าสู่ระบบ |
+| GET | `/api/v1/movies/search` | ค้นหาภาพยนตร์ |
+| GET | `/api/v1/movies/{tmdbMovieId}` | รายละเอียดภาพยนตร์ |
+| GET | `/api/v1/movies/filter/mood` | กรองตามอารมณ์ |
+| GET | `/api/v1/moods` | รายการอารมณ์ |
+| GET | `/api/v1/recommendations` | แนะนำภาพยนตร์ |
+| GET | `/api/v1/playlists` | รายการ Playlist |
+| POST | `/api/v1/playlists` | สร้าง Playlist |
+| GET | `/api/v1/history` | ประวัติการรับชม |
+| PUT | `/api/v1/{userId}/preferences/disliked-genres` | จัดการประเภทภาพยนตร์ที่ไม่ต้องการ |
+
+## How to Run Tests
+
+รันชุดทดสอบด้วย Maven Wrapper จากโฟลเดอร์ `code/movie_mood`:
+
 ```cmd
+:: Windows
 mvnw.cmd test
 ```
 
-**Unit Tests หลักที่ครอบคลุม:**
-* `UserServiceTest`
-* `MovieServiceTest`
-* `RecommendationServiceTest`
-* `RatingServiceTest`
+```bash
+# macOS / Linux
+./mvnw test
+```
 
----
+ชุดทดสอบอยู่ใน `src/test/` ครอบคลุมส่วน Controller, Service, Recommendation Strategy และการเชื่อมต่อข้อมูลภายนอก
 
-##  Deployment URL
+## Deployment URL
 
-* **Production URL:** `<deployment-url>` *(จะถูกเพิ่มหลังจากนำระบบขึ้น Deployment Server เรียบร้อยแล้ว)*
+- **Live Website:** [MovieMood](https://movie-mood-n62i.onrender.com/)
+- **Platform:** Render
+
+## Project Structure
+
+```text
+movie-mood/
+├── .github/workflows/           # CI
+├── docs/diagrams/              # UML และ ER Diagram
+├── README.md
+└── code/movie_mood/
+    ├── .env.example
+    ├── Dockerfile
+    ├── docker-compose.yml
+    ├── pom.xml
+    ├── mvnw
+    ├── mvnw.cmd
+    └── src/
+        ├── main/
+        │   ├── java/com/example/movie_mood/
+        │   │   ├── config/
+        │   │   ├── controller/
+        │   │   ├── domain/
+        │   │   ├── dto/
+        │   │   ├── facade/
+        │   │   ├── integration/tmdb/
+        │   │   ├── repository/
+        │   │   ├── security/
+        │   │   ├── service/
+        │   │   └── strategy/
+        │   └── resources/
+        │       ├── static/
+        │       └── templates/
+        └── test/
+```

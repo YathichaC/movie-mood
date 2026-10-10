@@ -12,6 +12,14 @@ public interface MovieService {
     MoviePage browseMovies(int page);
 
     MoviePage searchMovies(String keyword, int page);
+    MoviePage searchMoviesWithFilters(
+        String keyword,
+        List<Integer> genreIds,
+        Integer startYear,
+        Integer endYear,
+        Double minRating,
+        String sortBy,
+        int page);
 
     List<Movie> filterMoviesByMood(Mood mood);
 

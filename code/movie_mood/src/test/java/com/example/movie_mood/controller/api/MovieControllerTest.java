@@ -11,9 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.example.movie_mood.domain.model.MoviePage;
-
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -137,24 +141,37 @@ class MovieControllerTest {
 
         @Test
         void searchMovies_shouldReturnMatchingMovies() throws Exception {
+
+                // 1. สร้างหนังจำลอง
                 Movie movie = new Movie();
                 movie.setTmdbMovieId("11");
                 movie.setTitle("Batman");
                 movie.setRating(8.0);
                 movie.setGenreIds(List.of(28));
 
+                // 2. สร้างผลลัพธ์จำลอง
                 MoviePage moviePage = new MoviePage(
                                 List.of(movie),
                                 1,
                                 1,
                                 1);
 
-                when(movieService.searchMovies("Batman", 1))
-                                .thenReturn(moviePage);
+                // 3. Mock ให้ตรงกับค่าที่ Controller ส่งจริง
+                when(movieService.searchMoviesWithFilters(
+                                eq("Batman"),
+                                isNull(),
+                                isNull(),
+                                isNull(),
+                                isNull(),
+                                isNull(),
+                                eq(1))).thenReturn(moviePage);
 
+                // 4. ทดสอบ API
                 mockMvc.perform(
                                 get("/api/v1/movies/search")
-                                                .param("keyword", "Batman"))
+                                                .param("keyword", "Batman")
+                                                .param("page", "1"))
+                                .andDo(print())
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.content[0].tmdbMovieId").value("11"))
                                 .andExpect(jsonPath("$.content[0].title").value("Batman"))
@@ -163,7 +180,15 @@ class MovieControllerTest {
                                 .andExpect(jsonPath("$.totalPages").value(1))
                                 .andExpect(jsonPath("$.totalElements").value(1));
 
-                verify(movieService).searchMovies("Batman", 1);
+                // 5. ตรวจสอบว่า Controller เรียก Service ถูกต้อง
+                verify(movieService).searchMoviesWithFilters(
+                                eq("Batman"),
+                                isNull(),
+                                isNull(),
+                                isNull(),
+                                isNull(),
+                                isNull(),
+                                eq(1));
         }
 
         @Test
