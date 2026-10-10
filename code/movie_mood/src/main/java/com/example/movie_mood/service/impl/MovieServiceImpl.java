@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class MovieServiceImpl implements MovieService {
@@ -23,6 +25,15 @@ public class MovieServiceImpl implements MovieService {
     private static final int MAX_BATCH_MOVIE_REQUEST_SIZE = 50;
     private static final int SEARCH_FILTER_MAX_TMDB_PAGES = 10;
     private static final int SEARCH_FILTER_PAGE_SIZE = 20;
+    private static final long SEARCH_CACHE_TTL_MS = 5 * 60 * 1000L;
+
+    private final Map<String, SearchCacheEntry> searchCache = new ConcurrentHashMap<>();
+
+    private record SearchCacheEntry(
+            List<Movie> movies,
+            long createdAt) {
+    }
+
     private static final List<String> ALLOWED_DISCOVER_SORT_VALUES = List.of(
             "rating_desc",
             "rating_asc",
@@ -84,34 +95,7 @@ public class MovieServiceImpl implements MovieService {
             throw new IllegalArgumentException("Invalid sortBy value");
         }
 
-        MoviePage firstPage = movieProvider.searchMovies(keyword.trim(), 1);
-
-        int pagesToFetch = Math.min(
-                firstPage.getTotalPages(),
-                SEARCH_FILTER_MAX_TMDB_PAGES);
-
-        List<Movie> collectedMovies = new ArrayList<>();
-        Set<String> seenIds = new HashSet<>();
-
-        for (int tmdbPage = 1; tmdbPage <= pagesToFetch; tmdbPage++) {
-
-            MoviePage result = tmdbPage == 1
-                    ? firstPage
-                    : movieProvider.searchMovies(keyword.trim(), tmdbPage);
-
-            for (Movie movie : result.getMovies()) {
-
-                if (movie == null || movie.getTmdbMovieId() == null) {
-                    continue;
-                }
-
-                String id = String.valueOf(movie.getTmdbMovieId());
-
-                if (seenIds.add(id)) {
-                    collectedMovies.add(movie);
-                }
-            }
-        }
+        List<Movie> collectedMovies = getCachedSearchMovies(keyword);
 
         List<Movie> filteredMovies = new ArrayList<>(
                 collectedMovies.stream()
@@ -327,6 +311,58 @@ public class MovieServiceImpl implements MovieService {
                 minRating,
                 sortBy,
                 page);
+    }
+
+    private List<Movie> getCachedSearchMovies(String keyword) {
+
+        String normalizedKeyword = keyword.trim();
+        String cacheKey = normalizedKeyword.toLowerCase(Locale.ROOT);
+
+        long now = System.currentTimeMillis();
+
+        SearchCacheEntry cached = searchCache.get(cacheKey);
+
+        if (cached != null
+                && now - cached.createdAt() < SEARCH_CACHE_TTL_MS) {
+            return cached.movies();
+        }
+
+        MoviePage firstPage = movieProvider.searchMovies(normalizedKeyword, 1);
+
+        int pagesToFetch = Math.min(
+                firstPage.getTotalPages(),
+                SEARCH_FILTER_MAX_TMDB_PAGES);
+
+        List<Movie> collectedMovies = new ArrayList<>();
+        Set<String> seenIds = new HashSet<>();
+
+        for (int tmdbPage = 1; tmdbPage <= pagesToFetch; tmdbPage++) {
+
+            MoviePage result = tmdbPage == 1
+                    ? firstPage
+                    : movieProvider.searchMovies(normalizedKeyword, tmdbPage);
+
+            for (Movie movie : result.getMovies()) {
+
+                if (movie == null || movie.getTmdbMovieId() == null) {
+                    continue;
+                }
+
+                String id = String.valueOf(movie.getTmdbMovieId());
+
+                if (seenIds.add(id)) {
+                    collectedMovies.add(movie);
+                }
+            }
+        }
+
+        List<Movie> movies = List.copyOf(collectedMovies);
+
+        searchCache.put(
+                cacheKey,
+                new SearchCacheEntry(movies, System.currentTimeMillis()));
+
+        return movies;
     }
 
 }
