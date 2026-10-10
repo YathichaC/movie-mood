@@ -23,8 +23,12 @@ public class CachingMovieServiceProxy implements MovieProvider {
 
     private static final Logger log = LoggerFactory.getLogger(CachingMovieServiceProxy.class);
     private static final long POPULAR_MOVIES_CACHE_TTL_MS = Duration.ofMinutes(5).toMillis();
+    private static final long DISCOVER_MOVIES_CACHE_TTL_MS = Duration.ofMinutes(5).toMillis();
+    private static final int MAX_DISCOVER_CACHE_ENTRIES = 256;
     private static final long MOVIE_CACHE_TTL_MS = Duration.ofMinutes(30).toMillis();
     private static final int MAX_MOVIE_CACHE_ENTRIES = 512;
+    private final AtomicLong discoverMoviesCacheHits = new AtomicLong();
+    private final AtomicLong discoverMoviesCacheMisses = new AtomicLong();
 
     private final TmdbMovieAdapter movieAdapter;
 
@@ -36,6 +40,15 @@ public class CachingMovieServiceProxy implements MovieProvider {
                 }
             });
     private final Map<String, CachedMoviePage> popularMoviesCache = Collections.synchronizedMap(new LinkedHashMap<>());
+    private final Map<String, CachedMoviePage> discoverMoviesCache = Collections.synchronizedMap(
+            new LinkedHashMap<String, CachedMoviePage>(
+                    128, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(
+                        Map.Entry<String, CachedMoviePage> eldest) {
+                    return size() > MAX_DISCOVER_CACHE_ENTRIES;
+                }
+            });
     private final AtomicLong movieCacheHits = new AtomicLong();
     private final AtomicLong movieCacheMisses = new AtomicLong();
     private final AtomicLong popularMoviesCacheHits = new AtomicLong();
@@ -50,6 +63,7 @@ public class CachingMovieServiceProxy implements MovieProvider {
     public MoviePage getPopularMovies(int page) {
         String cacheKey = "popular:" + page;
         long now = System.currentTimeMillis();
+
         CachedMoviePage cachedResponse = popularMoviesCache.get(cacheKey);
 
         if (cachedResponse != null && cachedResponse.expiresAt() > now) {
@@ -57,13 +71,22 @@ public class CachingMovieServiceProxy implements MovieProvider {
             return cachedResponse.moviePage();
         }
 
-        if (cachedResponse != null && cachedResponse.expiresAt() <= now) {
-            popularMoviesCache.remove(cacheKey);
+        if (cachedResponse != null) {
+            popularMoviesCache.remove(cacheKey, cachedResponse);
         }
 
         popularMoviesCacheMisses.incrementAndGet();
+
         MoviePage moviePage = movieAdapter.getPopularMovies(page);
-        popularMoviesCache.put(cacheKey, new CachedMoviePage(moviePage, now + POPULAR_MOVIES_CACHE_TTL_MS));
+
+        if (moviePage != null) {
+            popularMoviesCache.put(
+                    cacheKey,
+                    new CachedMoviePage(
+                            moviePage,
+                            System.currentTimeMillis() + POPULAR_MOVIES_CACHE_TTL_MS));
+        }
+
         return moviePage;
     }
 
@@ -98,22 +121,40 @@ public class CachingMovieServiceProxy implements MovieProvider {
                 movieCacheHits.get(),
                 movieCacheMisses.get(),
                 popularMoviesCacheHits.get(),
-                popularMoviesCacheMisses.get());
+                popularMoviesCacheMisses.get(),
+                discoverMoviesCacheHits.get(),
+                discoverMoviesCacheMisses.get());
     }
 
     public CacheMetrics snapshotAndResetCacheMetrics() {
         CacheMetrics metrics = getCacheMetrics();
+
         movieCacheHits.set(0);
         movieCacheMisses.set(0);
         popularMoviesCacheHits.set(0);
         popularMoviesCacheMisses.set(0);
-        if (metrics.movieHits() > 0 || metrics.movieMisses() > 0 || metrics.popularHits() > 0 || metrics.popularMisses() > 0) {
-            log.info("TMDB cache summary for request movieHits={} movieMisses={} popularHits={} popularMisses={}",
+        discoverMoviesCacheHits.set(0);
+        discoverMoviesCacheMisses.set(0);
+
+        if (metrics.movieHits() > 0
+                || metrics.movieMisses() > 0
+                || metrics.popularHits() > 0
+                || metrics.popularMisses() > 0
+                || metrics.discoverHits() > 0
+                || metrics.discoverMisses() > 0) {
+
+            log.info(
+                    "TMDB cache summary movieHits={} movieMisses={} "
+                            + "popularHits={} popularMisses={} "
+                            + "discoverHits={} discoverMisses={}",
                     metrics.movieHits(),
                     metrics.movieMisses(),
                     metrics.popularHits(),
-                    metrics.popularMisses());
+                    metrics.popularMisses(),
+                    metrics.discoverHits(),
+                    metrics.discoverMisses());
         }
+
         return metrics;
     }
 
@@ -123,7 +164,13 @@ public class CachingMovieServiceProxy implements MovieProvider {
     private record CacheEntry(Movie movie, long expiresAt) {
     }
 
-    public record CacheMetrics(long movieHits, long movieMisses, long popularHits, long popularMisses) {
+    public record CacheMetrics(
+            long movieHits,
+            long movieMisses,
+            long popularHits,
+            long popularMisses,
+            long discoverHits,
+            long discoverMisses) {
     }
 
     @Override
@@ -147,12 +194,54 @@ public class CachingMovieServiceProxy implements MovieProvider {
             String sortBy,
             int page) {
 
-        return movieAdapter.discoverMovies(
+        // Normalize genre IDs so equivalent queries share the same cache key
+        List<Integer> normalizedGenreIds = genreIds == null
+                ? Collections.emptyList()
+                : genreIds.stream()
+                        .sorted()
+                        .toList();
+
+        String cacheKey = "discover:"
+                + normalizedGenreIds
+                + ":" + startYear
+                + ":" + endYear
+                + ":" + minRating
+                + ":" + sortBy
+                + ":" + page;
+
+        long now = System.currentTimeMillis();
+
+        CachedMoviePage cachedResponse = discoverMoviesCache.get(cacheKey);
+
+        if (cachedResponse != null
+                && cachedResponse.expiresAt() > now) {
+            discoverMoviesCacheHits.incrementAndGet();
+            return cachedResponse.moviePage();
+        }
+
+        if (cachedResponse != null) {
+            discoverMoviesCache.remove(cacheKey, cachedResponse);
+        }
+
+        discoverMoviesCacheMisses.incrementAndGet();
+
+        MoviePage moviePage = movieAdapter.discoverMovies(
                 genreIds,
                 startYear,
                 endYear,
                 minRating,
                 sortBy,
                 page);
+
+        if (moviePage != null) {
+            discoverMoviesCache.put(
+                    cacheKey,
+                    new CachedMoviePage(
+                            moviePage,
+                            System.currentTimeMillis()
+                                    + DISCOVER_MOVIES_CACHE_TTL_MS));
+        }
+
+        return moviePage;
     }
 }

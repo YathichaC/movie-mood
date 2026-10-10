@@ -89,11 +89,20 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
-        authService.processForgotPassword(request);
+    public ResponseEntity<?> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest request) {
+
+        boolean sent = authService.processForgotPassword(request);
+
+        if (!sent) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                            "message",
+                            "No account found with this email address."));
+        }
+
         return ResponseEntity.ok(Map.of(
-                "message", "If the email exists, a password reset link has been sent."
-        ));
+                "message", "Reset email sent successfully."));
     }
 
     @PostMapping("/reset-password")
@@ -101,8 +110,7 @@ public class AuthController {
         try {
             authService.resetPassword(request);
             return ResponseEntity.ok(Map.of(
-                    "message", "Password has been reset successfully."
-            ));
+                    "message", "Password has been reset successfully."));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }

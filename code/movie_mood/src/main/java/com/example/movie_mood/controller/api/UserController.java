@@ -68,14 +68,6 @@ public class UserController {
         return processPasswordChange(request, authentication);
     }
 
-    @PutMapping("/password")
-    public ResponseEntity<?> changePasswordPut(
-            @Valid @RequestBody ChangePasswordRequest request,
-            Authentication authentication) {
-
-        return processPasswordChange(request, authentication);
-    }
-
     private ResponseEntity<?> processPasswordChange(
             ChangePasswordRequest request,
             Authentication authentication) {

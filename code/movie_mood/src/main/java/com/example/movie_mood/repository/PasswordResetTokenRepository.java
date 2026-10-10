@@ -5,6 +5,7 @@ import com.example.movie_mood.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,4 +15,5 @@ public interface PasswordResetTokenRepository extends JpaRepository<PasswordRese
 
     Optional<PasswordResetToken> findByUser(User user);
     void deleteByUser(User user);
+    void deleteByExpiryDateBefore(Instant now);
 }

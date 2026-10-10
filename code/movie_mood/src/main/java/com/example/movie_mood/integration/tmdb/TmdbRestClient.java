@@ -150,45 +150,45 @@ public class TmdbRestClient {
                         };
                 }
 
-                return restClient.get()
-                                .uri(uriBuilder -> {
-                                        uriBuilder
-                                                        .path("/discover/movie")
-                                                        .queryParam("include_adult", false)
-                                                        .queryParam("language", "en-US")
-                                                        .queryParam("page", page)
-                                                        .queryParam("sort_by", tmdbSortBy);
+                return executeTimedRequest("discoverMovies", () ->
+        restClient.get()
+                .uri(uriBuilder -> {
+                    uriBuilder
+                            .path("/discover/movie")
+                            .queryParam("include_adult", false)
+                            .queryParam("language", "en-US")
+                            .queryParam("page", page)
+                            .queryParam("sort_by", tmdbSortBy);
 
-                                        if (genreIds != null && !genreIds.isEmpty()) {
-                                                String genres = genreIds.stream()
-                                                                .map(String::valueOf)
-                                                                .collect(java.util.stream.Collectors.joining("|"));
+                    if (genreIds != null && !genreIds.isEmpty()) {
+                        String genres = genreIds.stream()
+                                .map(String::valueOf)
+                                .collect(java.util.stream.Collectors.joining("|"));
 
-                                                uriBuilder.queryParam("with_genres", genres);
-                                        }
+                        uriBuilder.queryParam("with_genres", genres);
+                    }
 
-                                        if (startYear != null) {
-                                                uriBuilder.queryParam(
-                                                                "primary_release_date.gte",
-                                                                startYear + "-01-01");
-                                        }
+                    if (startYear != null) {
+                        uriBuilder.queryParam(
+                                "primary_release_date.gte",
+                                startYear + "-01-01");
+                    }
 
-                                        if (endYear != null) {
-                                                uriBuilder.queryParam(
-                                                                "primary_release_date.lte",
-                                                                endYear + "-12-31");
-                                        }
+                    if (endYear != null) {
+                        uriBuilder.queryParam(
+                                "primary_release_date.lte",
+                                endYear + "-12-31");
+                    }
 
-                                        if (minRating != null) {
-                                                uriBuilder.queryParam(
-                                                                "vote_average.gte",
-                                                                minRating);
-                                        }
+                    if (minRating != null) {
+                        uriBuilder.queryParam(
+                                "vote_average.gte",
+                                minRating);
+                    }
 
-                                        return uriBuilder.build();
-                                })
-                                .retrieve()
-                                .body(TmdbMovieListResponse.class);
+                    return uriBuilder.build();
+                })
+                .retrieve()
+                .body(TmdbMovieListResponse.class));
         }
-
 }
