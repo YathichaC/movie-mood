@@ -1,0 +1,89 @@
+
+name: Deploy MovieMood to AWS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "code/movie_mood/**"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: moviemood-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      EB_APPLICATION_NAME: ${{ vars.EB_APPLICATION_NAME }}
+      EB_ENVIRONMENT_NAME: ${{ vars.EB_ENVIRONMENT_NAME }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Package application
+        run: |
+          cd code/movie_mood
+          zip -r "$GITHUB_WORKSPACE/deploy.zip" . \
+            -x ".git/*" "target/*" ".env" ".env.*"
+
+      - name: Upload deployment bundle
+        id: upload
+        run: |
+          S3_BUCKET=$(aws elasticbeanstalk create-storage-location \
+            --query S3Bucket --output text)
+
+          S3_KEY="moviemood/deploy-${GITHUB_SHA}-${GITHUB_RUN_ID}.zip"
+
+          aws s3 cp "$GITHUB_WORKSPACE/deploy.zip" \
+            "s3://${S3_BUCKET}/${S3_KEY}"
+
+          echo "bucket=${S3_BUCKET}" >> "$GITHUB_OUTPUT"
+          echo "key=${S3_KEY}" >> "$GITHUB_OUTPUT"
+
+      - name: Create Elastic Beanstalk application version
+        run: |
+          VERSION_LABEL="github-${GITHUB_RUN_NUMBER}-${GITHUB_SHA::7}"
+
+          aws elasticbeanstalk create-application-version \
+            --application-name "$EB_APPLICATION_NAME" \
+            --version-label "$VERSION_LABEL" \
+            --source-bundle \
+              S3Bucket=${{ steps.upload.outputs.bucket }},S3Key=${{ steps.upload.outputs.key }} \
+            --process
+
+          echo "VERSION_LABEL=$VERSION_LABEL" >> "$GITHUB_ENV"
+
+      - name: Deploy to Elastic Beanstalk
+        run: |
+          aws elasticbeanstalk update-environment \
+            --environment-name "$EB_ENVIRONMENT_NAME" \
+            --version-label "$VERSION_LABEL"
+
+      - name: Wait for deployment
+        run: |
+          aws elasticbeanstalk wait environment-updated \
+            --environment-names "$EB_ENVIRONMENT_NAME"
+
+      - name: Verify deployment
+        run: |
+          aws elasticbeanstalk describe-environments \
+            --environment-names "$EB_ENVIRONMENT_NAME" \
+            --query 'Environments[0].[Status,Health,HealthStatus,CNAME]' \
+            --output table
